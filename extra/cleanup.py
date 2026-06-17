@@ -26,15 +26,16 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Set the two widgets, then confirm teardown is intentional.
-# MAGIC **You must change `confirm` to `yes` — this guard prevents accidental teardown.**
+# MAGIC This notebook **deletes everything by default.** To stop it, set `CONFIRM = False`
+# MAGIC (the assert below then aborts before any deletion). Set `DROP_SCHEMA = False` to keep
+# MAGIC the schema and only remove the models, table, and volume.
 
 # COMMAND ----------
 
-dbutils.widgets.dropdown("confirm", "no", ["no", "yes"], "Confirm teardown")
-dbutils.widgets.dropdown("drop_schema", "no", ["no", "yes"], "Also drop schema (CASCADE)")
-assert dbutils.widgets.get("confirm") == "yes", \
-    "Set the 'confirm' widget to 'yes' to delete workshop resources."
+CONFIRM = True       # 👉 set to False to abort before any deletion
+DROP_SCHEMA = True   # 👉 set to False to keep the schema (drop only models/table/volume)
+
+assert CONFIRM, "CONFIRM is False — aborting teardown. Set CONFIRM = True to delete."
 
 # COMMAND ----------
 
@@ -104,13 +105,13 @@ print(f"Dropped {DATA_TABLE} and volume {VOLUME}.")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC **Optional:** drop the entire schema with `CASCADE`, removing anything else left behind.
-# MAGIC Off by default (`drop_schema = no`) because the catalog or schema may be shared with
-# MAGIC other users or workshops.
+# MAGIC Drop the entire schema with `CASCADE`, removing anything else left behind.
+# MAGIC On by default (`DROP_SCHEMA = True`); set it to `False` above if the catalog or schema
+# MAGIC is shared with other users or workshops.
 
 # COMMAND ----------
 
-if dbutils.widgets.get("drop_schema") == "yes":
+if DROP_SCHEMA:
     spark.sql(f"DROP SCHEMA IF EXISTS {CATALOG}.{SCHEMA} CASCADE")
     print(f"Dropped schema {CATALOG}.{SCHEMA}.")
 print("Cleanup complete.")
