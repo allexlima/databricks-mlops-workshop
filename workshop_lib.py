@@ -61,11 +61,11 @@ def generate_dataset(n_months: int = 96, seed: int = SEED) -> pd.DataFrame:
     df["price_next_month"] = base + 0.3 * (df["price"].to_numpy() - base) + noise
     df["trend_up"] = df["price_next_month"] > df["price"]
 
-    df["holding_cost"]  = rng.uniform(0.5, 2.0, n)
+    df["holding_cost"] = rng.uniform(0.5, 2.0, n)
     df["purchase_cost"] = df["price"] * rng.uniform(0.9, 1.1, n)
-    df["demand"]        = rng.uniform(80, 140, n)
-    df["capacity"]      = rng.uniform(150, 220, n)
-    df["budget"]        = rng.uniform(20000, 40000, n)
+    df["demand"] = rng.uniform(80, 140, n)
+    df["capacity"] = rng.uniform(150, 220, n)
+    df["budget"] = rng.uniform(20000, 40000, n)
     return df
 
 

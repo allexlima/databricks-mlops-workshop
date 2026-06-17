@@ -4,12 +4,16 @@
 # base_environment = "databricks_ml_v5"
 # environment_version = "5"
 # ///
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC # 00 · Setup
 # MAGIC Points MLflow at Unity Catalog and creates the catalog/schema/volume and
 # MAGIC experiment. Run once before the labs.
 
 # COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## Dependencies
 # MAGIC **Serverless (recommended):** dependencies are declared in each notebook's
@@ -25,11 +29,33 @@
 # MAGIC ```
 
 # COMMAND ----------
+
+# MAGIC %md
+# MAGIC Load shared config (catalog name, schema, volume, experiment path) from `_config`.
+
+# COMMAND ----------
+
 # MAGIC %run ./_config
 
 # COMMAND ----------
+
+# MAGIC %md
+# MAGIC Tell MLflow to use Unity Catalog as the model registry instead of the legacy Workspace registry.
+
+# COMMAND ----------
+
 import mlflow
+
 mlflow.set_registry_uri("databricks-uc")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Verify the target catalog exists before attempting to write anything — creating
+# MAGIC catalogs requires admin privileges, so we only create objects *inside* one you
+# MAGIC already own.
+
+# COMMAND ----------
 
 # The catalog must already exist — creating catalogs is privileged and depends on
 # managed-location / Default-Storage settings. Set CATALOG (in _config) to one you
@@ -39,7 +65,25 @@ assert CATALOG in catalogs, (
     f"Catalog '{CATALOG}' not found. Set the 'catalog' widget to an existing Unity "
     f"Catalog you can write to (available: {catalogs})."
 )
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Create the schema and volume that all workshop notebooks will use for data and
+# MAGIC model artifacts (idempotent — safe to re-run).
+
+# COMMAND ----------
+
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA}")
 spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA}.{VOLUME}")  # serverless-safe file storage
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Register the MLflow experiment so all lab notebooks log runs to the same
+# MAGIC experiment, making comparisons easy in the Experiments UI.
+
+# COMMAND ----------
+
 mlflow.set_experiment(EXPERIMENT_PATH)
 print(f"Setup complete. Using {CATALOG}.{SCHEMA}.")
