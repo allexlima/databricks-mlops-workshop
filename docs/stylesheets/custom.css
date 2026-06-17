@@ -1,66 +1,117 @@
-/* Databricks branding for the MLflow MLOps workshop.
-   Brand colors: orange/coral #FF3621, dark navy/slate #1B3139.
-   Contrast rule: #FF3621 is reserved for the header bar and primary buttons ONLY.
-   Links/accents use slate (#1B3139) — bright orange on white fails WCAG. */
+/* ============================================================================
+   Databricks-style theme for the MLflow MLOps workshop.
+   Brand: Lava #FF3621 (accent/buttons), Navy/Slate #1B3139 (chrome/text).
+   Lava is reserved for accents & primary buttons; links use navy (light) /
+   light-lava (dark) for legibility — bright orange on white fails WCAG.
+   ========================================================================== */
 
-:root {
-  --md-primary-fg-color: #FF3621;        /* header + primary buttons */
+/* ---- Light scheme (default) ---- */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #ff3621;
   --md-primary-fg-color--light: #ff5a47;
   --md-primary-fg-color--dark: #c42912;
-  --md-primary-bg-color: #ffffff;        /* header text on orange */
-  --md-primary-bg-color--light: #ffffff;
-
-  --md-accent-fg-color: #1b3139;         /* hover/interactive accents */
-  --md-accent-fg-color--transparent: rgba(27, 49, 57, 0.1);
-
-  /* Body links: slate, not bright orange (WCAG on white). */
-  --md-typeset-a-color: #1b3139;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: #c42912;
+  --md-typeset-a-color: #1b3139;   /* body links: navy */
 }
 
-/* Link hover: a darkened brand orange (still readable on white). */
-.md-typeset a:hover {
-  color: #c42912;
+/* ---- Dark scheme (slate) ---- */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #ff3621;
+  --md-primary-fg-color--light: #ff5a47;
+  --md-primary-fg-color--dark: #c42912;
+  --md-accent-fg-color: #ff5a47;
+  --md-typeset-a-color: #ff8a7a;   /* body links: light lava on dark */
+  --md-default-bg-color: #0f1c21;  /* deep navy canvas */
 }
 
-/* Header bar: brand orange with legible white text/icons. */
+/* ---- Header & tabs: navy, not orange (the Databricks chrome look) ---- */
 .md-header,
 .md-tabs {
-  background-color: var(--md-primary-fg-color);
+  background-color: #1b3139;
   color: #ffffff;
 }
+.md-header__title {
+  font-weight: 700;
+}
+.md-header__button.md-logo img {
+  height: 1.6rem;
+  width: auto;
+}
 
-/* Footer: dark slate. */
+/* Link hover */
+.md-typeset a:hover {
+  color: var(--md-primary-fg-color--dark);
+}
+[data-md-color-scheme="slate"] .md-typeset a:hover {
+  color: #ff5a47;
+}
+
+/* ---- Footer: deep slate ---- */
 .md-footer {
   background-color: #1b3139;
 }
 .md-footer-meta {
-  background-color: #14252b;
+  background-color: #122026;
 }
 
-/* Sidebar active item: slate, bold. */
-.md-nav__link--active,
-.md-nav__item .md-nav__link--active {
-  color: #1b3139;
+/* ---- Sidebar active item ---- */
+.md-nav__link--active {
   font-weight: 700;
 }
 
-/* Primary buttons keep the brand orange with white text. */
+/* ---- Headings: DM Sans, navy, tighter ---- */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+[data-md-color-scheme="default"] .md-typeset h1,
+[data-md-color-scheme="default"] .md-typeset h2 {
+  color: #1b3139;
+}
+/* Lava underline accent under H2 section headers */
+.md-typeset h2 {
+  border-bottom: 2px solid rgba(255, 54, 33, 0.18);
+  padding-bottom: 0.25rem;
+}
+
+/* ---- Primary buttons: lava ---- */
 .md-typeset .md-button--primary {
   background-color: var(--md-primary-fg-color);
   border-color: var(--md-primary-fg-color);
   color: #ffffff;
 }
+.md-typeset .md-button--primary:hover {
+  background-color: var(--md-primary-fg-color--dark);
+  border-color: var(--md-primary-fg-color--dark);
+}
 
-/* Sleek code blocks: slate-tinted surface + brand-orange left accent.
-   (Background stays light so Material's syntax highlighting remains legible.) */
+/* ---- Grid cards (homepage lab overview) ---- */
+.md-typeset .grid.cards > ul > li {
+  border: 1px solid rgba(27, 49, 57, 0.12);
+  border-radius: 0.6rem;
+  padding: 1rem 1.1rem;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--md-primary-fg-color);
+  box-shadow: 0 6px 20px rgba(27, 49, 57, 0.12);
+  transform: translateY(-2px);
+}
+.md-typeset .grid.cards .twemoji,
+.md-typeset .grid.cards .material-icons {
+  color: var(--md-primary-fg-color);
+}
+
+/* ---- Code blocks: subtle lava left accent ---- */
 .md-typeset pre > code {
   border-left: 3px solid var(--md-primary-fg-color);
 }
-.md-typeset .highlight {
-  --md-code-bg-color: #f4f6f7;
-}
 
-/* Inline code: subtle slate tint. */
-.md-typeset code {
-  color: #1b3139;
+/* ---- Diagrams: center, breathe ---- */
+.md-typeset img[src$=".svg"] {
+  display: block;
+  margin: 1.4rem auto;
 }
