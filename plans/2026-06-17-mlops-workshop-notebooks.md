@@ -39,14 +39,18 @@
 - [ ] **Step 1: Create `requirements.txt` (notebook runtime deps, pinned floors)**
 
 ```
-# Workshop notebook runtime dependencies (Databricks ML runtime compatible)
+# Workshop notebook runtime dependencies (Databricks ML runtime compatible).
+# torch is CPU-only on purpose: the CUDA wheel is huge and would bloat both local
+# setup and the optional serving container. The pytorch CPU index supplies CPU
+# builds; harmless on macOS (already CPU/MPS).
+--extra-index-url https://download.pytorch.org/whl/cpu
 mlflow>=2.15,<3
 scikit-learn>=1.3
 pandas>=2.0
 numpy>=1.26
 pyomo>=6.7
 highspy>=1.7
-torch>=2.2          # optional PyTorch lab only
+torch>=2.2,<3       # optional PyTorch lab only; CPU-only via the index URL above
 ```
 
 - [ ] **Step 2: Create `requirements-dev.txt` (local test deps)**
@@ -169,8 +173,12 @@ Expected: FAIL — `ModuleNotFoundError: No module named 'workshop_lib'` (or att
 ```python
 """Reusable, framework-agnostic logic for the MLOps workshop.
 
-Imported by both the Databricks notebooks and the local pytest suite, so it must
-not depend on Databricks, MLflow, or dbutils. Pure pandas/NumPy/Pyomo only.
+Imported (never copy-pasted) by both the Databricks notebooks and the local
+pytest suite, so it must not depend on Databricks or dbutils — pure
+pandas/NumPy/Pyomo, plus mlflow only for the PyFunc base class.
+
+Customer-agnostic: contains no real customer, business-unit, or proprietary model
+names. Generic synthetic commodity domain only.
 """
 from __future__ import annotations
 
@@ -667,7 +675,7 @@ git commit -m "Add sklearn notebook with deterministic validation gate"
 
 **Interfaces:**
 - Consumes: `OPTIMIZER_MODEL`, `workshop_lib.PurchaseOptimizerModel`, `ECON_COLS`.
-- Produces: a registered UC PyFunc model `OPTIMIZER_MODEL` (no alias gate — it is not trained/scored), loaded back and called.
+- Produces: a registered UC PyFunc model `OPTIMIZER_MODEL` with alias **`@champion`** set on the registered version (the optimizer has no quality gate, but we promote it by alias so the whole workshop loads models uniformly by alias — never a version integer), loaded back via `@champion` and called.
 
 - [ ] **Step 1: Write `notebooks/04_pyomo_pyfunc.py`**
 
@@ -694,8 +702,10 @@ signature = mlflow.models.infer_signature(
     example, wl.PurchaseOptimizerModel().predict(None, example))
 
 # COMMAND ----------
-with mlflow.start_run(run_name="pyomo_optimizer"):
-    mlflow.pyfunc.log_model(
+from mlflow import MlflowClient
+client = MlflowClient()
+with mlflow.start_run(run_name="pyomo_optimizer") as run:
+    info = mlflow.pyfunc.log_model(
         artifact_path="model",
         python_model=wl.PurchaseOptimizerModel(),
         code_paths=["./workshop_lib.py"],          # ship the optimizer logic
@@ -705,14 +715,19 @@ with mlflow.start_run(run_name="pyomo_optimizer"):
         registered_model_name=OPTIMIZER_MODEL,
     )
 
+# Promote by alias so everything in the workshop loads uniformly by @champion.
+client.set_registered_model_alias(OPTIMIZER_MODEL, "champion", info.registered_model_version)
+
 # COMMAND ----------
-# Load from the registry and call it — proves it is governed like any model.
-opt = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion") \
-      if False else mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}/latest")
+# Load from the registry BY ALIAS and call it — proves it is governed like any model.
+opt = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
 print(opt.predict(example))
 ```
 
-> **Interface note:** the optimizer has no quality gate, so it has no `@champion` alias by default. Task 10's end-to-end loads it by `models:/{OPTIMIZER_MODEL}/latest` (or set an explicit `production` alias here if preferred — keep it alias-based, not a version integer). Pick one and keep Task 10 consistent.
+> **Interface note:** the optimizer is promoted to `@champion` here even though it has
+> no quality gate, purely so every model in the workshop is loaded by the same alias
+> convention. Tasks 9 and 10 load it via `models:/{OPTIMIZER_MODEL}@champion` — never a
+> version integer, never `/latest`.
 
 - [ ] **Step 2: In-workspace verification**
 
@@ -751,14 +766,25 @@ git commit -m "Add Pyomo PyFunc notebook, registered and loaded from UC"
 
 # COMMAND ----------
 import mlflow, pandas as pd, workshop_lib as wl
+from mlflow import MlflowClient
 mlflow.set_registry_uri("databricks-uc")
+client = MlflowClient()
+
+# Fail clearly if the predictor was never promoted, instead of a raw registry error.
+try:
+    client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
+except Exception:
+    raise RuntimeError(
+        f"No @champion alias on {FORECASTER_MODEL}. Run 02_sklearn_baseline and "
+        f"confirm it passed the R2>={R2_THRESHOLD} gate before running this notebook."
+    )
 
 df = spark.table(DATA_TABLE).toPandas().sort_values("month")
 latest = df.iloc[[-1]]
 feats = wl.DRIVERS + ["price"]
 
 forecaster = mlflow.pyfunc.load_model(f"models:/{FORECASTER_MODEL}@champion")
-optimizer = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}/latest")
+optimizer = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
 
 # COMMAND ----------
 predicted_price = float(forecaster.predict(latest[feats])[0])
@@ -831,7 +857,7 @@ assert champ is not None and champ.version is not None
 
 # 4) chain returns a purchase decision
 forecaster = mlflow.pyfunc.load_model(f"models:/{FORECASTER_MODEL}@champion")
-optimizer = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}/latest")
+optimizer = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
 latest = df.iloc[[-1]]
 pp = float(forecaster.predict(latest[wl.DRIVERS + ["price"]])[0])
 oi = latest[wl.ECON_COLS].copy(); oi.insert(0, "predicted_price", pp)
@@ -1036,7 +1062,7 @@ git commit -m "Add optional serving notebook and notebooks README"
 - Optional serving with solver-in-container note → Task 12. ✓
 - `.py` source format, `_config` via `%run` → Tasks 5–12. ✓
 
-**Placeholder scan:** No "TBD"/"add error handling"-style gaps; every code step shows real content. The one open choice (optimizer alias vs. `/latest`) is called out explicitly in Task 8 with instruction to keep Task 10 consistent.
+**Placeholder scan:** No "TBD"/"add error handling"-style gaps; every code step shows real content. The optimizer-load question is resolved: it is promoted to `@champion` in Task 8 and loaded by that alias in Tasks 8, 9, 10 — uniform alias-first, no `/latest`, no version integers anywhere. `05_end_to_end` guards a missing `@champion` with a clear actionable message (Task 9). `torch` is pinned CPU-only (Task 1).
 
 **Type consistency:** `generate_dataset`, `quick_fit_r2`, `solve_purchase`, `PurchaseOptimizerModel.predict` signatures match across Tasks 2–4 and their notebook consumers (Tasks 6–11). Constants `SEED`, `R2_THRESHOLD`, `R2_BAND`, `DRIVERS`, `ECON_COLS` are defined once in `workshop_lib` and re-exposed by `_config`. Model name constants `FORECASTER_MODEL`/`OPTIMIZER_MODEL`/`DATA_TABLE` defined in Task 5, consumed consistently thereafter.
 
