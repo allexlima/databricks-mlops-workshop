@@ -1,4 +1,13 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# base_environment = "databricks_ml_v5"
+# environment_version = "5"
+# dependencies = [
+#   "pyomo",
+#   "highspy",
+# ]
+# ///
 # MAGIC %md
 # MAGIC # 04 · Pyomo optimizer as a custom PyFunc (the headline)
 # MAGIC A non-trainable operations-research model, wrapped as MLflow PyFunc, lives

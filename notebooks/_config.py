@@ -1,4 +1,9 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# base_environment = "databricks_ml_v5"
+# environment_version = "5"
+# ///
 # MAGIC %md
 # MAGIC # Shared config
 # MAGIC `%run` this from every lab notebook. Edit CATALOG/SCHEMA once here and every

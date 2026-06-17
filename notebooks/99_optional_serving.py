@@ -1,4 +1,9 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# base_environment = "databricks_ml_v5"
+# environment_version = "5"
+# ///
 # MAGIC %md
 # MAGIC # 99 · Optional — Model Serving
 # MAGIC Deploy a registered model to a serving endpoint and query it. The Pyomo

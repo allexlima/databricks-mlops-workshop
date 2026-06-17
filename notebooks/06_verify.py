@@ -1,4 +1,13 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# base_environment = "databricks_ml_v5"
+# environment_version = "5"
+# dependencies = [
+#   "pyomo",
+#   "highspy",
+# ]
+# ///
 # MAGIC %md
 # MAGIC # 06 · Verify (minimum bar)
 # MAGIC The four definition-of-done checkpoints on the mandatory path. Assertions

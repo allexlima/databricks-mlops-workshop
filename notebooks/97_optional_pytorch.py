@@ -1,4 +1,12 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# base_environment = "databricks_ml_v5"
+# environment_version = "5"
+# dependencies = [
+#   "torch",
+# ]
+# ///
 # MAGIC %md
 # MAGIC # 97 · Optional — PyTorch (same lifecycle, different flavor)
 # MAGIC The SAME data/split through a small MLP, reusing the SAME validation gate.
