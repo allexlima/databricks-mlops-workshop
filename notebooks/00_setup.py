@@ -14,7 +14,15 @@
 # COMMAND ----------
 import mlflow
 mlflow.set_registry_uri("databricks-uc")
-spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG}")
+
+# The catalog must already exist — creating catalogs is privileged and depends on
+# managed-location / Default-Storage settings. Set the `catalog` widget (in _config)
+# to one you can create schemas in. We only create the schema inside it.
+catalogs = [r[0] for r in spark.sql("SHOW CATALOGS").collect()]
+assert CATALOG in catalogs, (
+    f"Catalog '{CATALOG}' not found. Set the 'catalog' widget to an existing Unity "
+    f"Catalog you can write to (available: {catalogs})."
+)
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA}")
 mlflow.set_experiment(EXPERIMENT_PATH)
-print("Setup complete.")
+print(f"Setup complete. Using {CATALOG}.{SCHEMA}.")
