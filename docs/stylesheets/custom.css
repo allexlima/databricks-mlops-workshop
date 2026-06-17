@@ -170,10 +170,16 @@
 
 /* ============================ Grid cards ================================== */
 .md-typeset .grid.cards > ul > li {
-  background-color: #fff;
   border: 1px solid rgba(27, 49, 57, 0.12);
   padding: 1rem 1.1rem;
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+[data-md-color-scheme="default"] .md-typeset .grid.cards > ul > li {
+  background-color: #fff;
+}
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
+  background-color: #16252b;
+  border-color: rgba(255, 255, 255, 0.12);
 }
 .md-typeset .grid.cards > ul > li:hover {
   border-color: var(--db-lava);
