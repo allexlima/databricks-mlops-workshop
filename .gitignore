@@ -219,3 +219,6 @@ __marimo__/
 
 # Claude Code
 .claude/
+
+# Local-only project memory loader (imports .claude/CLAUDE.md)
+/CLAUDE.md
