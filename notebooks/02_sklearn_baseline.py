@@ -38,6 +38,7 @@ with mlflow.start_run(run_name="sklearn_gbr") as run:
     mlflow.log_metrics({"rmse": rmse, "mae": mae, "r2": r2})
     mlflow.sklearn.log_model(
         model, name="model",
+        serialization_format="cloudpickle",   # portable across envs (avoids skops)
         input_example=test[feats].head(3),
         signature=mlflow.models.infer_signature(test[feats], preds),
     )
