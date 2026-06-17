@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 130" role="img" aria-label="Ciclo de vida do modelo no MLflow: Rastrear, Registrar, Validar, Compor, Governar">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#FF3621"/>
+    </marker>
+    <style>
+      .box{fill:#1B3139;}
+      .label{fill:#fff;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;font-weight:600;text-anchor:middle;}
+      .flow{stroke:#FF3621;stroke-width:2.5;marker-end:url(#arrow);}
+    </style>
+  </defs>
+  <rect class="box" x="10"  y="45" width="150" height="44" rx="8"/>
+  <text class="label" x="85"  y="72">Rastrear</text>
+  <line class="flow" x1="162" y1="67" x2="196" y2="67"/>
+  <rect class="box" x="200" y="45" width="150" height="44" rx="8"/>
+  <text class="label" x="275" y="72">Registrar</text>
+  <line class="flow" x1="352" y1="67" x2="386" y2="67"/>
+  <rect class="box" x="390" y="45" width="150" height="44" rx="8"/>
+  <text class="label" x="465" y="72">Validar</text>
+  <line class="flow" x1="542" y1="67" x2="576" y2="67"/>
+  <rect class="box" x="580" y="45" width="150" height="44" rx="8"/>
+  <text class="label" x="655" y="72">Compor</text>
+  <line class="flow" x1="732" y1="67" x2="766" y2="67"/>
+  <rect class="box" x="770" y="45" width="150" height="44" rx="8"/>
+  <text class="label" x="845" y="72">Governar</text>
+</svg>

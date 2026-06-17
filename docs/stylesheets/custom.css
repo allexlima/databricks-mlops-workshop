@@ -1,0 +1,66 @@
+/* Databricks branding for the MLflow MLOps workshop.
+   Brand colors: orange/coral #FF3621, dark navy/slate #1B3139.
+   Contrast rule: #FF3621 is reserved for the header bar and primary buttons ONLY.
+   Links/accents use slate (#1B3139) — bright orange on white fails WCAG. */
+
+:root {
+  --md-primary-fg-color: #FF3621;        /* header + primary buttons */
+  --md-primary-fg-color--light: #ff5a47;
+  --md-primary-fg-color--dark: #c42912;
+  --md-primary-bg-color: #ffffff;        /* header text on orange */
+  --md-primary-bg-color--light: #ffffff;
+
+  --md-accent-fg-color: #1b3139;         /* hover/interactive accents */
+  --md-accent-fg-color--transparent: rgba(27, 49, 57, 0.1);
+
+  /* Body links: slate, not bright orange (WCAG on white). */
+  --md-typeset-a-color: #1b3139;
+}
+
+/* Link hover: a darkened brand orange (still readable on white). */
+.md-typeset a:hover {
+  color: #c42912;
+}
+
+/* Header bar: brand orange with legible white text/icons. */
+.md-header,
+.md-tabs {
+  background-color: var(--md-primary-fg-color);
+  color: #ffffff;
+}
+
+/* Footer: dark slate. */
+.md-footer {
+  background-color: #1b3139;
+}
+.md-footer-meta {
+  background-color: #14252b;
+}
+
+/* Sidebar active item: slate, bold. */
+.md-nav__link--active,
+.md-nav__item .md-nav__link--active {
+  color: #1b3139;
+  font-weight: 700;
+}
+
+/* Primary buttons keep the brand orange with white text. */
+.md-typeset .md-button--primary {
+  background-color: var(--md-primary-fg-color);
+  border-color: var(--md-primary-fg-color);
+  color: #ffffff;
+}
+
+/* Sleek code blocks: slate-tinted surface + brand-orange left accent.
+   (Background stays light so Material's syntax highlighting remains legible.) */
+.md-typeset pre > code {
+  border-left: 3px solid var(--md-primary-fg-color);
+}
+.md-typeset .highlight {
+  --md-code-bg-color: #f4f6f7;
+}
+
+/* Inline code: subtle slate tint. */
+.md-typeset code {
+  color: #1b3139;
+}

@@ -1,0 +1,55 @@
+site_name: Workshop de MLOps no Databricks
+site_description: Ciclo de vida de modelos com MLflow no Databricks — um conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
+repo_url: https://github.com/allexlima/databricks-mlops-workshop
+repo_name: allexlima/databricks-mlops-workshop
+edit_uri: ""
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.footer
+    - navigation.top
+    - navigation.instant
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - scheme: default
+  icon:
+    repo: fontawesome/brands/github
+
+extra_css:
+  - stylesheets/custom.css
+
+markdown_extensions:
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+nav:
+  - Início: index.md
+  - Configuração:
+      - Pré-requisitos: setup/prerequisites.md
+  - Lab 1 — Gerar o conjunto de dados: lab-1-generate-data/index.md
+  - Lab 2 — Treinar o forecaster (sklearn): lab-2-forecaster/index.md
+  - Lab 3 — Otimizador Pyomo (destaque): lab-3-optimizer/index.md
+  - Lab 4 — Cadeia ponta a ponta: lab-4-end-to-end/index.md
+  - Lab 5 — Verificação: lab-5-verify/index.md
+  - Labs opcionais: optional/index.md
