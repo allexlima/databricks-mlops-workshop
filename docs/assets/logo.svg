@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Databricks-style lakehouse mark">
-  <g fill="#FF3621">
-    <path d="M6 13 L24 5 L42 13 L24 21 Z"/>
-    <path d="M6 24 L24 16 L42 24 L24 32 Z" opacity="0.8"/>
-    <path d="M6 35 L24 27 L42 35 L24 43 Z" opacity="0.6"/>
-  </g>
-</svg>
