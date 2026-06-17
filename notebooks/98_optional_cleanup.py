@@ -6,10 +6,6 @@
 # MAGIC **Destructive.** Set the `confirm` widget to `yes` to proceed.
 
 # COMMAND ----------
-# MAGIC %pip install -q -r ../requirements.txt
-# MAGIC %restart_python
-
-# COMMAND ----------
 # MAGIC %run ./_config
 
 # COMMAND ----------

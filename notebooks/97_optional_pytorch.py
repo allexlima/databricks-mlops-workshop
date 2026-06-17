@@ -5,10 +5,6 @@
 # MAGIC Optional: the end-to-end chain does not depend on this notebook.
 
 # COMMAND ----------
-# MAGIC %pip install -q -r ../requirements.txt
-# MAGIC %restart_python
-
-# COMMAND ----------
 # MAGIC %run ./_config
 
 # COMMAND ----------

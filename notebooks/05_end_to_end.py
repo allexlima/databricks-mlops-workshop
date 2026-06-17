@@ -6,10 +6,6 @@
 # MAGIC A once-manual monthly run now lives in a governed lineage.
 
 # COMMAND ----------
-# MAGIC %pip install -q -r ../requirements.txt
-# MAGIC %restart_python
-
-# COMMAND ----------
 # MAGIC %run ./_config
 
 # COMMAND ----------

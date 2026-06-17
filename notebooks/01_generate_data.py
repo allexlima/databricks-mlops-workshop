@@ -5,10 +5,6 @@
 # MAGIC models read from this. We assert the signal is learnable-but-not-trivial.
 
 # COMMAND ----------
-# MAGIC %pip install -q -r ../requirements.txt
-# MAGIC %restart_python
-
-# COMMAND ----------
 # MAGIC %run ./_config
 
 # COMMAND ----------

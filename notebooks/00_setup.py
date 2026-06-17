@@ -1,12 +1,22 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # 00 · Setup
-# MAGIC Installs deps, points MLflow at Unity Catalog, creates the catalog/schema
-# MAGIC and experiment. Run once before the labs.
+# MAGIC Points MLflow at Unity Catalog and creates the catalog/schema/volume and
+# MAGIC experiment. Run once before the labs.
 
 # COMMAND ----------
+# MAGIC %md
+# MAGIC ## Dependencies
+# MAGIC **Serverless (recommended):** dependencies are declared in each notebook's
+# MAGIC serverless **Environment** and persisted as PEP 723 metadata in the source —
+# MAGIC nothing to install, just run the cells.
+# MAGIC
+# MAGIC **Classic / ML cluster:** the PEP 723 environment is ignored. Run this once at
+# MAGIC the top of each notebook (or install the libs on the cluster):
+# MAGIC ```
 # MAGIC %pip install -q -r ../requirements.txt
 # MAGIC %restart_python
+# MAGIC ```
 
 # COMMAND ----------
 # MAGIC %run ./_config
