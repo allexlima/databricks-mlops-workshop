@@ -699,7 +699,7 @@ print(f"Creating endpoint {endpoint} for {FORECASTER_MODEL} v{champ.version}.")
 Run order (mandatory path): `00_setup` → `01_generate_data` → `02_sklearn_baseline`
 → `04_pyomo_pyfunc` → `05_end_to_end` → `06_verify`.
 
-Optional: `97_optional_pytorch`, `99_optional_serving`.
+Optional: `97_optional_pytorch`, `99_optional_serving`, `98_optional_cleanup` (teardown).
 
 `workshop_lib.py` holds the pure, reusable logic (data generation, the Pyomo
 optimizer, the PyFunc wrapper); the notebooks import it rather than duplicating
@@ -719,6 +719,88 @@ git commit -m "Add optional serving notebook and notebooks README"
 
 ---
 
+### Task J: `98_optional_cleanup.py` (optional teardown)
+
+**Files:** Create `notebooks/98_optional_cleanup.py`.
+**Consumes:** `FORECASTER_MODEL`, `OPTIMIZER_MODEL`, `EXPERIMENT_PATH`, `DATA_TABLE`, `CATALOG`, `SCHEMA`. **Produces:** removes all resources the workshop created. Destructive; guarded by a `confirm` widget (inline fail-loud assert). Idempotent (`IF EXISTS` / try-except).
+
+- [ ] **Step 1: Write `notebooks/98_optional_cleanup.py`**
+
+```python
+# Databricks notebook source
+# MAGIC %md
+# MAGIC # 98 · Optional — Cleanup (teardown)
+# MAGIC Removes everything the workshop created: serving endpoint, registered
+# MAGIC models, the experiment, the Delta table (and optionally the schema).
+# MAGIC **Destructive.** Set the `confirm` widget to `yes` to proceed.
+
+# COMMAND ----------
+# MAGIC %run ./_config
+
+# COMMAND ----------
+dbutils.widgets.dropdown("confirm", "no", ["no", "yes"], "Confirm teardown")
+dbutils.widgets.dropdown("drop_schema", "no", ["no", "yes"], "Also drop schema (CASCADE)")
+assert dbutils.widgets.get("confirm") == "yes", \
+    "Set the 'confirm' widget to 'yes' to delete workshop resources."
+
+# COMMAND ----------
+import mlflow
+from mlflow import MlflowClient
+from mlflow.deployments import get_deploy_client
+mlflow.set_registry_uri("databricks-uc")
+client = MlflowClient()
+
+# 1) Serving endpoint (the optional serving lab may have created it).
+try:
+    get_deploy_client("databricks").delete_endpoint("mlops-workshop-forecaster")
+    print("Deleted serving endpoint.")
+except Exception as e:
+    print(f"No serving endpoint to delete ({e}).")
+
+# 2) Registered models.
+for name in (FORECASTER_MODEL, OPTIMIZER_MODEL):
+    try:
+        client.delete_registered_model(name)
+        print(f"Deleted registered model {name}.")
+    except Exception as e:
+        print(f"No model {name} ({e}).")
+
+# 3) Experiment.
+try:
+    exp = client.get_experiment_by_name(EXPERIMENT_PATH)
+    if exp:
+        mlflow.delete_experiment(exp.experiment_id)
+        print(f"Deleted experiment {EXPERIMENT_PATH}.")
+except Exception as e:
+    print(f"No experiment to delete ({e}).")
+
+# 4) Data table + CSV.
+spark.sql(f"DROP TABLE IF EXISTS {DATA_TABLE}")
+try:
+    dbutils.fs.rm("dbfs:/tmp/commodity_monthly.csv")
+except Exception:
+    pass
+print(f"Dropped {DATA_TABLE} and CSV.")
+
+# COMMAND ----------
+# Optional: drop the whole schema (removes anything left behind). Off by default
+# because the catalog/schema may be shared.
+if dbutils.widgets.get("drop_schema") == "yes":
+    spark.sql(f"DROP SCHEMA IF EXISTS {CATALOG}.{SCHEMA} CASCADE")
+    print(f"Dropped schema {CATALOG}.{SCHEMA}.")
+print("Cleanup complete.")
+```
+
+- [ ] **Step 2: Commit**
+```bash
+git add notebooks/98_optional_cleanup.py
+git commit -m "Add optional cleanup/teardown notebook"
+```
+
+> **Checkpoint:** author runs `98` with `confirm=yes`. Expect each resource deleted or a clean "nothing to delete" message; re-running is safe (idempotent). The `drop_schema` toggle stays `no` unless the schema is dedicated to the workshop.
+
+---
+
 ## Coverage check (vs. spec)
 - Agnostic, synthetic, fixed seed → Global Constraints + Task A. ✓
 - Two-act narrative (sklearn standard, Pyomo headline) → Tasks D, E. ✓
@@ -730,5 +812,6 @@ git commit -m "Add optional serving notebook and notebooks README"
 - End-to-end chain + lineage beat → Task F. ✓
 - Four-checkpoint verification, alias-based → Task G. ✓
 - Optional serving + solver-in-container note → Task I. ✓
+- Optional cleanup/teardown (guarded, idempotent) → Task J. ✓
 - `.py` source format, `_config` via `%run`, notebooks import `workshop_lib` → Tasks A–I. ✓
 - No test suite (inline asserts only) → Global Constraints; no `tests/` created. ✓
