@@ -5,6 +5,10 @@
 # MAGIC in the exact same registry/lifecycle as the ML predictor.
 
 # COMMAND ----------
+# MAGIC %pip install -q -r ../requirements.txt
+# MAGIC %restart_python
+
+# COMMAND ----------
 # MAGIC %run ./_config
 
 # COMMAND ----------

@@ -6,7 +6,7 @@
 
 # COMMAND ----------
 # MAGIC %pip install -q -r ../requirements.txt
-# MAGIC dbutils.library.restartPython()
+# MAGIC %restart_python
 
 # COMMAND ----------
 # MAGIC %run ./_config

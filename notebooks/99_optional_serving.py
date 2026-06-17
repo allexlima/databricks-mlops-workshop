@@ -5,6 +5,10 @@
 # MAGIC endpoint works because `highspy` is pip-installable inside the container.
 
 # COMMAND ----------
+# MAGIC %pip install -q -r ../requirements.txt
+# MAGIC %restart_python
+
+# COMMAND ----------
 # MAGIC %run ./_config
 
 # COMMAND ----------
