@@ -3,10 +3,10 @@
 # setup and the optional serving container. The pytorch CPU index supplies CPU
 # builds; harmless on macOS (already CPU/MPS).
 --extra-index-url https://download.pytorch.org/whl/cpu
-mlflow>=2.15,<3
+mlflow>=3,<4        # Databricks ML Runtime ships MLflow 3.x; use name= (not artifact_path=) in log_model
 scikit-learn>=1.3
 pandas>=2.0
 numpy>=1.26
 pyomo>=6.7
 highspy>=1.7
-torch>=2.2,<3       # optional PyTorch lab only; CPU-only via the index URL above
+torch>=2.2          # optional PyTorch lab only; CPU-only via the index URL above
