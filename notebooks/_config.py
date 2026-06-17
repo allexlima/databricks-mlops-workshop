@@ -16,6 +16,8 @@ EXPERIMENT_PATH = "/Shared/mlops_workshop"
 FORECASTER_MODEL = f"{CATALOG}.{SCHEMA}.price_forecaster"
 OPTIMIZER_MODEL = f"{CATALOG}.{SCHEMA}.purchase_optimizer"
 DATA_TABLE = f"{CATALOG}.{SCHEMA}.commodity_monthly"
+VOLUME = "workshop_files"                              # UC Volume (serverless-safe file storage)
+CSV_PATH = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/commodity_monthly.csv"
 SEED = wl.SEED
 R2_THRESHOLD = wl.R2_THRESHOLD
 print(f"catalog={CATALOG} schema={SCHEMA} forecaster={FORECASTER_MODEL}")

@@ -45,13 +45,10 @@ try:
 except Exception as e:
     print(f"No experiment to delete ({e}).")
 
-# 4) Data table + CSV.
+# 4) Data table + CSV volume.
 spark.sql(f"DROP TABLE IF EXISTS {DATA_TABLE}")
-try:
-    dbutils.fs.rm("dbfs:/tmp/commodity_monthly.csv")
-except Exception:
-    pass
-print(f"Dropped {DATA_TABLE} and CSV.")
+spark.sql(f"DROP VOLUME IF EXISTS {CATALOG}.{SCHEMA}.{VOLUME}")
+print(f"Dropped {DATA_TABLE} and volume {VOLUME}.")
 
 # COMMAND ----------
 # Optional: drop the whole schema (removes anything left behind). Off by default

@@ -24,5 +24,6 @@ assert CATALOG in catalogs, (
     f"Catalog you can write to (available: {catalogs})."
 )
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA}")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA}.{VOLUME}")  # serverless-safe file storage
 mlflow.set_experiment(EXPERIMENT_PATH)
 print(f"Setup complete. Using {CATALOG}.{SCHEMA}.")

@@ -31,7 +31,7 @@ lo, hi = wl.R2_BAND
 assert lo <= model_r2 <= hi, f"R2 {model_r2:.3f} outside band {wl.R2_BAND}"
 
 # COMMAND ----------
-# Persist as Delta (governed) + CSV (portable).
+# Persist as Delta (governed) + CSV on a UC Volume (portable, serverless-safe).
 spark.createDataFrame(df).write.mode("overwrite").saveAsTable(DATA_TABLE)
-df.to_csv("/dbfs/tmp/commodity_monthly.csv", index=False)
-print(f"Wrote {DATA_TABLE} and CSV.")
+df.to_csv(CSV_PATH, index=False)
+print(f"Wrote {DATA_TABLE} and {CSV_PATH}.")
