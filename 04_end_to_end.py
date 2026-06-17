@@ -28,8 +28,8 @@ try:
     client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
 except Exception:
     raise RuntimeError(
-        f"No @champion alias on {FORECASTER_MODEL}. Run 02_sklearn_baseline and "
-        f"confirm it passed the R2>={R2_THRESHOLD} gate before running this notebook."
+        f"No @champion alias on {FORECASTER_MODEL}. Run 02_train_forecaster_sklearn "
+        f"and confirm it passed the R2>={R2_THRESHOLD} gate before running this notebook."
     )
 
 df = spark.table(DATA_TABLE).toPandas().sort_values("month")

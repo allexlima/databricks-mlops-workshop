@@ -13,7 +13,7 @@
 # MAGIC Optional: the end-to-end chain does not depend on this notebook.
 
 # COMMAND ----------
-# MAGIC %run ./_config
+# MAGIC %run ../_config
 
 # COMMAND ----------
 import mlflow, numpy as np, torch, torch.nn as nn, workshop_lib as wl

@@ -17,9 +17,10 @@
 # MAGIC nothing to install, just run the cells.
 # MAGIC
 # MAGIC **Classic / ML cluster:** the PEP 723 environment is ignored. Run this once at
-# MAGIC the top of each notebook (or install the libs on the cluster):
+# MAGIC the top of each notebook (or install the libs on the cluster). Use
+# MAGIC `requirements.txt` from a root notebook, or `../requirements.txt` from `extra/`:
 # MAGIC ```
-# MAGIC %pip install -q -r ../requirements.txt
+# MAGIC %pip install -q -r requirements.txt
 # MAGIC %restart_python
 # MAGIC ```
 

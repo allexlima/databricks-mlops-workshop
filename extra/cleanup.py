@@ -11,7 +11,7 @@
 # MAGIC **Destructive.** Set the `confirm` widget to `yes` to proceed.
 
 # COMMAND ----------
-# MAGIC %run ./_config
+# MAGIC %run ../_config
 
 # COMMAND ----------
 dbutils.widgets.dropdown("confirm", "no", ["no", "yes"], "Confirm teardown")

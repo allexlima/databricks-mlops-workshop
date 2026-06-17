@@ -10,7 +10,7 @@
 # MAGIC endpoint works because `highspy` is pip-installable inside the container.
 
 # COMMAND ----------
-# MAGIC %run ./_config
+# MAGIC %run ../_config
 
 # COMMAND ----------
 from mlflow.deployments import get_deploy_client

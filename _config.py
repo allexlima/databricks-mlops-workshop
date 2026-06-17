@@ -10,6 +10,15 @@
 # MAGIC notebook inherits them. Reproducibility constants live in `workshop_lib`.
 
 # COMMAND ----------
+import os
+import sys
+
+# Make the repo root importable whether this config is %run from the root
+# (mandatory notebooks) or a subfolder like extra/ (optional notebooks).
+for _p in (os.getcwd(), os.path.dirname(os.getcwd())):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 import workshop_lib as wl
 
 # 👉 Set these to a Unity Catalog + schema you can write to. Edit once; every
