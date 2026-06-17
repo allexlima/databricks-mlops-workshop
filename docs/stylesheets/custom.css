@@ -55,6 +55,11 @@
 .md-sidebar--primary {
   background-color: var(--db-navy);
 }
+
+/* The header already shows the site title — hide the duplicate site-title
+   block at the top of the sidebar nav (scoped to the primary nav's own
+   title so section labels are untouched). */
+.md-sidebar--primary .md-nav--primary > .md-nav__title { display: none; }
 .md-sidebar--primary .md-sidebar__scrollwrap { background-color: var(--db-navy); }
 .md-sidebar--primary .md-nav {
   background-color: var(--db-navy);
@@ -65,15 +70,16 @@
 .md-sidebar--primary .md-nav__link { color: #cdd6da; }
 .md-sidebar--primary .md-nav__link:hover { color: #fff; }
 
-/* Active sidebar item: Lava left-border + faint tint (AWS-style) */
+/* Active sidebar item: Lava left-bar + faint tint (AWS-style).
+   Use an inset box-shadow for the bar so the link keeps its place — a
+   negative margin would shift the active row (and its tint) out of
+   alignment with its siblings. */
 .md-sidebar--primary .md-nav__link--active,
 .md-sidebar--primary .md-nav__item .md-nav__link--active {
   color: #fff;
   font-weight: 700;
-  border-left: 3px solid var(--db-lava);
-  background-color: rgba(255, 54, 33, 0.12);
-  margin-left: -0.6rem;
-  padding-left: calc(0.6rem - 3px);
+  background-color: rgba(255, 54, 33, 0.14);
+  box-shadow: inset 3px 0 0 var(--db-lava);
 }
 
 /* Footer: deep navy */
