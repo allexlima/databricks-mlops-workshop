@@ -98,18 +98,9 @@ Use `requirements.txt` (na raiz do repositório) para os notebooks mandatórios 
 
 ---
 
-## 4. Importe os notebooks como Git folder
+## 4. Tenha o repositório clonado no workspace
 
-Para que os comandos `%run ./_config` e `import workshop_lib` funcionem corretamente, os notebooks precisam estar em uma **Git folder** no workspace, não enviados manualmente um por um.
-
-**Como fazer:**
-
-1. Na barra lateral do workspace, clique em **Workspace** e navegue até onde quer criar a pasta.
-2. Clique em **Adicionar** → **Git folder**.
-3. Cole a URL do repositório e selecione o branch **`main`**.
-4. Confirme a criação da pasta.
-
-Isso clona o repositório inteiro como uma unidade. O `%run ./_config` (que todos os notebooks executam logo no início) usa um caminho relativo (`./_config`), e o `import workshop_lib` busca o módulo no diretório atual. Ambos resolvem corretamente quando os arquivos estão lado a lado na mesma Git folder, como no repositório.
+Os notebooks precisam estar em uma **Git folder** no workspace para que o `%run ./_config` e o `import workshop_lib` resolvam os caminhos relativos. O passo a passo completo está em [Clonar o repositório](clone-repo.md).
 
 !!! warning "Atenção: não faça upload avulso de notebooks"
     Se você fizer upload dos `.py` individualmente (sem a estrutura de pasta do repositório), o `%run ./_config` vai falhar com `FileNotFoundError` e o `import workshop_lib` vai falhar com `ModuleNotFoundError`. A Git folder é a única abordagem que garante que os caminhos relativos e os imports funcionem.
