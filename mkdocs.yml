@@ -77,11 +77,11 @@ plugins:
 
 nav:
   - Início: index.md
-  - Configuração:
-      - Pré-requisitos: setup/prerequisites.md
   - Conceitos:
       - PyFunc e modelos customizados: conceitos/pyfunc-modelos-customizados.md
       - Otimização com Pyomo: conceitos/otimizacao-pyomo.md
+  - Environment Setup:
+      - Pré-requisitos: setup/prerequisites.md
   - "Lab 1: Gerar o conjunto de dados": lab-1-generate-data/index.md
   - "Lab 2: Treinar o forecaster (sklearn)": lab-2-forecaster/index.md
   - "Lab 3: Otimizador Pyomo (destaque)":
