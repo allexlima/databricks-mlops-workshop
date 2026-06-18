@@ -1,12 +1,12 @@
 # PyFunc e modelos customizados
 
-No MLflow, cada framework de ML tem seu próprio *flavor* — `mlflow.sklearn`, `mlflow.pytorch`, `mlflow.transformers` e assim por diante. Esses flavors sabem exatamente como serializar, deserializar e servir modelos do framework correspondente. Mas e quando o modelo não pertence a nenhum framework? E quando não existe um `fit()`?
+No MLflow, cada framework de ML tem seu próprio *flavor*: `mlflow.sklearn`, `mlflow.pytorch`, `mlflow.transformers` e assim por diante. Esses flavors sabem exatamente como serializar, deserializar e servir modelos do framework correspondente. Mas e quando o modelo não pertence a nenhum framework? E quando não existe um `fit()`?
 
 É para isso que existe o `mlflow.pyfunc`.
 
 ## O que é o PyFunc
 
-O PyFunc é a interface universal do MLflow. Em vez de depender de um framework específico, ele define um contrato simples: qualquer objeto Python que implemente o método `predict` pode ser registrado, versionado, governado e servido — exatamente como um modelo sklearn ou PyTorch.
+O PyFunc é a interface universal do MLflow. Em vez de depender de um framework específico, ele define um contrato simples: qualquer objeto Python que implemente o método `predict` pode ser registrado, versionado, governado e servido, exatamente como um modelo sklearn ou PyTorch.
 
 !!! note "Conceito"
     `mlflow.pyfunc.PythonModel` é a classe base que você estende para criar um modelo customizado.
@@ -28,13 +28,13 @@ Cada argumento tem um papel preciso:
 
 | Argumento | O que é | Quando usar |
 |-----------|---------|-------------|
-| `context` | `mlflow.pyfunc.PythonModelContext` — dá acesso aos `artifacts` declarados no `log_model` | Para carregar arquivos extras: pesos, tokenizers, configurações |
-| `model_input` | `pd.DataFrame` com os dados de entrada — garantido pelo runtime MLflow | Sempre: é a entrada principal |
+| `context` | `mlflow.pyfunc.PythonModelContext` que dá acesso aos `artifacts` declarados no `log_model` | Para carregar arquivos extras: pesos, tokenizers, configurações |
+| `model_input` | `pd.DataFrame` com os dados de entrada, garantido pelo runtime MLflow | Sempre: é a entrada principal |
 | `params` | `dict` opcional com hiperparâmetros de inferência | Para expor opções sem mudar a assinatura (temperatura, limiar, etc.) |
 
 !!! tip "Curiosidade"
-    O parâmetro `params=None` foi adicionado na MLflow 2.6 e é **obrigatório na assinatura** nas versões 3.x —
-    mesmo que você não use params, declare-o. Sem ele, o serving pode falhar ao passar configurações extras.
+    O parâmetro `params=None` foi adicionado na MLflow 2.6 e é **obrigatório na assinatura** nas versões 3.x.
+    Mesmo que você não use params, declare-o. Sem ele, o serving pode falhar ao passar configurações extras.
 
 No workshop, o `PurchaseOptimizerModel` em `workshop_lib.py` usa `model_input` para receber as seis variáveis do problema de compra e ignora `context` e `params` porque o solver não precisa de arquivos externos:
 
@@ -62,7 +62,7 @@ Cada linha do DataFrame de entrada é um problema de otimização independente. 
 
 ## Como registrar: `log_model` no MLflow 3.x
 
-A chamada que empacota e registra o modelo customizado é `mlflow.pyfunc.log_model`. No MLflow 3.x, o parâmetro correto é `name=` — não o antigo `artifact_path=`, que foi depreciado:
+A chamada que empacota e registra o modelo customizado é `mlflow.pyfunc.log_model`. No MLflow 3.x, o parâmetro correto é `name=`, não o antigo `artifact_path=`, que foi depreciado:
 
 ```python
 with mlflow.start_run(run_name="pyomo_optimizer"):
@@ -83,19 +83,19 @@ with mlflow.start_run(run_name="pyomo_optimizer"):
 
 Os parâmetros mais importantes:
 
-**`python_model`** — a instância da sua classe. O MLflow serializa o objeto com `cloudpickle` e o empacota no artefato do run.
+**`python_model`**: a instância da sua classe. O MLflow serializa o objeto com `cloudpickle` e o empacota no artefato do run.
 
-**`code_paths`** — lista de arquivos `.py` (ou diretórios) que o modelo precisa em tempo de execução. No notebook `03_register_optimizer_pyomo.py`, `workshop_lib.py` é declarado aqui porque `PurchaseOptimizerModel.predict` chama `solve_purchase`, que está definida nesse arquivo. Sem `code_paths`, o modelo seria registrado mas falharia ao ser carregado em outro ambiente.
+**`code_paths`**: lista de arquivos `.py` (ou diretórios) que o modelo precisa em tempo de execução. No notebook `03_register_optimizer_pyomo.py`, `workshop_lib.py` é declarado aqui porque `PurchaseOptimizerModel.predict` chama `solve_purchase`, que está definida nesse arquivo. Sem `code_paths`, o modelo seria registrado mas falharia ao ser carregado em outro ambiente.
 
-**`pip_requirements`** — dependências Python declaradas explicitamente. O MLflow as inclui no `MLmodel` e as instala automaticamente quando o modelo é servido ou carregado em outro ambiente.
+**`pip_requirements`**: dependências Python declaradas explicitamente. O MLflow as inclui no `MLmodel` e as instala automaticamente quando o modelo é servido ou carregado em outro ambiente.
 
-**`signature`** — define o schema das entradas e saídas. Inferida automaticamente com `mlflow.models.infer_signature(example_input, example_output)`. Habilita validação em serving e documentação automática na UI.
+**`signature`**: define o schema das entradas e saídas. Inferida automaticamente com `mlflow.models.infer_signature(example_input, example_output)`. Habilita validação em serving e documentação automática na UI.
 
-**`registered_model_name`** — o nome completo no Unity Catalog: `{catalog}.{schema}.purchase_optimizer`. Declarar aqui registra o modelo diretamente dentro do `with mlflow.start_run()`, sem precisar de uma chamada separada ao `MlflowClient`.
+**`registered_model_name`**: o nome completo no Unity Catalog: `{catalog}.{schema}.purchase_optimizer`. Declarar aqui registra o modelo diretamente dentro do `with mlflow.start_run()`, sem precisar de uma chamada separada ao `MlflowClient`.
 
 ## O mecanismo `context` e `artifacts`
 
-Quando o modelo precisa carregar arquivos em tempo de execução — um arquivo de pesos, um tokenizer, uma tabela de lookup — você os declara em `artifacts` no `log_model` e os acessa via `context.artifacts` dentro do `predict`:
+Quando o modelo precisa carregar arquivos em tempo de execução (um arquivo de pesos, um tokenizer, uma tabela de lookup), você os declara em `artifacts` no `log_model` e os acessa via `context.artifacts` dentro do `predict`:
 
 ```python
 # Ao registrar:
@@ -112,22 +112,22 @@ def predict(self, context, model_input, params=None):
     # carrega o arquivo...
 ```
 
-O MLflow faz o upload desses arquivos junto com o artefato do run e os baixa automaticamente quando o modelo é carregado — seja localmente, seja num endpoint de serving.
+O MLflow faz o upload desses arquivos junto com o artefato do run e os baixa automaticamente quando o modelo é carregado, seja localmente ou num endpoint de serving.
 
 !!! tip "Curiosidade"
     O `context` também expõe `context.model_config` para configurações passadas em tempo de deploy,
     sem precisar re-registrar o modelo. Útil para feature flags ou parâmetros de ambiente.
 
-No optimizer do workshop, o `context` não é usado porque o Pyomo constrói o modelo de otimização do zero a cada chamada — não há estado pré-computado para carregar.
+No optimizer do workshop, o `context` não é usado porque o Pyomo constrói o modelo de otimização do zero a cada chamada. Não há estado pré-computado para carregar.
 
 ## Serialização com cloudpickle
 
-Quando você passa `python_model=MeuModelo()`, o MLflow usa `cloudpickle` para serializar o objeto. O `cloudpickle` consegue serializar closures, lambdas, e objetos que o `pickle` padrão não consegue — por isso é a escolha padrão para PyFuncs.
+Quando você passa `python_model=MeuModelo()`, o MLflow usa `cloudpickle` para serializar o objeto. O `cloudpickle` consegue serializar closures, lambdas, e objetos que o `pickle` padrão não consegue, por isso é a escolha padrão para PyFuncs.
 
 !!! warning "Atenção"
     O cloudpickle serializa o *estado* do objeto no momento do `log_model`, mas **não** serializa o código-fonte das classes.
     Se `PurchaseOptimizerModel` estiver definida no notebook (não num arquivo separado), o modelo vai falhar ao ser
-    carregado em outro ambiente — porque o código não estará disponível.
+    carregado em outro ambiente, porque o código não estará disponível.
 
     A solução é sempre declarar as classes em um módulo separado (como `workshop_lib.py`) e incluí-lo via `code_paths`.
     Assim o MLflow empacota o código junto com o artefato e ele estará disponível onde quer que o modelo seja carregado.
@@ -139,10 +139,10 @@ Quando você passa `python_model=MeuModelo()`, o MLflow usa `cloudpickle` para s
 | Modelo sklearn, PyTorch, HuggingFace, XGBoost, etc. | Use o flavor nativo (`mlflow.sklearn`, `mlflow.pytorch`, ...) |
 | Modelo de qualquer framework que precisa de pré/pós-processamento customizado | PyFunc wrapping o flavor nativo |
 | Pipeline multi-etapa (forecaster → optimizer, por exemplo) | PyFunc compondo os dois |
-| Solver de otimização, motor de regras, heurística, simulação | PyFunc — é exatamente o caso de uso |
-| Modelo sem `fit()` algum | PyFunc — não há outra opção |
+| Solver de otimização, motor de regras, heurística, simulação | PyFunc: é exatamente o caso de uso |
+| Modelo sem `fit()` algum | PyFunc: não há outra opção |
 
-O optimizer do workshop é o caso mais puro: um modelo de pesquisa operacional que **nunca foi treinado**. Não há parâmetros aprendidos. O "modelo" é o problema de programação linear e o solver HiGHS. O PyFunc é a única interface que faz sentido — e é suficiente para que esse objeto viva no Unity Catalog com versões, aliases e toda a governança do MLflow.
+O optimizer do workshop é o caso mais puro: um modelo de pesquisa operacional que **nunca foi treinado**. Não há parâmetros aprendidos. O "modelo" é o problema de programação linear e o solver HiGHS. O PyFunc é a única interface que faz sentido, e é suficiente para que esse objeto viva no Unity Catalog com versões, aliases e toda a governança do MLflow.
 
 ## Alias `@champion` e acesso version-agnostic
 
@@ -153,7 +153,7 @@ client = MlflowClient()
 client.set_registered_model_alias(OPTIMIZER_MODEL, "champion", info.registered_model_version)
 ```
 
-A partir daí, qualquer notebook que precise do optimizer usa o URI com alias — nunca um número de versão fixo:
+A partir daí, qualquer notebook que precise do optimizer usa o URI com alias, nunca um número de versão fixo:
 
 ```python
 opt = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
@@ -163,11 +163,10 @@ print(opt.predict(example))
 !!! tip "Curiosidade"
     Usar `@champion` em vez de `@v3` (ou `@latest`, que não existe no Unity Catalog) é a prática correta
     porque re-execuções do notebook criam novas versões. Um número hardcoded quebraria no segundo run.
-    O alias é o handle estável que o operator do modelo controla explicitamente — uma decisão de governança,
+    O alias é o handle estável que o operator do modelo controla explicitamente: uma decisão de governança,
     não só de conveniência.
 
-Esse padrão é idêntico ao do forecaster sklearn em `02_train_forecaster_sklearn.py`. Os dois modelos —
-um treinado, outro não — usam exatamente a mesma mecânica de registro e promoção. É o PyFunc que torna isso possível.
+Esse padrão é idêntico ao do forecaster sklearn em `02_train_forecaster_sklearn.py`. Os dois modelos (um treinado, outro não) usam exatamente a mesma mecânica de registro e promoção. É o PyFunc que torna isso possível.
 
 ## Verificação de viabilidade antes de registrar
 
@@ -184,9 +183,9 @@ Só após passar esses asserts o modelo é registrado e promovido. É o equivale
 
 ## Por que PyFunc é a língua franca do MLflow
 
-Todo flavor nativo do MLflow — sklearn, PyTorch, HuggingFace — é implementado *sobre* o PyFunc. Quando você faz `mlflow.sklearn.log_model(...)`, o MLflow salva um wrapper PyFunc que sabe como carregar e chamar o modelo sklearn. A diferença é que para frameworks conhecidos o MLflow gera esse wrapper automaticamente; para modelos customizados, você escreve o wrapper você mesmo.
+Todo flavor nativo do MLflow (sklearn, PyTorch, HuggingFace) é implementado *sobre* o PyFunc. Quando você faz `mlflow.sklearn.log_model(...)`, o MLflow salva um wrapper PyFunc que sabe como carregar e chamar o modelo sklearn. A diferença é que para frameworks conhecidos o MLflow gera esse wrapper automaticamente; para modelos customizados, você escreve o wrapper você mesmo.
 
-Isso tem uma consequência importante: **qualquer ferramenta que entende PyFunc entende todos os modelos MLflow**. O Model Serving na Databricks, o `mlflow.evaluate()`, o Unity Catalog — todos interagem com modelos através da interface PyFunc, independentemente do que está por baixo. Registrar o Pyomo optimizer como PyFunc não é uma gambiarra; é o caminho oficial.
+Isso tem uma consequência importante: **qualquer ferramenta que entende PyFunc entende todos os modelos MLflow**. O Model Serving na Databricks, o `mlflow.evaluate()` e o Unity Catalog interagem com modelos através da interface PyFunc, independentemente do que está por baixo. Registrar o Pyomo optimizer como PyFunc não é uma gambiarra: é o caminho oficial.
 
 ---
 

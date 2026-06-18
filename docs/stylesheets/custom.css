@@ -142,6 +142,16 @@
 }
 .md-sidebar--primary .md-nav__link:hover { color: var(--db-chrome-fg); }
 
+/* Collapsible nav: keep parent (expandable) group labels prominent */
+.md-sidebar--primary .md-nav__item--nested > .md-nav__link { color: var(--db-chrome-fg); font-weight: 700; }
+
+/* Compact, comfortable type for the left menu and the right TOC (Índice) */
+.md-sidebar--primary .md-nav,
+.md-sidebar--secondary .md-nav { font-size: 0.66rem; }
+
+/* Indent subpages a bit more under their parent group */
+.md-sidebar--primary .md-nav--primary .md-nav .md-nav__link { padding-left: 1.9rem; }
+
 /* Active sidebar item: Lava left-bar + faint tint.
    The bar is an inset box-shadow so the row keeps its place; the base
    padding-left above gives the label clearance from the bar. */
@@ -174,6 +184,9 @@
 .md-content__inner::before { display: none; }
 
 /* ============================ Typography ================================== */
+
+/* Slightly smaller, comfortable body type */
+.md-typeset { font-size: 0.76rem; }
 
 .md-typeset h1, .md-typeset h2, .md-typeset h3 {
   font-weight: 700;

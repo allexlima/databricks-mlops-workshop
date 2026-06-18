@@ -1,17 +1,17 @@
 # Otimização (pesquisa operacional) com Pyomo e HiGHS
 
-Quando alguém diz "modelo", a primeira imagem costuma ser de dados de treino, uma função de perda e um `fit()`. Mas existe uma família inteira de modelos que **não aprendem** — eles **decidem**. Esta página explica como essa família funciona, como o Pyomo a expressa em Python, e por que ela cabe perfeitamente no mesmo ciclo de vida MLflow que qualquer modelo de ML.
+Quando alguém diz "modelo", a primeira imagem costuma ser de dados de treino, uma função de perda e um `fit()`. Mas existe uma família inteira de modelos que **não aprendem**: eles **decidem**. Esta página explica como essa família funciona, como o Pyomo a expressa em Python, e por que ela cabe perfeitamente no mesmo ciclo de vida MLflow que qualquer modelo de ML.
 
 ---
 
 ## Pesquisa operacional: a arte de tomar a melhor decisão possível
 
-**Pesquisa operacional** (PO, ou *operations research* — OR) é o ramo da matemática aplicada que trata de encontrar a solução ótima para problemas de decisão com recursos limitados. Ao contrário do ML, que induz padrões a partir de dados históricos, a PO parte de um modelo matemático explícito do problema e resolve esse modelo de forma exata (ou aproximada, dependendo da complexidade).
+**Pesquisa operacional** (PO, ou *operations research*, OR) é o ramo da matemática aplicada que trata de encontrar a solução ótima para problemas de decisão com recursos limitados. Ao contrário do ML, que induz padrões a partir de dados históricos, a PO parte de um modelo matemático explícito do problema e resolve esse modelo de forma exata (ou aproximada, dependendo da complexidade).
 
 O paradigma central é a **otimização matemática**: dado um conjunto de variáveis de decisão, uma função a minimizar (ou maximizar) e um conjunto de restrições, encontre os valores das variáveis que otimizam a função sem violar nenhuma restrição.
 
 !!! note "Conceito"
-    **Otimização matemática** é o processo de encontrar o ponto `x*` no espaço viável tal que `f(x*)` seja mínimo (ou máximo). O espaço viável é definido pelas restrições — desigualdades e igualdades que `x` deve satisfazer. Quando tanto `f` quanto as restrições são lineares nas variáveis de decisão, o problema é chamado de **programação linear** (PL ou *linear programming* — LP).
+    **Otimização matemática** é o processo de encontrar o ponto `x*` no espaço viável tal que `f(x*)` seja mínimo (ou máximo). O espaço viável é definido pelas restrições: desigualdades e igualdades que `x` deve satisfazer. Quando tanto `f` quanto as restrições são lineares nas variáveis de decisão, o problema é chamado de **programação linear** (PL ou *linear programming*, LP).
 
 ---
 
@@ -25,11 +25,11 @@ A distinção entre ML e PO é simples, mas importante:
 | **Entrada** | Dados históricos de treino | Modelo matemático do problema |
 | **Processo** | Ajuste de parâmetros (`fit`) | Resolução de sistema de equações/inequações |
 | **Saída** | Predição probabilística | Decisão ótima (determinística) |
-| **Melhora com mais dados?** | Sim | Não — muda-se o modelo, não os dados |
+| **Melhora com mais dados?** | Sim | Não. Muda-se o modelo, não os dados |
 | **Garantia** | Estatística (em média, tende a acertar) | Matemática (solução ótima dentro do modelo) |
 
 !!! tip "Curiosidade"
-    Os dois paradigmas se **complementam** no workshop da AnyCompany: o forecaster (ML) prevê o preço do próximo mês, e o optimizer (PO) usa essa previsão como dado de entrada para decidir a quantidade a comprar. Um alimenta o outro — essa composição é exatamente o que `04_end_to_end.py` monta.
+    Os dois paradigmas se **complementam** no workshop da AnyCompany: o forecaster (ML) prevê o preço do próximo mês, e o optimizer (PO) usa essa previsão como dado de entrada para decidir a quantidade a comprar. Um alimenta o outro, e essa composição é exatamente o que `04_end_to_end.py` monta.
 
 ---
 
@@ -39,10 +39,10 @@ Todo problema de otimização tem três componentes fundamentais:
 
 ### 1. Variáveis de decisão
 
-São as incógnitas que o solver vai determinar — as "alavancas" que você controla. No problema da AnyCompany:
+São as incógnitas que o solver vai determinar, as "alavancas" que você controla. No problema da AnyCompany:
 
-- `q` — quantidade a comprar (unidades, real não-negativo)
-- `leftover` — excedente sobre a demanda (auxiliar para calcular custo de estoque)
+- `q`: quantidade a comprar (unidades, real não-negativo)
+- `leftover`: excedente sobre a demanda (auxiliar para calcular custo de estoque)
 
 ### 2. Função objetivo
 
@@ -54,7 +54,7 @@ minimizar:  purchase_cost × q  +  holding_cost × leftover
 
 ### 3. Restrições
 
-São as fronteiras do espaço viável — o que é fisicamente ou logicamente possível:
+São as fronteiras do espaço viável, ou seja, o que é fisicamente ou logicamente possível:
 
 | Restrição | Descrição | Expressão |
 |---|---|---|
@@ -64,7 +64,7 @@ São as fronteiras do espaço viável — o que é fisicamente ou logicamente po
 | Definir excedente | Auxiliar para o custo de estoque | `leftover ≥ q − demand` |
 
 !!! note "Conceito"
-    Uma solução é **viável** quando satisfaz todas as restrições. Uma solução **ótima** é a melhor dentre todas as viáveis segundo a função objetivo. Se nenhuma combinação de valores satisfaz todas as restrições simultaneamente, o problema é chamado de **infeasible** — sem solução.
+    Uma solução é **viável** quando satisfaz todas as restrições. Uma solução **ótima** é a melhor dentre todas as viáveis segundo a função objetivo. Se nenhuma combinação de valores satisfaz todas as restrições simultaneamente, o problema é chamado de **infeasible** (sem solução).
 
 ---
 
@@ -73,16 +73,16 @@ São as fronteiras do espaço viável — o que é fisicamente ou logicamente po
 O problema da AnyCompany é um caso particular e poderoso: tanto a função objetivo quanto todas as restrições são **lineares** nas variáveis de decisão (nenhum produto entre variáveis, nenhum expoente). Isso torna o problema uma **LP**, com propriedades muito convenientes:
 
 - A solução ótima, se existir, está sempre em um **vértice** do poliedro viável (geometricamente, num "canto" do espaço de soluções).
-- Algoritmos como o **simplex** e os de **pontos interiores** resolvem LPs de forma exata e muito eficiente — mesmo com milhões de variáveis.
+- Algoritmos como o **simplex** e os de **pontos interiores** resolvem LPs de forma exata e muito eficiente, mesmo com milhões de variáveis.
 
-!!! tip "Curiosidade — a história do simplex"
-    O método simplex foi proposto por **George Dantzig** em 1947, enquanto trabalhava para as Forças Aéreas dos EUA em problemas de logística militar. Dantzig conta que, ao visitar o matemático John von Neumann com o rascunho do método, von Neumann respondeu em menos de uma hora com a teoria da dualidade LP — que Dantzig não conhecia. O simplex continua sendo um dos algoritmos mais usados na prática mais de 75 anos depois.
+!!! tip "Curiosidade: a história do simplex"
+    O método simplex foi proposto por **George Dantzig** em 1947, enquanto trabalhava para as Forças Aéreas dos EUA em problemas de logística militar. Dantzig conta que, ao visitar o matemático John von Neumann com o rascunho do método, von Neumann respondeu em menos de uma hora com a teoria da dualidade LP, que Dantzig não conhecia. O simplex continua sendo um dos algoritmos mais usados na prática mais de 75 anos depois.
 
 ---
 
 ## Pyomo: otimização matemática em Python
 
-**Pyomo** é uma biblioteca Python de modelagem algébrica para otimização. Em vez de formular o problema em uma linguagem proprietária (AMPL, GAMS), você escreve o modelo em Python puro — o que facilita integração com pipelines de dados, MLflow e Databricks.
+**Pyomo** é uma biblioteca Python de modelagem algébrica para otimização. Em vez de formular o problema em uma linguagem proprietária (AMPL, GAMS), você escreve o modelo em Python puro, o que facilita a integração com pipelines de dados, MLflow e Databricks.
 
 A estrutura básica de um modelo Pyomo:
 
@@ -106,24 +106,24 @@ m.obj = pyo.Objective(
 )
 ```
 
-Leia o código como leria matemática: cada linha é uma equação ou inequação do problema. Não há nada implícito — o modelo é exatamente o que está escrito.
+Leia o código como leria matemática: cada linha é uma equação ou inequação do problema. Não há nada implícito. O modelo é exatamente o que está escrito.
 
-!!! tip "Curiosidade — modelos concretos vs. abstratos"
+!!! tip "Curiosidade: modelos concretos vs. abstratos"
     Pyomo oferece dois sabores: `ConcreteModel` (dados embutidos no momento da construção, como aqui) e `AbstractModel` (estrutura separada dos dados, populada depois). Para problemas de decisão mensal com parâmetros variando a cada chamada, `ConcreteModel` é mais direto e legível.
 
 ---
 
 ## O solver HiGHS via `highspy`
 
-Um modelo Pyomo é apenas uma **representação** do problema — ele não resolve nada sozinho. Você precisa de um **solver** para isso. Existem vários: GLPK, CPLEX, Gurobi, CBC... O workshop usa o **HiGHS**.
+Um modelo Pyomo é apenas uma **representação** do problema: ele não resolve nada sozinho. Você precisa de um **solver** para isso. Existem vários: GLPK, CPLEX, Gurobi, CBC... O workshop usa o **HiGHS**.
 
 **HiGHS** (*High-performance Software for Linear Optimization*) é um solver de código aberto de alto desempenho desenvolvido pela Universidade de Edinburgh. Ele suporta LP, QP e MIP (programação inteira mista), e é notável por várias razões práticas:
 
-- **Puro pip**: o pacote `highspy` empacota o binário HiGHS compilado e o instala como extensão Python — **nenhum binário externo** precisa ser instalado no sistema operacional. Em ambientes serverless na Databricks, onde você não tem acesso de root, isso é essencial.
+- **Puro pip**: o pacote `highspy` empacota o binário HiGHS compilado e o instala como extensão Python. **Nenhum binário externo** precisa ser instalado no sistema operacional. Em ambientes serverless na Databricks, onde você não tem acesso de root, isso é essencial.
 - **Interface APPSI**: o Pyomo expõe o HiGHS via a interface APPSI (*Algebraic Programming System Plugin Interface*), mais moderna e eficiente que os adaptadores de linha de comando.
 - **Performance**: HiGHS regularmente vence benchmarks contra solvers comerciais em LPs de médio porte.
 
-!!! tip "Curiosidade — HiGHS no OR-Tools e no SciPy"
+!!! tip "Curiosidade: HiGHS no OR-Tools e no SciPy"
     O HiGHS não é exclusividade do Pyomo. O Google OR-Tools e o `scipy.optimize.linprog` (com `method='highs'`) também o usam internamente como backend LP. Se você já usou `scipy.optimize.linprog` recentemente, provavelmente já rodou o HiGHS sem saber.
 
 ---
@@ -170,17 +170,17 @@ def solve_purchase(predicted_price: float, holding_cost: float, purchase_cost: f
 
 Alguns detalhes importantes:
 
-**`opt.config.load_solution = False`** — por padrão, se o solver retornar infeasible ou unbounded, o Pyomo levanta uma exceção ao tentar carregar a solução. Com `load_solution = False`, o controle fica na sua mão: você verifica `termination_condition` e decide o que retornar. Isso permite que o código seja robusto a qualquer combinação de parâmetros que o usuário envie.
+**`opt.config.load_solution = False`**: por padrão, se o solver retornar infeasible ou unbounded, o Pyomo levanta uma exceção ao tentar carregar a solução. Com `load_solution = False`, o controle fica na sua mão: você verifica `termination_condition` e decide o que retornar. Isso permite que o código seja robusto a qualquer combinação de parâmetros que o usuário envie.
 
-**`result.solution_loader.load_vars()`** — só é chamado quando o status é "optimal". Carrega os valores ótimos nas variáveis `m.q` e `m.leftover` para que `pyo.value()` funcione.
+**`result.solution_loader.load_vars()`**: só é chamado quando o status é "optimal". Carrega os valores ótimos nas variáveis `m.q` e `m.leftover` para que `pyo.value()` funcione.
 
-**`predicted_price` não entra no solver** — note que `predicted_price` é recebido como parâmetro mas **não é usado diretamente nas restrições ou na função objetivo** do modelo de uma única linha de código acima. Ele está disponível no contexto do `predict()` da `PurchaseOptimizerModel` para possíveis extensões futuras (por exemplo, modelar o risco de variação de preço). Quem de fato entra na função objetivo é `purchase_cost`, que representa o preço de compra do período.
+**`predicted_price` não entra no solver**: note que `predicted_price` é recebido como parâmetro mas **não é usado diretamente nas restrições ou na função objetivo** do modelo de uma única linha de código acima. Ele está disponível no contexto do `predict()` da `PurchaseOptimizerModel` para possíveis extensões futuras (por exemplo, modelar o risco de variação de preço). Quem de fato entra na função objetivo é `purchase_cost`, que representa o preço de compra do período.
 
 ---
 
 ## Infeasibilidade: quando não existe solução
 
-Um modelo LP é **infeasible** quando as restrições são contraditórias entre si — não existe nenhum `q` que satisfaça todas ao mesmo tempo. Exemplo clássico:
+Um modelo LP é **infeasible** quando as restrições são contraditórias entre si: não existe nenhum `q` que satisfaça todas ao mesmo tempo. Exemplo clássico:
 
 ```
 q ≥ 150    (demanda mínima de 150 unidades)
@@ -189,16 +189,16 @@ q ≤ 120    (capacidade máxima de 120 unidades)
 
 Não existe nenhum valor de `q` que seja simultaneamente ≥ 150 e ≤ 120. O solver detecta isso imediatamente e retorna `termination_condition = infeasible`.
 
-No workshop, isso pode acontecer se o `budget` for muito baixo para atender a `demand` ao `purchase_cost` dado. A função `solve_purchase` retorna `{"status": "infeasible", "purchase_qty": nan, "total_cost": nan}` — um dicionário controlado, sem exceção — e o código chamador pode reagir adequadamente.
+No workshop, isso pode acontecer se o `budget` for muito baixo para atender a `demand` ao `purchase_cost` dado. A função `solve_purchase` retorna `{"status": "infeasible", "purchase_qty": nan, "total_cost": nan}` (um dicionário controlado, sem exceção) e o código chamador pode reagir adequadamente.
 
 !!! warning "Atenção"
-    Um modelo infeasible **não é um bug do solver** — é um sinal de que os parâmetros do problema são inconsistentes com o modelo formulado. Na prática, infeasibilidade pode indicar que uma restrição está muito apertada, que os dados de entrada estão fora do intervalo esperado, ou que o modelo precisa ser reformulado para capturar uma flexibilidade que existe no mundo real mas não no modelo.
+    Um modelo infeasible **não é um bug do solver**: é um sinal de que os parâmetros do problema são inconsistentes com o modelo formulado. Na prática, infeasibilidade pode indicar que uma restrição está muito apertada, que os dados de entrada estão fora do intervalo esperado, ou que o modelo precisa ser reformulado para capturar uma flexibilidade que existe no mundo real mas não no modelo.
 
 ---
 
 ## De solver a MLflow PyFunc
 
-O Pyomo resolve o problema — mas como esse modelo vive no Unity Catalog junto com o forecaster sklearn? É aí que entra o `PurchaseOptimizerModel`:
+O Pyomo resolve o problema, mas como esse modelo vive no Unity Catalog junto com o forecaster sklearn? É aí que entra o `PurchaseOptimizerModel`:
 
 ```python
 class PurchaseOptimizerModel(mlflow.pyfunc.PythonModel):
@@ -236,7 +236,7 @@ with mlflow.start_run(run_name="pyomo_optimizer"):
 client.set_registered_model_alias(OPTIMIZER_MODEL, "champion", info.registered_model_version)
 ```
 
-Note o `code_paths=["./workshop_lib.py"]`: o arquivo `workshop_lib.py` é empacotado **dentro do artefato do modelo** no Unity Catalog. Quando o modelo é carregado em outro notebook ou em Model Serving, o solver está disponível — sem depender do caminho do workspace.
+Note o `code_paths=["./workshop_lib.py"]`: o arquivo `workshop_lib.py` é empacotado **dentro do artefato do modelo** no Unity Catalog. Quando o modelo é carregado em outro notebook ou em Model Serving, o solver está disponível, sem depender do caminho do workspace.
 
 A carga posterior usa o alias `@champion`, igualzinho ao forecaster:
 
@@ -252,9 +252,9 @@ resultado = opt.predict(example)
 
 ## Por que isso importa no contexto do workshop
 
-A tese central do workshop é: **"o MLflow governa o que você tiver — inclusive um modelo de pesquisa operacional fora do comum"**. O `purchase_optimizer` demonstra isso de forma concreta:
+A tese central do workshop é: **"o MLflow governa o que você tiver, inclusive um modelo de pesquisa operacional fora do comum"**. O `purchase_optimizer` demonstra isso de forma concreta:
 
-- Não tem `fit()`, não tem dados de treino, não tem R² — e ainda assim vive no Unity Catalog com versionamento, alias `@champion`, linhagem e governança idênticos ao forecaster.
+- Não tem `fit()`, não tem dados de treino, não tem R². Ainda assim vive no Unity Catalog com versionamento, alias `@champion`, linhagem e governança idênticos ao forecaster.
 - Qualquer pessoa com permissão no catalog pode carregar o modelo pelo URI `models:/{catalog}.{schema}.purchase_optimizer@champion` sem saber nada sobre Pyomo ou HiGHS.
 - Em `04_end_to_end.py`, os dois modelos são carregados pelo mesmo mecanismo e compostos em uma cadeia: forecaster prediz o preço → optimizer decide a quantidade. A plataforma não distingue os dois.
 
@@ -262,5 +262,5 @@ A tese central do workshop é: **"o MLflow governa o que você tiver — inclusi
 
 ## Próximos passos
 
-- [PyFunc e modelos customizados](pyfunc-modelos-customizados.md) — entenda o contrato PyFunc que torna isso possível.
-- [Lab 3 — O otimizador Pyomo como modelo customizado](../lab-3-optimizer/index.md) — execute `03_register_optimizer_pyomo.py` passo a passo.
+- [PyFunc e modelos customizados](pyfunc-modelos-customizados.md): entenda o contrato PyFunc que torna isso possível.
+- [Lab 3: O otimizador Pyomo como modelo customizado](../lab-3-optimizer/index.md): execute `03_register_optimizer_pyomo.py` passo a passo.

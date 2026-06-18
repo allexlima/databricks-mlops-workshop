@@ -1,5 +1,5 @@
-site_name: MLOps na Databricks
-site_description: Ciclo de vida de modelos com MLflow no Databricks — um conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
+site_name: Custom MLOps na Databricks
+site_description: Ciclo de vida de modelos com MLflow na Databricks. Um conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
 repo_url: https://github.com/allexlima/databricks-mlops-workshop
 repo_name: allexlima/databricks-mlops-workshop
 edit_uri: ""
@@ -13,8 +13,6 @@ theme:
     text: DM Sans
     code: DM Mono
   features:
-    - navigation.sections
-    - navigation.expand
     - navigation.footer
     - navigation.top
     - navigation.instant
@@ -68,15 +66,15 @@ nav:
   - Conceitos:
       - PyFunc e modelos customizados: conceitos/pyfunc-modelos-customizados.md
       - Otimização com Pyomo: conceitos/otimizacao-pyomo.md
-  - Lab 1 — Gerar o conjunto de dados: lab-1-generate-data/index.md
-  - Lab 2 — Treinar o forecaster (sklearn): lab-2-forecaster/index.md
-  - Lab 3 — Otimizador Pyomo (destaque):
+  - "Lab 1: Gerar o conjunto de dados": lab-1-generate-data/index.md
+  - "Lab 2: Treinar o forecaster (sklearn)": lab-2-forecaster/index.md
+  - "Lab 3: Otimizador Pyomo (destaque)":
       - Visão geral: lab-3-optimizer/index.md
       - Empacotar como PyFunc: lab-3-optimizer/modelo-pyfunc.md
       - Registrar e promover a @champion: lab-3-optimizer/registrar-promover.md
-  - Lab 4 — Cadeia ponta a ponta:
+  - "Lab 4: Workflow end-to-end":
       - Visão geral: lab-4-end-to-end/index.md
       - Carregar os modelos por @champion: lab-4-end-to-end/carregar-modelos.md
       - Rodar a cadeia e obter a decisão: lab-4-end-to-end/cadeia-decisao.md
-  - Lab 5 — Verificação: lab-5-verify/index.md
+  - "Lab 5: Verificação": lab-5-verify/index.md
   - Labs opcionais: optional/index.md

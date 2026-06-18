@@ -1,12 +1,12 @@
 # Pré-requisitos
 
-Antes de executar o primeiro notebook, confirme que o ambiente está pronto. Esta página explica **o que você precisa, por quê, e como configurar** — não apenas o checklist, mas o raciocínio por trás de cada item.
+Antes de executar o primeiro notebook, confirme que o ambiente está pronto. Esta página explica **o que você precisa, por quê, e como configurar**: não apenas o checklist, mas o raciocínio por trás de cada item.
 
 ---
 
 ## 1. Workspace Databricks com Unity Catalog
 
-Todo o workshop gira em torno do **Unity Catalog** (UC) — o sistema de governança centralizado da Databricks que gerencia tabelas, volumes, modelos e permissões sob um namespace unificado de três níveis.
+Todo o workshop gira em torno do **Unity Catalog** (UC), o sistema de governança centralizado da Databricks que gerencia tabelas, volumes, modelos e permissões sob um namespace unificado de três níveis.
 
 !!! note "Conceito: o namespace de três níveis"
     O Unity Catalog organiza todos os dados e objetos na forma `catalog.schema.objeto`:
@@ -17,10 +17,10 @@ Todo o workshop gira em torno do **Unity Catalog** (UC) — o sistema de governa
     | **Schema** | Agrupamento lógico de objetos relacionados | `mlops_workshop` |
     | **Objeto** | Tabela, Volume, modelo MLflow, função | `price_forecaster` |
 
-    Ao fazer `mlflow.set_registry_uri("databricks-uc")`, você instrui o MLflow a registrar modelos nesse namespace — ao invés do registry legado por workspace. Um modelo registrado fica em `catalog.schema.nome_do_modelo`, e você pode promovê-lo com um alias como `@champion` que persiste entre re-runs sem depender de número de versão.
+    Ao fazer `mlflow.set_registry_uri("databricks-uc")`, você instrui o MLflow a registrar modelos nesse namespace, em vez do registry legado por workspace. Um modelo registrado fica em `catalog.schema.nome_do_modelo`, e você pode promovê-lo com um alias como `@champion` que persiste entre re-runs sem depender de número de versão.
 
 !!! tip "Curiosidade: por que o UC mudou o jogo"
-    Antes do Unity Catalog, cada workspace Databricks tinha seu próprio registry de modelos isolado — mover um modelo entre ambientes exigia exportação manual. Com o UC, o mesmo modelo vive em um namespace centralizado e pode ser acessado por qualquer workspace conectado ao mesmo metastore. Para este workshop, isso significa que o `@champion` registrado em `02_train_forecaster_sklearn.py` está disponível automaticamente no `04_end_to_end.py`, sem nenhuma cópia.
+    Antes do Unity Catalog, cada workspace Databricks tinha seu próprio registry de modelos isolado. Mover um modelo entre ambientes exigia exportação manual. Com o UC, o mesmo modelo vive em um namespace centralizado e pode ser acessado por qualquer workspace conectado ao mesmo metastore. Para este workshop, isso significa que o `@champion` registrado em `02_train_forecaster_sklearn.py` está disponível automaticamente no `04_end_to_end.py`, sem nenhuma cópia.
 
 Verifique se o seu workspace tem Unity Catalog habilitado: na barra lateral, você deve ver a opção **Catalog** (ícone de tabela). Se não aparecer, entre em contato com o administrador do workspace.
 
@@ -28,7 +28,7 @@ Verifique se o seu workspace tem Unity Catalog habilitado: na barra lateral, voc
 
 ## 2. Permissões no Unity Catalog
 
-O notebook `00_setup.py` cria o **schema** e o **Volume** dentro de um catálogo existente — mas **não cria o catálogo**. Criar catálogos é uma operação privilegiada que depende da configuração de *managed location* (local de armazenamento gerenciado) no metastore, e é responsabilidade do administrador.
+O notebook `00_setup.py` cria o **schema** e o **Volume** dentro de um catálogo existente, mas **não cria o catálogo**. Criar catálogos é uma operação privilegiada que depende da configuração de *managed location* (local de armazenamento gerenciado) no metastore, e é responsabilidade do administrador.
 
 Você precisa das seguintes permissões no catálogo escolhido:
 
@@ -51,7 +51,7 @@ Você precisa das seguintes permissões no catálogo escolhido:
     )
     ```
 
-    Se o catálogo configurado não existir, o notebook falha com uma mensagem clara — não com um erro críptico do registry. O catálogo padrão é `main`. Se você não tiver acesso ao `main`, altere `CATALOG` em `_config.py` para um catálogo em que tenha as permissões listadas acima antes de rodar qualquer notebook.
+    Se o catálogo configurado não existir, o notebook falha com uma mensagem clara (não com um erro críptico do registry). O catálogo padrão é `main`. Se você não tiver acesso ao `main`, altere `CATALOG` em `_config.py` para um catálogo em que tenha as permissões listadas acima antes de rodar qualquer notebook.
 
 !!! warning "Atenção: permissões para modelos MLflow no Unity Catalog"
     `CREATE MODEL` é uma permissão separada de `CREATE TABLE`. Em alguns workspaces configurados de forma restritiva, um usuário pode ter permissão para criar tabelas mas não modelos. Se o `02_train_forecaster_sklearn.py` falhar ao registrar o modelo, verifique com o administrador se `CREATE MODEL` está concedida no schema.
@@ -74,13 +74,13 @@ Cada notebook carrega um bloco de metadados **PEP 723** logo após o cabeçalho 
 # ///
 ```
 
-Esse bloco instrui o ambiente serverless a usar o **ML base environment** (`databricks_ml_v5`), que já inclui MLflow, scikit-learn, pandas, numpy e outras dependências de ML — sem instalação manual. Cada notebook declara apenas seus **extras** além do base: os notebooks `03_register_optimizer_pyomo.py`, `04_end_to_end.py` e `05_verify.py` adicionam `pyomo` e `highspy`; o notebook opcional `extra/train_forecaster_pytorch.py` adiciona `torch` (CPU-only, para evitar o volume do wheel CUDA).
+Esse bloco instrui o ambiente serverless a usar o **ML base environment** (`databricks_ml_v5`), que já inclui MLflow, scikit-learn, pandas, numpy e outras dependências de ML, sem instalação manual. Cada notebook declara apenas seus **extras** além do base: os notebooks `03_register_optimizer_pyomo.py`, `04_end_to_end.py` e `05_verify.py` adicionam `pyomo` e `highspy`; o notebook opcional `extra/train_forecaster_pytorch.py` adiciona `torch` (CPU-only, para evitar o volume do wheel CUDA).
 
-!!! note "Conceito: PEP 723 — dependências inline no código-fonte"
-    PEP 723 é uma proposta da comunidade Python que padroniza a declaração de dependências diretamente em scripts Python — sem `requirements.txt` separado, sem ambiente virtual manual. Na Databricks, o serverless interpreta esse bloco e provisiona o ambiente certo antes de executar o notebook. O resultado prático: **você nunca vê um `%pip install` nos notebooks principais** — o ambiente já está pronto quando a primeira célula roda.
+!!! note "Conceito: PEP 723, dependências inline no código-fonte"
+    PEP 723 é uma proposta da comunidade Python que padroniza a declaração de dependências diretamente em scripts Python, sem `requirements.txt` separado e sem ambiente virtual manual. Na Databricks, o serverless interpreta esse bloco e provisiona o ambiente certo antes de executar o notebook. O resultado prático: **você nunca vê um `%pip install` nos notebooks principais**, pois o ambiente já está pronto quando a primeira célula roda.
 
 !!! tip "Curiosidade: por que o base environment importa"
-    O `databricks_ml_v5` é um snapshot versionado e testado do ecossistema de ML. Usar `environment_version = "5"` garante que o workshop rode com exatamente as mesmas versões de biblioteca, independentemente de quando você executar — hoje ou daqui a seis meses. Isso é **reprodutibilidade por design**.
+    O `databricks_ml_v5` é um snapshot versionado e testado do ecossistema de ML. Usar `environment_version = "5"` garante que o workshop rode com exatamente as mesmas versões de biblioteca, independentemente de quando você executar: hoje ou daqui a seis meses. Isso é **reprodutibilidade por design**.
 
 ### Cluster clássico (fallback)
 
@@ -91,16 +91,16 @@ Em clusters clássicos (não-serverless), o bloco PEP 723 é simplesmente ignora
 %restart_python
 ```
 
-Use `requirements.txt` (na raiz do repositório) para os notebooks mandatórios (`00`–`05`), e `../requirements.txt` para os notebooks em `extra/`.
+Use `requirements.txt` (na raiz do repositório) para os notebooks mandatórios (`00` a `05`), e `../requirements.txt` para os notebooks em `extra/`.
 
 !!! warning "Atenção: não misture as duas abordagens"
-    Em serverless, **não adicione** células `%pip install` manualmente — o PEP 723 já gerencia o ambiente. Adicionar um `%pip install` no meio de um notebook serverless reinicia o processo Python e pode causar comportamento inesperado.
+    Em serverless, **não adicione** células `%pip install` manualmente: o PEP 723 já gerencia o ambiente. Adicionar um `%pip install` no meio de um notebook serverless reinicia o processo Python e pode causar comportamento inesperado.
 
 ---
 
 ## 4. Importe os notebooks como Git folder
 
-Para que os comandos `%run ./_config` e `import workshop_lib` funcionem corretamente, os notebooks precisam estar em uma **Git folder** no workspace — não enviados manualmente um por um.
+Para que os comandos `%run ./_config` e `import workshop_lib` funcionem corretamente, os notebooks precisam estar em uma **Git folder** no workspace, não enviados manualmente um por um.
 
 **Como fazer:**
 
@@ -109,7 +109,7 @@ Para que os comandos `%run ./_config` e `import workshop_lib` funcionem corretam
 3. Cole a URL do repositório e selecione o branch **`main`**.
 4. Confirme a criação da pasta.
 
-Isso clona o repositório inteiro como uma unidade. O `%run ./_config` — que todos os notebooks executam logo no início — usa um caminho relativo (`./_config`), e o `import workshop_lib` busca o módulo no diretório atual. Ambos resolvem corretamente quando os arquivos estão lado a lado na mesma Git folder, como no repositório.
+Isso clona o repositório inteiro como uma unidade. O `%run ./_config` (que todos os notebooks executam logo no início) usa um caminho relativo (`./_config`), e o `import workshop_lib` busca o módulo no diretório atual. Ambos resolvem corretamente quando os arquivos estão lado a lado na mesma Git folder, como no repositório.
 
 !!! warning "Atenção: não faça upload avulso de notebooks"
     Se você fizer upload dos `.py` individualmente (sem a estrutura de pasta do repositório), o `%run ./_config` vai falhar com `FileNotFoundError` e o `import workshop_lib` vai falhar com `ModuleNotFoundError`. A Git folder é a única abordagem que garante que os caminhos relativos e os imports funcionem.
@@ -136,10 +136,10 @@ DATA_TABLE       = f"{CATALOG}.{SCHEMA}.commodity_monthly"
 CSV_PATH         = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/commodity_monthly.csv"
 ```
 
-Todos os notebooks fazem `%run ./_config` como primeira célula de código, então **editar essas duas linhas uma única vez propaga a mudança por todo o workshop**. Nenhum notebook tem URLs de workspace, tokens, ou caminhos `/dbfs/` hardcoded — apenas referências a essas constantes.
+Todos os notebooks fazem `%run ./_config` como primeira célula de código, então **editar essas duas linhas uma única vez propaga a mudança por todo o workshop**. Nenhum notebook tem URLs de workspace, tokens, ou caminhos `/dbfs/` hardcoded: apenas referências a essas constantes.
 
 !!! tip "Curiosidade: por que `/Volumes/` e não `/dbfs/`"
-    Em compute serverless, o DBFS FUSE (que permite acessar arquivos em `/dbfs/`) não está disponível. O workshop usa UC Volumes — uma abstração de armazenamento de arquivos governada pelo Unity Catalog, acessível via `/Volumes/{catalog}/{schema}/{volume}/`. Volumes funcionam tanto em serverless quanto em clusters clássicos, tornando os notebooks portáveis.
+    Em compute serverless, o DBFS FUSE (que permite acessar arquivos em `/dbfs/`) não está disponível. O workshop usa UC Volumes, uma abstração de armazenamento de arquivos governada pelo Unity Catalog, acessível via `/Volumes/{catalog}/{schema}/{volume}/`. Volumes funcionam tanto em serverless quanto em clusters clássicos, tornando os notebooks portáveis.
 
 ---
 
@@ -150,7 +150,7 @@ Com tudo acima pronto, execute o notebook **`00_setup.py`**. Ele:
 1. Faz `%run ./_config` para carregar as constantes.
 2. Configura `mlflow.set_registry_uri("databricks-uc")` para apontar o registry ao Unity Catalog.
 3. Verifica que o catálogo `CATALOG` existe (falha com mensagem clara se não).
-4. Cria o schema `SCHEMA` e o Volume `workshop_files` (idempotente — seguro re-executar).
+4. Cria o schema `SCHEMA` e o Volume `workshop_files` (idempotente, seguro re-executar).
 5. Registra o experimento MLflow em `/Shared/mlops_workshop`.
 
 !!! success "Pronto quando…"
@@ -176,4 +176,4 @@ Com tudo acima pronto, execute o notebook **`00_setup.py`**. Ele:
 
 ---
 
-**Próximo passo:** [Lab 1 — Gerar o dataset sintético](../lab-1-generate-data/index.md)
+**Próximo passo:** [Lab 1: Gerar o dataset sintético](../lab-1-generate-data/index.md)
