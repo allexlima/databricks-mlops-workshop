@@ -18,68 +18,101 @@
   --db-radius: 3px;          /* flat, squared AWS aesthetic */
 }
 
-/* ---- Light scheme (primary) ---- */
+/* ---- Light scheme (primary): light chrome, full-color logo ---- */
 [data-md-color-scheme="default"] {
   --md-primary-fg-color: var(--db-lava);
   --md-accent-fg-color: var(--db-lava-link);
   --md-default-bg-color: var(--db-oat);
   --md-typeset-a-color: var(--db-lava-link);
+  /* chrome (header + sidebar) */
+  --db-chrome-bg: #fff;
+  --db-chrome-fg: var(--db-navy);
+  --db-chrome-muted: #5b6b70;
+  --db-chrome-border: rgba(27, 49, 57, 0.12);
+  --db-sidebar-bg: transparent;            /* oat page shows through */
+  --db-active-tint: rgba(255, 54, 33, 0.09);
+  --db-search-bg: rgba(27, 49, 57, 0.06);
 }
 
-/* ---- Dark scheme (slate) ---- */
+/* ---- Dark scheme (slate): navy chrome, white logo ---- */
 [data-md-color-scheme="slate"] {
   --md-primary-fg-color: var(--db-lava);
   --md-accent-fg-color: #ff5a47;
   --md-default-bg-color: #0f1c21;
   --md-typeset-a-color: #ff8a7a;
+  /* chrome (header + sidebar) */
+  --db-chrome-bg: var(--db-navy);
+  --db-chrome-fg: #fff;
+  --db-chrome-muted: #cdd6da;
+  --db-chrome-border: rgba(255, 255, 255, 0.10);
+  --db-sidebar-bg: var(--db-navy);
+  --db-active-tint: rgba(255, 54, 33, 0.14);
+  --db-search-bg: rgba(255, 255, 255, 0.10);
 }
 
 /* ============================ Chrome ====================================== */
 
-/* Slim sticky header in Navy with generous clear space */
+/* Slim sticky header — scheme-aware (light chrome in default, navy in slate) */
 .md-header {
-  background-color: var(--db-navy);
-  color: #fff;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+  background-color: var(--db-chrome-bg);
+  color: var(--db-chrome-fg);
+  border-bottom: 1px solid var(--db-chrome-border);
+  box-shadow: none;
 }
 .md-header__inner { padding: 0 0.6rem; }
 .md-header__title { font-weight: 700; letter-spacing: -0.01em; padding-left: 0.8rem; font-size: 1.02rem; }
-.md-tabs { background-color: var(--db-navy); }
+.md-tabs { background-color: var(--db-chrome-bg); }
 
-/* Official white Databricks lockup (theme.logo). It's a wide wordmark, so give
-   it a touch more height than Material's icon default and clear spacing. */
-.md-header__button.md-logo { padding-right: 0.4rem; }
+/* Header search field tuned for the (light or navy) header surface */
+.md-search__input { background-color: var(--db-search-bg); color: var(--db-chrome-fg); }
+.md-search__input::placeholder { color: var(--db-chrome-muted); }
+.md-search__icon { color: var(--db-chrome-fg); }
+
+/* Official Databricks lockup, swapped per scheme: full-color on the light
+   header, white/reversed on the navy one. The asset is a wide wordmark, so we
+   render it as a sized background (the <img> is hidden) and use the exact
+   ~6.3:1 aspect at 1.4rem tall. */
+.md-header__button.md-logo {
+  padding-right: 0.4rem;
+  height: 1.4rem;
+  width: 8.8rem;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+}
 .md-header__button.md-logo img,
-.md-header__button.md-logo svg { height: 1.4rem; width: auto; }
+.md-header__button.md-logo svg { display: none; }
+[data-md-color-scheme="default"] .md-header__button.md-logo {
+  background-image: url("../assets/primary-lockup-full-color-rgb.svg");
+}
+[data-md-color-scheme="slate"] .md-header__button.md-logo {
+  background-image: url("../assets/primary-lockup-full-color-white-rgb.svg");
+}
 
-/* Persistent left sidebar as a Navy module tree */
-.md-sidebar--primary {
-  background-color: var(--db-navy);
+/* Left sidebar as a module tree — navy in slate, light/oat in default */
+.md-sidebar--primary { background-color: var(--db-sidebar-bg); }
+.md-sidebar--primary .md-sidebar__scrollwrap { background-color: var(--db-sidebar-bg); }
+.md-sidebar--primary .md-nav {
+  background-color: var(--db-sidebar-bg);
+  color: var(--db-chrome-muted);
 }
 
 /* The header already shows the site title — hide the duplicate site-title
    block at the top of the sidebar nav (scoped to the primary nav's own
    title so section labels are untouched). */
 .md-sidebar--primary .md-nav--primary > .md-nav__title { display: none; }
-.md-sidebar--primary .md-sidebar__scrollwrap { background-color: var(--db-navy); }
-.md-sidebar--primary .md-nav {
-  background-color: var(--db-navy);
-  color: #cdd6da;
-}
-.md-sidebar--primary .md-nav__title { color: #fff; }
-.md-sidebar--primary .md-nav__item--section > .md-nav__link { color: #fff; font-weight: 700; }
-.md-sidebar--primary .md-nav__link { color: #cdd6da; }
-.md-sidebar--primary .md-nav__link:hover { color: #fff; }
+.md-sidebar--primary .md-nav__item--section > .md-nav__link { color: var(--db-chrome-fg); font-weight: 700; }
+.md-sidebar--primary .md-nav__link { color: var(--db-chrome-muted); padding-left: 0.7rem; }
+.md-sidebar--primary .md-nav__link:hover { color: var(--db-chrome-fg); }
 
 /* Active sidebar item: Lava left-bar + faint tint (AWS-style).
-   Use an inset box-shadow for the bar so the link keeps its place — a
-   negative margin would shift the active row (and its tint) out of
-   alignment with its siblings. */
+   The bar is an inset box-shadow so the row keeps its place; the base
+   padding-left above gives the label clearance from the bar. */
 .md-sidebar--primary .md-nav__link--active,
 .md-sidebar--primary .md-nav__item .md-nav__link--active {
-  color: #fff;
+  color: var(--db-chrome-fg);
   font-weight: 700;
-  background-color: rgba(255, 54, 33, 0.14);
+  background-color: var(--db-active-tint);
   box-shadow: inset 3px 0 0 var(--db-lava);
 }
 
