@@ -167,7 +167,11 @@
   border-radius: var(--db-radius);
   box-shadow: 0 1px 3px var(--db-card-shadow);
 }
-.md-content__inner { padding: 0 1.4rem 1.4rem; }
+.md-content__inner { padding: 1.2rem 1.4rem 1.6rem; }
+/* Material adds a 0.8rem spacer ::before the first content block; with our own
+   top padding that doubles the gap, so neutralize it. */
+.md-content__inner > :first-child { margin-top: 0; }
+.md-content__inner::before { display: none; }
 
 /* ============================ Typography ================================== */
 
@@ -247,6 +251,11 @@
 }
 
 /* ============================ Grid cards ================================== */
+/* Two cards per row (collapses to one on narrow screens) */
+.md-typeset .grid.cards { grid-template-columns: repeat(2, 1fr); }
+@media screen and (max-width: 44.9375em) {
+  .md-typeset .grid.cards { grid-template-columns: 1fr; }
+}
 .md-typeset .grid.cards > ul > li {
   background-color: var(--db-card-lift);
   border: 1px solid var(--db-card-lift-border);
@@ -271,7 +280,7 @@
   border-left: 4px solid var(--db-lava);
   border-radius: var(--db-radius);
   padding: 2rem 1.8rem;
-  margin: 2rem -1.5rem 1.4rem;
+  margin: 0 -1.5rem 1.4rem;
 }
 .db-hero h1 { color: var(--db-hero-fg) !important; margin: 0 0 0.4rem; border: 0; }
 .db-hero p { color: var(--db-hero-fg-muted); margin: 0.3rem 0 0.9rem; }
