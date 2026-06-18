@@ -11,7 +11,7 @@ notebook on `main` and references it by name.
 
 ```bash
 python3 -m venv .venv-docs
-.venv-docs/bin/pip install -r requirements-docs.txt
+.venv-docs/bin/pip install -r requirements.txt
 .venv-docs/bin/mkdocs serve     # live preview at http://127.0.0.1:8000
 .venv-docs/bin/mkdocs build --strict   # production build (zero warnings)
 ```
