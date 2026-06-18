@@ -7,8 +7,8 @@ edit_uri: ""
 theme:
   name: material
   language: pt-BR
-  logo: assets/logo.svg
-  favicon: assets/logo.svg
+  logo: assets/primary-lockup-full-color-white-rgb.svg
+  favicon: assets/databricks-favicon-48x48-orange.png
   font:
     text: DM Sans
     code: DM Mono
@@ -19,6 +19,7 @@ theme:
     - navigation.top
     - navigation.instant
     - navigation.tracking
+    - navigation.path
     - toc.follow
     - search.suggest
     - search.highlight

@@ -46,10 +46,11 @@
 .md-header__title { font-weight: 700; letter-spacing: -0.01em; padding-left: 0.8rem; font-size: 1.02rem; }
 .md-tabs { background-color: var(--db-navy); }
 
-/* No official logo asset yet → hide Material's generic mark and show a clean
-   white wordmark (the title). When the official white SVG is added via
-   theme.logo in mkdocs.yml, DELETE this rule. */
-.md-header__button.md-logo { display: none; }
+/* Official white Databricks lockup (theme.logo). It's a wide wordmark, so give
+   it a touch more height than Material's icon default and clear spacing. */
+.md-header__button.md-logo { padding-right: 0.4rem; }
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg { height: 1.4rem; width: auto; }
 
 /* Persistent left sidebar as a Navy module tree */
 .md-sidebar--primary {
