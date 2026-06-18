@@ -271,7 +271,7 @@
   border-left: 4px solid var(--db-lava);
   border-radius: var(--db-radius);
   padding: 2rem 1.8rem;
-  margin: 0 0 1.4rem;
+  margin: 2rem -1.5rem 1.4rem;
 }
 .db-hero h1 { color: var(--db-hero-fg) !important; margin: 0 0 0.4rem; border: 0; }
 .db-hero p { color: var(--db-hero-fg-muted); margin: 0.3rem 0 0.9rem; }
