@@ -1,101 +1,82 @@
-# Lab 4 — Cadeia ponta a ponta
+# Lab 4 — Cadeia ponta a ponta (visão geral)
 
-Neste lab você vai compor os dois modelos já registrados em um único pipeline governado: uma rotina mensal que antes era executada manualmente agora vive em um ciclo de vida rastreado, com lineage auditável do dado ao modelo.
+Nos labs anteriores você treinou e registrou dois modelos completamente diferentes no mesmo ciclo de vida governado pelo MLflow:
 
-![Cadeia: drivers → forecaster → preço previsto → otimizador → decisão](../assets/diagrams/chain.svg){ width="100%" }
+- **`price_forecaster`** — um modelo scikit-learn que prevê o preço do próximo mês de uma commodity a partir de drivers econômicos.
+- **`purchase_optimizer`** — um modelo de pesquisa operacional (Pyomo), embrulhado como PyFunc, que transforma essa previsão em uma decisão de compra.
+
+Neste lab, você vai **compô-los** em uma única cadeia de decisão e entender o que a governança do Unity Catalog te dá de graça.
+
+![Cadeia ponta a ponta: drivers → forecaster @champion → preço previsto → optimizer @champion → decisão de compra](../assets/diagrams/chain.svg){ width="100%" }
 
 Abra `04_end_to_end.py` no repositório.
 
 ---
 
-## 1 · Imports e configuração do registry
+## O que é composição de modelos governados
 
-```python
-import mlflow
-import pandas as pd
-import workshop_lib as wl
-from mlflow import MlflowClient
+!!! note "Conceito"
+    **Composição** é a prática de encadear dois ou mais modelos registrados para resolver um problema que nenhum deles resolveria sozinho. Aqui, o `price_forecaster` resolve "qual será o preço?" e o `purchase_optimizer` resolve "quanto comprar dado esse preço?". O resultado é um pipeline de decisão mensal rastreável do dado de entrada ao output final.
 
-mlflow.set_registry_uri("databricks-uc")
-client = MlflowClient()
-```
+A composição de modelos não é novidade — pipelines em produção sempre combinaram etapas. O que muda aqui é que **cada etapa é um modelo registrado e versionado**: você sabe exatamente qual versão do forecaster gerou o preço previsto que alimentou qual versão do optimizer.
 
-`set_registry_uri("databricks-uc")` redireciona o MLflow para o Unity Catalog como backend do model registry. Sem isso, aliases como `@champion` não resolveriam contra os modelos registrados no UC — o cliente tentaria o registry legado do workspace e falharia silenciosamente.
+### Por que alias-first torna a composição robusta
 
----
+Todo o workshop usa o alias `@champion` em vez de números de versão literais. Isso tem consequências diretas neste lab:
 
-## 2 · Champion guard
+| Abordagem | O que acontece num retreino |
+|---|---|
+| `models:/…/3` (versão fixa) | O código aponta para a versão antiga. Você precisa editar o notebook manualmente. |
+| `models:/…/latest` | Pega sempre a versão mais recente, mesmo sem validação. Sem gate de qualidade. |
+| `models:/…@champion` | Só aponta para a versão que passou pelo gate de R² ≥ 0,6 e foi promovida. Nenhuma edição no notebook. |
 
-```python
-try:
-    client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
-except Exception:
-    raise RuntimeError(
-        f"No @champion alias on {FORECASTER_MODEL}. Run 02_train_forecaster_sklearn "
-        f"and confirm it passed the R2>={R2_THRESHOLD} gate before running this notebook."
-    )
-```
+A cadeia deste lab carrega **ambos os modelos por `@champion`**. Se um retreino acontecer e o novo modelo passar pelo gate, basta promover o alias — a cadeia já usa o modelo mais recente na próxima execução.
 
-Antes de tocar nos dados, o notebook verifica proativamente se o alias `@champion` existe. O motivo: se o Lab 2 não tiver sido executado (ou o modelo não tiver passado pelo gate de R²), o erro que viria do registry seria genérico e difícil de diagnosticar. A guarda falha imediatamente com uma mensagem clara e acionável — você sabe exatamente o que falta fazer, em vez de ter que interpretar um stack trace do registry.
-
-!!! warning "Pré-requisitos obrigatórios"
-    Execute o **Lab 2** (`02_train_forecaster_sklearn`) e o **Lab 3** (`03_purchase_optimizer`) antes deste. Ambos precisam ter promovido um `@champion` no Unity Catalog. Se a guarda disparar, volte ao lab correspondente e confirme que o modelo passou pelo gate de qualidade.
+!!! tip "Curiosidade"
+    O padrão de alias `@champion` vem do champion–challenger clássico de ML em produção, onde um modelo challenger disputa com o campeão atual. Neste workshop usamos um gate determinístico simples (R² ≥ 0,6), sem challenger — mas o alias carrega a mesma semântica: "versão aprovada para produção". MLflow 3.x generalizou aliases para qualquer string arbitrária; `@champion` é apenas a mais comum.
 
 ---
 
-## 3 · Carregar os dois modelos por alias
+## O que o Unity Catalog governa automaticamente
 
-```python
-df = spark.table(DATA_TABLE).toPandas().sort_values("month")
-latest = df.iloc[[-1]]
+Quando você carrega modelos por URI do tipo `models:/{catalog}.{schema}.price_forecaster@champion` com `mlflow.set_registry_uri("databricks-uc")`, o Unity Catalog passa a ser o backend do registry. Isso traz:
 
-forecaster = mlflow.pyfunc.load_model(f"models:/{FORECASTER_MODEL}@champion")
-optimizer  = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
-```
+- **Lineage automático**: o UC conecta a tabela Delta de entrada → runs do experimento MLflow → modelos registrados. Sem instrumentação extra.
+- **Auditoria de acesso**: quem consultou, retreinou ou promoveu um modelo fica registrado no audit log do UC.
+- **Permissões granulares**: você pode controlar quem pode ler ou promover cada modelo registrado, usando as mesmas permissões do Unity Catalog que já se aplicam às suas tabelas.
+- **Versionamento imutável**: cada versão registrada é um artefato imutável. Você sempre pode voltar e reproduzir qualquer decisão histórica.
 
-Ambos os modelos — `price_forecaster@champion` e `purchase_optimizer@champion` — são carregados pelo alias, nunca pelo número de versão.
-
-!!! info "Por que alias e não número de versão?"
-    Cada novo treino registra uma versão nova (v1, v2, v3…). Se o código usasse um número fixo, seria necessário atualizar o notebook a cada retreino. Com `@champion`, o alias aponta sempre para a versão promovida mais recente: o notebook não precisa mudar — apenas o alias é atualizado no registry quando um modelo melhor é promovido.
+!!! tip "Curiosidade"
+    O lineage do Unity Catalog usa a mesma infraestrutura que rastreia linhagem de tabelas Delta. MLflow 3.x integra essa linhagem de forma nativa quando o registry URI aponta para `databricks-uc` — o grafo aparece automaticamente no Catalog Explorer sem nenhuma configuração adicional.
 
 ---
 
-## 4 · Rodar a cadeia: drivers → preço previsto → decisão
+## O que você vai fazer neste lab
 
-=== "Rodar a cadeia"
+O notebook `04_end_to_end.py` percorre quatro passos:
 
-    ```python
-    predicted_price = float(forecaster.predict(latest[wl.DRIVERS + ["price"]])[0])
+1. **Imports e configuração do registry** — apontar MLflow para o Unity Catalog.
+2. **Champion guard** — verificar proativamente se `@champion` existe antes de rodar a cadeia.
+3. **Carregar ambos os modelos** — por alias, nunca por número de versão.
+4. **Rodar a cadeia** — drivers do mês mais recente → preço previsto → decisão de compra.
 
-    opt_input = latest[wl.ECON_COLS].copy()
-    opt_input.insert(0, "predicted_price", predicted_price)
+As duas subpáginas deste lab cobrem esses passos em detalhe:
 
-    decision = optimizer.predict(opt_input)
-
-    print(f"Predicted next-month price: {predicted_price:.2f}")
-    print(decision)
-    ```
-
-    O fluxo é direto: o `forecaster` recebe os drivers econômicos do mês mais recente e estima o preço do próximo mês. Esse preço previsto é inserido como feature adicional para o `optimizer` (modelo Pyomo), que resolve o problema de otimização e retorna a quantidade de compra recomendada com `status=optimal`.
-
-=== "Inspecionar o lineage"
-
-    Abra o **Catalog Explorer** no workspace Databricks:
-
-    1. Navegue até a tabela Delta referenciada por `DATA_TABLE` (definida no `_config`)
-    2. Clique na aba **Lineage**
-    3. Você verá o grafo: **tabela Delta → experimento MLflow → modelos registrados**
-
-    Esse grafo conecta automaticamente o dado de origem aos modelos que o consumiram — sem nenhuma instrumentação manual adicional. É o Unity Catalog fazendo governança de ponta a ponta: qualquer pessoa pode responder "qual versão do modelo gerou esta decisão de compra?" sem abrir nenhum log.
-
-!!! success "Você deve ver"
-    - Uma linha impressa com o preço previsto, por exemplo: `Predicted next-month price: 142.37`
-    - Um DataFrame de uma linha com a decisão de compra e `status=optimal`
-    - No Catalog Explorer → Lineage: um grafo conectando a tabela Delta de entrada → runs do experimento → ambos os modelos registrados
-
-!!! note "📸 Espaço reservado para captura de tela"
-    *Capture aqui: o grafo de lineage no Catalog Explorer (tabela → experimento → modelos). Depois substitua por `![Lineage](../assets/screenshots/lab-4-lineage.png)`.*
+- [Carregar os modelos por @champion](carregar-modelos.md) — como os modelos são carregados e por que o guard existe.
+- [Rodar a cadeia e obter a decisão](cadeia-decisao.md) — a execução passo a passo e o lineage no Catalog Explorer.
 
 ---
 
-Próximo: [Lab 5 — Verificação](../lab-5-verify/index.md)
+## Pré-requisitos
+
+!!! warning "Atenção"
+    Este lab depende dos dois labs anteriores:
+
+    - **Lab 2** (`02_train_forecaster_sklearn.py`) deve ter treinado e promovido `price_forecaster@champion`.
+    - **Lab 3** (`03_register_optimizer_pyomo.py`) deve ter registrado e promovido `purchase_optimizer@champion`.
+
+    Se algum dos dois não foi executado (ou o modelo não passou pelo gate de R² ≥ 0,6), o notebook falha imediatamente com uma mensagem clara — não com um stack trace genérico do registry.
+
+---
+
+Próximo passo: [Carregar os modelos por @champion →](carregar-modelos.md)

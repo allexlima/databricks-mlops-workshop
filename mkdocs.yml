@@ -65,9 +65,18 @@ nav:
   - Início: index.md
   - Configuração:
       - Pré-requisitos: setup/prerequisites.md
+  - Conceitos:
+      - PyFunc e modelos customizados: conceitos/pyfunc-modelos-customizados.md
+      - Otimização com Pyomo: conceitos/otimizacao-pyomo.md
   - Lab 1 — Gerar o conjunto de dados: lab-1-generate-data/index.md
   - Lab 2 — Treinar o forecaster (sklearn): lab-2-forecaster/index.md
-  - Lab 3 — Otimizador Pyomo (destaque): lab-3-optimizer/index.md
-  - Lab 4 — Cadeia ponta a ponta: lab-4-end-to-end/index.md
+  - Lab 3 — Otimizador Pyomo (destaque):
+      - Visão geral: lab-3-optimizer/index.md
+      - Empacotar como PyFunc: lab-3-optimizer/modelo-pyfunc.md
+      - Registrar e promover a @champion: lab-3-optimizer/registrar-promover.md
+  - Lab 4 — Cadeia ponta a ponta:
+      - Visão geral: lab-4-end-to-end/index.md
+      - Carregar os modelos por @champion: lab-4-end-to-end/carregar-modelos.md
+      - Rodar a cadeia e obter a decisão: lab-4-end-to-end/cadeia-decisao.md
   - Lab 5 — Verificação: lab-5-verify/index.md
   - Labs opcionais: optional/index.md

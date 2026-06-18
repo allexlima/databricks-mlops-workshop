@@ -2,7 +2,7 @@
 
 # MLOps na Databricks
 
-Aprenda, na prática, o **ciclo de vida de modelos com MLflow** no Databricks — um
+Aprenda, na prática, o **ciclo de vida de modelos com MLflow** na Databricks — um
 conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
 
 <span class="db-badges">
@@ -13,35 +13,101 @@ conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
 
 </div>
 
-Bem-vindo(a)! Você vai cobrir rastreamento de experimentos, o registro de modelos no
-Unity Catalog, portões de validação, promoção por *alias* e a composição de modelos em
-um pipeline governado.
+Bem-vindo(a)! Este workshop ensina o **ciclo de vida de modelos de ML com MLflow** —
+desde o rastreamento de experimentos até a promoção governada em produção — usando o
+Databricks como plataforma. A ciência de dados é o **veículo**, não o destino.
 
-Aqui a ciência de dados é o **veículo**, não o destino. O foco é o ciclo de vida — e
-para deixá-lo concreto, seguimos uma empresa fictícia, a **AnyCompany**, que compra uma
-matéria-prima (uma *commodity*) todos os meses.
+Para deixar esse ciclo concreto, seguimos a **AnyCompany**, uma empresa fictícia que
+compra uma matéria-prima (uma *commodity*) todo mês. O problema real é decidir
+*quanto comprar*. Para isso, a empresa precisa primeiro *prever o preço* do próximo
+mês, e então *otimizar a decisão de compra* com base nessa previsão.
 
-![Ciclo de vida do modelo: Rastrear, Registrar, Validar, Compor, Governar](assets/diagrams/lifecycle.svg){ width="100%" }
+!!! note "Conceito"
+    **MLOps** é o conjunto de práticas que leva um modelo de ML de um notebook
+    exploratório até um artefato confiável, versionado e governado — que pode ser
+    auditado, substituído e monitorado ao longo do tempo. Não é sobre infraestrutura
+    sofisticada: é sobre **disciplina de ciclo de vida**. O MLflow é a ferramenta
+    que implementa essa disciplina na Databricks.
 
-## A ideia central
+![Ciclo de vida do modelo: Rastrear → Registrar → Validar → Compor → Governar](assets/diagrams/lifecycle.svg){ width="100%" }
 
-Colocamos **dois modelos bem diferentes no mesmo ciclo de vida governado**:
+## A tese do workshop
 
-1. um **forecaster** de ML tradicional (scikit-learn) que prevê o preço do próximo mês; e
-2. um **otimizador** de pesquisa operacional (Pyomo) que transforma essa previsão na
-   decisão de quanto comprar no mês.
+A maioria dos tutoriais de MLflow mostra modelos scikit-learn ou PyTorch — casos
+nos quais o fluxo `fit → log → register` é natural. A pergunta interessante é outra:
 
-!!! quote "A tese do workshop"
+> **E quando o modelo não tem `fit()`?**
+
+Um solver de pesquisa operacional, por exemplo, não é treinado em dados — ele
+*resolve* um problema de otimização matemática a cada chamada. Ainda assim, ele
+precisa ser versionado, validado, promovido e composto com outros modelos.
+
+!!! quote ""
     **O MLflow governa o que você tiver — inclusive um modelo de pesquisa operacional
     fora do comum.** Não se trata apenas de "o MLflow suporta vários frameworks".
 
+É isso que este workshop demonstra: dois modelos com naturezas completamente
+diferentes vivem no **mesmo ciclo de vida governado**, com os mesmos mecanismos de
+registro, alias e lineage no Unity Catalog.
+
 ## O que você vai construir
 
-Um único conjunto de dados sintético alimenta os dois modelos; ambos são registrados e
-governados no Unity Catalog e, no final, compostos em uma cadeia que produz a decisão de
-compra do mês:
+Um único dataset sintético e reprodutível alimenta **dois modelos separados**, ambos
+registrados no Unity Catalog e compostos em uma cadeia que produz a decisão de compra
+do mês:
 
-![Cadeia: drivers → forecaster → preço previsto → otimizador → decisão de compra](assets/diagrams/chain.svg){ width="100%" }
+![Cadeia de decisão: drivers do mês atual → forecaster @champion → preço previsto → otimizador @champion → decisão de compra](assets/diagrams/chain.svg){ width="100%" }
+
+### Os dois modelos
+
+| Modelo | Tipo | Framework | Registro |
+|--------|------|-----------|----------|
+| `price_forecaster` | Forecaster de regressão | scikit-learn | `mlflow.sklearn.log_model(name=...)` |
+| `purchase_optimizer` | Solver de otimização | Pyomo + HiGHS via PyFunc | `mlflow.pyfunc.log_model(name=..., python_model=...)` |
+
+Ambos são promovidos ao alias **`@champion`** somente se passarem por uma validação
+explícita. O forecaster precisa atingir **R² ≥ 0,6** no conjunto de teste (held-out).
+O optimizer precisa devolver uma solução **feasible** — o solver HiGHS confirma isso
+automaticamente.
+
+!!! tip "Curiosidade"
+    O alias `@champion` é a chave que torna o pipeline estável entre re-execuções.
+    Cada vez que você re-treina e re-registra, o MLflow cria uma nova versão do
+    modelo (v2, v3, …). Referenciar uma versão literal (`models:/…/3`) quebra na
+    próxima re-execução. Referenciar `@champion` nunca quebra — você simplesmente
+    move o alias para a nova versão aprovada.
+
+### O ciclo de vida em cinco etapas
+
+1. **Track** — cada execução de treinamento (ou configuração do solver) é registrada
+   como um MLflow *run*: parâmetros, métricas, artefatos.
+2. **Register** — o modelo aprovado é promovido ao Unity Catalog como um artefato
+   versionado e governado.
+3. **Validate** — um portão explícito (R² ≥ 0,6 para o forecaster; feasibility para
+   o optimizer) precede qualquer promoção ao alias `@champion`.
+4. **Compose** — os dois modelos são carregados pelo alias e compostos em uma cadeia:
+   `drivers → forecaster → preço → optimizer → decisão`.
+5. **Govern** — Unity Catalog mantém o lineage, a auditoria e o controle de acesso
+   de ambos os modelos em um único lugar.
+
+!!! note "Conceito"
+    **PyFunc** (abreviação de *Python Function*) é a interface genérica do MLflow para
+    modelos que não têm um flavor nativo — qualquer classe Python que implemente
+    `predict(self, context, model_input, params=None)` pode ser registrada, versionada
+    e servida exatamente como um modelo scikit-learn. É o mecanismo que torna possível
+    governar o solver Pyomo no mesmo ciclo de vida. Veja mais em
+    [Conceitos: PyFunc e modelos customizados](conceitos/pyfunc-modelos-customizados.md).
+
+## Conceitos de apoio
+
+Dois tópicos conceituais estão disponíveis para leitura antes ou durante os labs —
+úteis se você não tem familiaridade com PyFunc ou com otimização via Pyomo:
+
+- [PyFunc e modelos customizados](conceitos/pyfunc-modelos-customizados.md) — como o
+  MLflow empacota qualquer objeto Python como modelo registrável e servível.
+- [Otimização com Pyomo](conceitos/otimizacao-pyomo.md) — o que é um modelo de
+  programação linear, como o Pyomo formula o problema de compra e por que o solver
+  HiGHS é uma boa escolha sem dependências de sistema.
 
 ## A trilha do workshop
 
@@ -108,6 +174,14 @@ compra do mês:
 !!! info "Como funcionam os labs"
     Cada página de lab corresponde a um notebook e guia você na execução. O caminho
     obrigatório são seis notebooks (`00`–`05`); os labs opcionais acrescentam uma
-    variante em PyTorch, *serving* de modelo e a limpeza dos recursos.
+    variante em PyTorch, *serving* de modelo e a limpeza dos recursos. Todos os
+    notebooks usam um dataset sintético com semente fixa — cada re-execução produz
+    os mesmos resultados.
+
+!!! warning "Atenção"
+    O catálogo Unity Catalog (`main` por padrão) precisa existir antes de executar
+    o `00_setup.py`. O notebook cria o *schema* e o *volume* automaticamente, mas
+    não o catálogo. Se o catálogo não existir, você verá uma mensagem clara pedindo
+    para criá-lo primeiro.
 
 [Começar pelos pré-requisitos :material-arrow-right:](setup/prerequisites.md){ .md-button .md-button--primary }
