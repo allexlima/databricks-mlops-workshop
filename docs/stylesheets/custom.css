@@ -61,7 +61,7 @@
   --db-chrome-fg: #fff;
   --db-chrome-muted: #cdd6da;
   --db-chrome-border: rgba(255, 255, 255, 0.10);
-  --db-sidebar-bg: var(--db-navy);
+  --db-sidebar-bg: transparent;            /* page bg shows through (mirror light) */
   --db-active-tint: rgba(255, 54, 33, 0.18);
   --db-search-bg: rgba(255, 255, 255, 0.10);
   /* surfaces (content card + grid cards) — mirror light, dark palette */
