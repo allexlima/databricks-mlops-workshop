@@ -96,9 +96,9 @@ automaticamente).
     `predict(self, context, model_input, params=None)` pode ser registrada, versionada
     e servida exatamente como um modelo scikit-learn. É o mecanismo que torna possível
     governar o solver Pyomo no mesmo ciclo de vida. Veja mais em
-    [Conceitos: PyFunc e modelos customizados](conceitos/pyfunc-modelos-customizados.md).
+    [Fundamentos: PyFunc e modelos customizados](conceitos/pyfunc-modelos-customizados.md).
 
-## Conceitos de apoio
+## Fundamentos
 
 Dois tópicos conceituais estão disponíveis para leitura antes ou durante os labs,
 úteis se você não tem familiaridade com PyFunc ou com otimização via Pyomo:
@@ -113,7 +113,7 @@ Dois tópicos conceituais estão disponíveis para leitura antes ou durante os l
 
 <div class="grid cards" markdown>
 
--   :material-database-cog:{ .lg } __Lab 1: Gerar o conjunto de dados__
+-   :material-database-cog:{ .lg } __Gerar o conjunto de dados__
 
     ---
 
@@ -121,7 +121,7 @@ Dois tópicos conceituais estão disponíveis para leitura antes ou durante os l
 
     [:octicons-arrow-right-24: Começar](lab-1-generate-data/index.md)
 
--   :material-chart-line:{ .lg } __Lab 2: Forecaster (sklearn)__
+-   :material-chart-line:{ .lg } __Forecaster (sklearn)__
 
     ---
 
@@ -129,7 +129,7 @@ Dois tópicos conceituais estão disponíveis para leitura antes ou durante os l
 
     [:octicons-arrow-right-24: Abrir](lab-2-forecaster/index.md)
 
--   :material-cog-sync:{ .lg } __Lab 3: Otimizador Pyomo__
+-   :material-cog-sync:{ .lg } __Otimizador Pyomo__
 
     ---
 
@@ -137,7 +137,7 @@ Dois tópicos conceituais estão disponíveis para leitura antes ou durante os l
 
     [:octicons-arrow-right-24: Abrir](lab-3-optimizer/index.md)
 
--   :material-link-variant:{ .lg } __Lab 4: Workflow end-to-end__
+-   :material-link-variant:{ .lg } __Workflow end-to-end__
 
     ---
 
@@ -145,7 +145,7 @@ Dois tópicos conceituais estão disponíveis para leitura antes ou durante os l
 
     [:octicons-arrow-right-24: Abrir](lab-4-end-to-end/index.md)
 
--   :material-check-decagram:{ .lg } __Lab 5: Verificação__
+-   :material-check-decagram:{ .lg } __Verificação__
 
     ---
 

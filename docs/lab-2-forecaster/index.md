@@ -1,4 +1,4 @@
-# Lab 2: Treinar o forecaster (sklearn)
+# Treinar o forecaster (sklearn)
 
 Este lab é o coração do workshop: o loop cotidiano de MLOps na Databricks.
 Você vai treinar um modelo de previsão de preço, rastrear tudo no MLflow
@@ -336,4 +336,4 @@ desta vez com um [PyFunc customizado](../conceitos/pyfunc-modelos-customizados.m
 No **Lab 4**, os dois modelos são carregados via `@champion` e compostos em
 uma decisão de compra completa.
 
-**Próximo: [Lab 3: Registrar o otimizador Pyomo](../lab-3-optimizer/index.md)**
+**Próximo: [Registrar o otimizador Pyomo](../lab-3-optimizer/index.md)**

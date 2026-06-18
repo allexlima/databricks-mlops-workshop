@@ -176,4 +176,4 @@ Com tudo acima pronto, execute o notebook **`00_setup.py`**. Ele:
 
 ---
 
-**Próximo passo:** [Lab 1: Gerar o dataset sintético](../lab-1-generate-data/index.md)
+**Próximo passo:** [Gerar o dataset sintético](../lab-1-generate-data/index.md)

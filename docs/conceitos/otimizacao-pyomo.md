@@ -263,4 +263,4 @@ A tese central do workshop é: **"o MLflow governa o que você tiver, inclusive 
 ## Próximos passos
 
 - [PyFunc e modelos customizados](pyfunc-modelos-customizados.md): entenda o contrato PyFunc que torna isso possível.
-- [Lab 3: O otimizador Pyomo como modelo customizado](../lab-3-optimizer/index.md): execute `03_register_optimizer_pyomo.py` passo a passo.
+- [O otimizador Pyomo como modelo customizado](../lab-3-optimizer/index.md): execute `03_register_optimizer_pyomo.py` passo a passo.

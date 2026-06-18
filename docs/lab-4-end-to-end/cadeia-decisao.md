@@ -114,4 +114,4 @@ experimento MLflow (mlops_workshop)
 
 ---
 
-Próximo passo: [Lab 5: Verificação →](../lab-5-verify/index.md)
+Próximo passo: [Verificação →](../lab-5-verify/index.md)

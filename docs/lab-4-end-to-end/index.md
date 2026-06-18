@@ -1,4 +1,4 @@
-# Lab 4: Workflow end-to-end
+# Workflow end-to-end
 
 Nos labs anteriores você treinou e registrou dois modelos completamente diferentes no mesmo ciclo de vida governado pelo MLflow:
 

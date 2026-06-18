@@ -106,4 +106,4 @@ Essa é a prova final: o modelo foi registrado, o alias foi definido, e agora el
 
 ---
 
-**Próximo passo:** [Lab 4: Workflow end-to-end](../lab-4-end-to-end/index.md)
+**Próximo passo:** [Workflow end-to-end](../lab-4-end-to-end/index.md)

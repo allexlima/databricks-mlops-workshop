@@ -1,4 +1,4 @@
-# Lab 3: Otimizador Pyomo (visão geral)
+# Otimizador Pyomo (visão geral)
 
 Este é o lab central do workshop. Aqui a tese do curso se torna concreta: o MLflow governa o que você tiver, inclusive um modelo de **pesquisa operacional** que nunca viu uma função `fit()`.
 

@@ -1,4 +1,4 @@
-# Lab 5: Verificação (Definition of Done)
+# Verificação (Definition of Done)
 
 `05_verify.py` é o portão final do caminho obrigatório: quatro asserções baseadas em alias que provam, de ponta a ponta, que os dois modelos estão registrados, promovidos e operando juntos como cadeia. Se todos os quatro passarem, o workshop está concluído.
 

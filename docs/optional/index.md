@@ -239,4 +239,4 @@ spark.sql(f"DROP SCHEMA IF EXISTS {CATALOG}.{SCHEMA} CASCADE")
 
 ---
 
-Pronto com os labs opcionais? Volte para [Lab 5: Verificação](../lab-5-verify/index.md) se quiser revisar os checkpoints do caminho principal.
+Pronto com os labs opcionais? Volte para [Verificação](../lab-5-verify/index.md) se quiser revisar os checkpoints do caminho principal.

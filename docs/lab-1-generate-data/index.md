@@ -1,4 +1,4 @@
-# Lab 1: Gerar o conjunto de dados
+# Gerar o conjunto de dados
 
 Todo ciclo de vida de modelos começa com dados. Não dados quaisquer: dados **reprodutíveis, governados e com uma única fonte de verdade**. Sem isso, comparar modelos diferentes é como comparar maçãs com laranjas. Você não sabe se um resultado melhor vem do modelo ou dos dados que ele viu.
 
@@ -212,4 +212,4 @@ O dataset inclui uma coluna `trend_up`, um booleano derivado de `price_next_mont
 
 ---
 
-Próximo passo: [Lab 2: Treinar o forecaster](../lab-2-forecaster/index.md)
+Próximo passo: [Treinar o forecaster](../lab-2-forecaster/index.md)
