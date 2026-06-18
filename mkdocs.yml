@@ -82,10 +82,14 @@ nav:
       - Otimização com Pyomo: conceitos/otimizacao-pyomo.md
   - Environment Setup:
       - Workspace Databricks: setup/workspace.md
-      - Clonar e configurar o repositório: setup/clone-repo.md
-      - Checklist do ambiente: setup/prerequisites.md
+      - Clonar o repositório: setup/clone-repo.md
+      - Configurar e rodar o setup: setup/configure.md
+      - Checklist do ambiente: setup/checklist.md
   - Gerar o conjunto de dados: lab-1-generate-data/index.md
-  - Treinar o forecaster (sklearn): lab-2-forecaster/index.md
+  - Forecaster (sklearn):
+      - Visão geral: lab-2-forecaster/index.md
+      - Tracking com MLflow: lab-2-forecaster/tracking.md
+      - Validation gate e registro: lab-2-forecaster/validation-gate.md
   - MLflow Custom Flavor:
       - Visão geral: lab-3-optimizer/index.md
       - Empacotar como PyFunc: lab-3-optimizer/modelo-pyfunc.md
@@ -95,4 +99,8 @@ nav:
       - Carregar os modelos por @champion: lab-4-end-to-end/carregar-modelos.md
       - Rodar a cadeia e obter a decisão: lab-4-end-to-end/cadeia-decisao.md
   - Verificação: lab-5-verify/index.md
-  - Labs opcionais: optional/index.md
+  - Labs opcionais:
+      - Visão geral: optional/index.md
+      - Forecaster em PyTorch: optional/pytorch-forecaster.md
+      - Model Serving: optional/model-serving.md
+      - Limpeza dos recursos: optional/cleanup.md

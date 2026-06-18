@@ -1,18 +1,9 @@
-# Clonar o repositório e configurar o ambiente
+# Clonar o repositório
 
-Os notebooks do workshop vivem no GitHub. Para rodá-los na Databricks, você vai
-trazer o repositório para dentro do seu workspace como uma **Git folder**: o
-recurso também conhecido como Repos. Esse passo garante que a estrutura de
-pastas do repositório seja preservada, o que é essencial para que o
-`%run ./_config` e o `import workshop_lib` resolvam os caminhos corretamente.
+Com o workspace pronto (passo anterior), o objetivo agora é trazer o repositório para dentro dele. Os notebooks vivem no GitHub; para rodá-los na Databricks, você os clona como uma **Git folder** e escolhe o tipo de compute que vai usar durante o workshop.
 
 !!! note "Conceito"
-    Uma **Git folder** é um clone de um repositório Git que vive dentro do
-    workspace da Databricks. Ela mantém a hierarquia de diretórios idêntica à
-    do repositório remoto. Isso importa porque o `%run ./_config` usa um caminho
-    relativo (`./`), se você importar os notebooks soltos, sem essa estrutura,
-    o Databricks não consegue encontrar o arquivo e o comando falha. Documentação
-    oficial: [Git folders (Repos)](https://docs.databricks.com/en/repos/index.html).
+    Uma **Git folder** é um clone de um repositório Git que vive dentro do workspace da Databricks. Ela mantém a hierarquia de diretórios idêntica à do repositório remoto. Isso importa porque o `%run ./_config` usa um caminho relativo (`./`); se você importar os notebooks soltos, sem essa estrutura, a Databricks não consegue encontrar o arquivo e o comando falha. Documentação oficial: [Git folders (Repos)](https://docs.databricks.com/en/repos/index.html).
 
 ---
 
@@ -85,6 +76,9 @@ O workshop roda em dois tipos de compute. Escolha o seu cenário:
     Documentação oficial:
     [Serverless compute](https://docs.databricks.com/en/compute/serverless/index.html).
 
+    !!! warning "Atenção"
+        Se o compute serverless não aparecer no seletor do notebook, fale com o administrador do workspace ou crie uma conta gratuita na [Databricks Free Edition](https://www.databricks.com/learn/free-edition) (veja a página anterior).
+
     !!! note "Conceito"
         **PEP 723** é um padrão Python que permite declarar dependências de um
         script diretamente no cabeçalho do arquivo, em um bloco de metadados. A
@@ -116,108 +110,9 @@ O workshop roda em dois tipos de compute. Escolha o seu cenário:
 
     !!! warning "Atenção"
         Nunca pule o `%restart_python` após o `%pip install`. Sem ele, o Python
-        continua usando a sessão anterior e as libs novas não são reconhecidas ,
-        o import vai falhar ou silenciosamente usar uma versão antiga.
+        continua usando a sessão anterior e as libs novas não são reconhecidas:
+        o import vai falhar ou usar silenciosamente uma versão antiga.
 
 ---
 
-## 3. Configurar o `_config.py`
-
-O arquivo `_config.py` é o único lugar onde você configura o workshop. Edite
-as duas constantes no topo **uma única vez**: todos os notebooks fazem
-`%run ./_config` e herdam esses valores automaticamente.
-
-Abra o `_config.py` na raiz da Git folder e localize o bloco abaixo:
-
-```python
-# 👉 Set these to a Unity Catalog + schema you can write to. Edit once; every
-# notebook picks it up via `%run ./_config`.
-CATALOG = "main"
-SCHEMA  = "mlops_workshop"
-```
-
-- **`CATALOG`**: nome do catálogo Unity Catalog onde o workshop vai criar seus
-  objetos. O valor padrão é `main`. Troque pelo catálogo ao qual você tem
-  permissão de criar schemas. O catálogo precisa existir previamente, o
-  `00_setup` vai checar isso e mostrar uma mensagem clara se não encontrar.
-- **`SCHEMA`**: nome do schema que o workshop vai criar dentro do catálogo. O
-  padrão `mlops_workshop` funciona bem para a maioria dos casos. Use um nome
-  diferente se quiser isolar sua instância do workshop em um ambiente
-  compartilhado.
-
-A partir dessas duas constantes, o `_config.py` deriva todos os outros nomes
-usados no workshop:
-
-```python
-EXPERIMENT_PATH  = "/Shared/mlops_workshop"
-FORECASTER_MODEL = f"{CATALOG}.{SCHEMA}.price_forecaster"
-OPTIMIZER_MODEL  = f"{CATALOG}.{SCHEMA}.purchase_optimizer"
-DATA_TABLE       = f"{CATALOG}.{SCHEMA}.commodity_monthly"
-VOLUME           = "workshop_files"
-CSV_PATH         = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/commodity_monthly.csv"
-```
-
-!!! tip "Curiosidade"
-    Todos os artefatos de arquivo (datasets CSV, modelos, etc.) são gravados em
-    um **UC Volume** (`/Volumes/{catalog}/{schema}/workshop_files/…`), nunca em
-    `/dbfs/`. O DBFS FUSE não está disponível no compute serverless, usar
-    Volumes é a forma correta e portável de armazenar arquivos na Databricks
-    moderna. Saiba mais sobre o
-    [MLflow no Databricks](https://docs.databricks.com/en/mlflow/index.html).
-
-!!! info "📸 Screenshot"
-    *Reservado:* o arquivo `_config.py` aberto no editor do workspace, com as
-    linhas `CATALOG` e `SCHEMA` destacadas no topo e os nomes derivados visíveis
-    abaixo.
-
-!!! warning "Atenção"
-    Não inclua o nome do catálogo em variáveis hardcoded em nenhuma célula de
-    notebook, sempre use as constantes do `_config`. Isso garante que o
-    workshop funcione em qualquer workspace sem edições espalhadas.
-
----
-
-## 4. Rodar o `00_setup.py`
-
-Com o `_config.py` configurado, abra o notebook `00_setup.py` e execute todas
-as células em ordem. O que ele faz, passo a passo:
-
-1. **`%run ./_config`**: carrega todas as constantes do `_config.py` no
-   escopo da sessão.
-2. **`mlflow.set_registry_uri("databricks-uc")`**: aponta o MLflow para o
-   Unity Catalog como registry, em vez do registry legado do workspace.
-3. **Verifica que o catálogo existe**: faz um `SHOW CATALOGS` e interrompe
-   com uma mensagem clara se `CATALOG` não for encontrado. O `00_setup` nunca
-   tenta criar o catálogo, isso requer privilégios de admin e depende de
-   configurações de storage que variam por workspace.
-4. **Cria o schema e o volume**: `CREATE SCHEMA IF NOT EXISTS` e
-   `CREATE VOLUME IF NOT EXISTS`, ambos idempotentes (seguro re-executar).
-5. **Registra o experimento MLflow**: `mlflow.set_experiment(EXPERIMENT_PATH)`
-   garante que todos os labs loguem runs no mesmo experimento, facilitando
-   comparações na UI de Experiments.
-6. **Imprime a confirmação final**: `Setup complete. Using <catalog>.<schema>.`
-
-!!! info "📸 Screenshot"
-    *Reservado:* a saída do `00_setup.py` no workspace mostrando a linha
-    `Setup complete. Using main.mlops_workshop.` e, ao lado, o Catalog Explorer
-    com o schema `mlops_workshop` e o volume `workshop_files` recém-criados.
-
-!!! warning "Atenção"
-    Se o `assert` do catálogo falhar, a mensagem vai listar os catálogos
-    disponíveis para você. Basta atualizar o `CATALOG` no `_config.py` para um
-    catálogo da lista e re-executar o `00_setup`.
-
-!!! success "Pronto quando..."
-    O `00_setup.py` imprime a linha:
-
-    ```
-    Setup complete. Using <catálogo>.<schema>.
-    ```
-
-    Isso confirma que o MLflow está apontado para o Unity Catalog, o schema e o
-    volume existem, e o experimento foi registrado. Você está pronto para
-    começar os labs.
-
----
-
-Próximo passo: [Checklist do ambiente](prerequisites.md)
+**Próximo passo:** [Configurar e rodar o setup](configure.md)

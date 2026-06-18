@@ -1,6 +1,6 @@
 # Otimização (pesquisa operacional) com Pyomo e HiGHS
 
-Quando alguém diz "modelo", a primeira imagem costuma ser de dados de treino, uma função de perda e um `fit()`. Mas existe uma família inteira de modelos que **não aprendem**: eles **decidem**. Esta página explica como essa família funciona, como o Pyomo a expressa em Python, e por que ela cabe perfeitamente no mesmo ciclo de vida MLflow que qualquer modelo de ML.
+Quando alguém diz "modelo", a primeira imagem costuma ser de dados de treino, uma função de perda e um `fit()`. Mas existe uma família inteira de modelos que **não aprendem**: eles **decidem**. Esta página explica como essa família funciona, como o Pyomo a expressa em Python e por que ela cabe perfeitamente no mesmo ciclo de vida MLflow que qualquer modelo de ML.
 
 ---
 
@@ -174,7 +174,7 @@ Alguns detalhes importantes:
 
 **`result.solution_loader.load_vars()`**: só é chamado quando o status é "optimal". Carrega os valores ótimos nas variáveis `m.q` e `m.leftover` para que `pyo.value()` funcione.
 
-**`predicted_price` não entra no solver**: note que `predicted_price` é recebido como parâmetro mas **não é usado diretamente nas restrições ou na função objetivo** do modelo de uma única linha de código acima. Ele está disponível no contexto do `predict()` da `PurchaseOptimizerModel` para possíveis extensões futuras (por exemplo, modelar o risco de variação de preço). Quem de fato entra na função objetivo é `purchase_cost`, que representa o preço de compra do período.
+**`predicted_price` não entra no solver**: note que `predicted_price` é recebido como parâmetro mas **não é usado diretamente nas restrições ou na função objetivo** do modelo mostrado acima. Ele fica disponível no contexto do `predict()` da `PurchaseOptimizerModel` para possíveis extensões futuras (por exemplo, modelar o risco de variação de preço). Quem de fato entra na função objetivo é `purchase_cost`, que representa o preço de compra do período.
 
 ---
 
@@ -198,55 +198,9 @@ No workshop, isso pode acontecer se o `budget` for muito baixo para atender a `d
 
 ## De solver a MLflow PyFunc
 
-O Pyomo resolve o problema, mas como esse modelo vive no Unity Catalog junto com o forecaster sklearn? É aí que entra o `PurchaseOptimizerModel`:
+O Pyomo resolve o problema, mas como esse modelo vive no Unity Catalog junto com o forecaster sklearn? A resposta é o `PurchaseOptimizerModel` (definido em `workshop_lib.py`): uma classe que adapta a interface do solver ao contrato PyFunc, recebendo um DataFrame, chamando `solve_purchase` linha a linha e devolvendo um DataFrame com a decisão. O registro e a promoção ao alias `@champion` seguem o mesmo padrão do forecaster sklearn. O detalhe crucial é o `code_paths=["./workshop_lib.py"]`: o solver é empacotado dentro do artefato do modelo no Unity Catalog e estará disponível onde quer que o modelo seja carregado, sem depender do caminho do workspace.
 
-```python
-class PurchaseOptimizerModel(mlflow.pyfunc.PythonModel):
-    def predict(self, context, model_input: pd.DataFrame, params=None) -> pd.DataFrame:
-        rows = [
-            solve_purchase(
-                predicted_price=r["predicted_price"],
-                holding_cost=r["holding_cost"],
-                purchase_cost=r["purchase_cost"],
-                demand=r["demand"],
-                capacity=r["capacity"],
-                budget=r["budget"],
-            )
-            for _, r in model_input.iterrows()
-        ]
-        return pd.DataFrame(rows, columns=["purchase_qty", "total_cost", "status"])
-```
-
-A classe não tem `fit()`, não tem parâmetros aprendidos, não tem artefatos de treino. O que ela faz é simplesmente **adaptar** a interface do solver ao contrato PyFunc: recebe um DataFrame, processa linha a linha, devolve um DataFrame. Isso é suficiente para o MLflow tratá-la como qualquer outro modelo.
-
-No `03_register_optimizer_pyomo.py`, o log e o registro seguem o mesmo padrão do Lab 2:
-
-```python
-with mlflow.start_run(run_name="pyomo_optimizer"):
-    info = mlflow.pyfunc.log_model(
-        name="model",
-        python_model=wl.PurchaseOptimizerModel(),
-        code_paths=["./workshop_lib.py"],          # solver empacotado junto
-        pip_requirements=["pyomo>=6.7", "highspy>=1.7", "pandas>=2.0"],
-        input_example=example,
-        signature=signature,
-        registered_model_name=OPTIMIZER_MODEL,     # {catalog}.{schema}.purchase_optimizer
-    )
-
-client.set_registered_model_alias(OPTIMIZER_MODEL, "champion", info.registered_model_version)
-```
-
-Note o `code_paths=["./workshop_lib.py"]`: o arquivo `workshop_lib.py` é empacotado **dentro do artefato do modelo** no Unity Catalog. Quando o modelo é carregado em outro notebook ou em Model Serving, o solver está disponível, sem depender do caminho do workspace.
-
-A carga posterior usa o alias `@champion`, igualzinho ao forecaster:
-
-```python
-opt = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
-resultado = opt.predict(example)
-```
-
-!!! note "Conceito"
-    **PyFunc** é a abstração genérica do MLflow para qualquer coisa que responda à interface `predict(context, model_input, params)`. Ela existe exatamente para casos como este: modelos que não cabem em nenhum flavor nativo (sklearn, pytorch, etc.), mas que precisam de versionamento, governança e serving. Veja mais em [PyFunc e modelos customizados](pyfunc-modelos-customizados.md).
+O contrato completo do PyFunc, a assinatura `predict`, o `log_model` no MLflow 3.x e a serialização com cloudpickle estão detalhados em [PyFunc e modelos customizados](pyfunc-modelos-customizados.md).
 
 ---
 
@@ -263,4 +217,6 @@ A tese central do workshop é: **"o MLflow governa o que você tiver, inclusive 
 ## Próximos passos
 
 - [PyFunc e modelos customizados](pyfunc-modelos-customizados.md): entenda o contrato PyFunc que torna isso possível.
-- [O otimizador Pyomo como modelo customizado](../lab-3-optimizer/index.md): execute `03_register_optimizer_pyomo.py` passo a passo.
+- [Otimizador Pyomo como PyFunc](../lab-3-optimizer/index.md): execute `03_register_optimizer_pyomo.py` passo a passo.
+
+Pronto para começar o caminho obrigatório? [Configure o ambiente de trabalho](../setup/workspace.md) e siga a trilha dos labs.

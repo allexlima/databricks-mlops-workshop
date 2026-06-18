@@ -14,7 +14,7 @@ conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
 </div>
 
 Bem-vindo(a)! Este workshop ensina o **ciclo de vida de modelos de ML com MLflow**,
-do rastreamento de experimentos à promoção governada em produção, usando o
+do rastreamento de experimentos à promoção governada em produção, usando a
 Databricks como plataforma. A ciência de dados é o **veículo**, não o destino.
 
 Para deixar esse ciclo concreto, seguimos a **AnyCompany**, uma empresa fictícia que
@@ -34,13 +34,13 @@ mês, e então *otimizar a decisão de compra* com base nessa previsão.
 ## A tese do workshop
 
 A maioria dos tutoriais de MLflow mostra modelos scikit-learn ou PyTorch, casos
-nos quais o fluxo `fit → log → register` é natural. A pergunta interessante é outra:
+em que o fluxo `fit → log → register` é natural. A pergunta interessante é outra:
 
 > **E quando o modelo não tem `fit()`?**
 
 Um solver de pesquisa operacional, por exemplo, não é treinado em dados: ele
-*resolve* um problema de otimização matemática a cada chamada. Ainda assim, ele
-precisa ser versionado, validado, promovido e composto com outros modelos.
+*resolve* um problema de otimização matemática a cada chamada. Mesmo assim, precisa
+ser versionado, validado, promovido e composto com outros modelos.
 
 !!! quote ""
     **O MLflow governa o que você tiver, inclusive um modelo de pesquisa operacional
@@ -121,6 +121,15 @@ Ao final do workshop, você será capaz de:
 
 ## A trilha do workshop
 
+!!! info "Como funcionam os labs"
+    Cada página de lab corresponde a um notebook e guia você na execução. O caminho
+    obrigatório são seis notebooks (`00` a `05`); os labs opcionais acrescentam uma
+    variante em PyTorch, *serving* de modelo e a limpeza dos recursos. Todos os
+    notebooks usam um dataset sintético com semente fixa; cada re-execução produz
+    os mesmos resultados.
+
+Antes de começar os labs, [configure o ambiente de trabalho](setup/workspace.md).
+
 <div class="grid cards" markdown>
 
 -   :material-database-cog:{ .lg } __Gerar o conjunto de dados__
@@ -175,18 +184,11 @@ Ao final do workshop, você será capaz de:
 
 ## Para quem é
 
-- **Público:** pessoas usuárias de Databricks em nível básico-intermediário, com pouca
+- **Público:** profissionais da Databricks em nível básico-intermediário, com pouca
   experiência em MLOps.
 - **Duração:** ~3 horas.
 - **Computação:** *serverless* (recomendado) ou um cluster clássico com Databricks
   Runtime ML.
-
-!!! info "Como funcionam os labs"
-    Cada página de lab corresponde a um notebook e guia você na execução. O caminho
-    obrigatório são seis notebooks (`00` a `05`); os labs opcionais acrescentam uma
-    variante em PyTorch, *serving* de modelo e a limpeza dos recursos. Todos os
-    notebooks usam um dataset sintético com semente fixa; cada re-execução produz
-    os mesmos resultados.
 
 !!! warning "Atenção"
     O catálogo Unity Catalog (`main` por padrão) precisa existir antes de executar

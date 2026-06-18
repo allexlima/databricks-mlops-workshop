@@ -36,7 +36,7 @@ Cada argumento tem um papel preciso:
     O parâmetro `params=None` foi adicionado na MLflow 2.6 e é **obrigatório na assinatura** nas versões 3.x.
     Mesmo que você não use params, declare-o. Sem ele, o serving pode falhar ao passar configurações extras.
 
-No workshop, o `PurchaseOptimizerModel` em `workshop_lib.py` usa `model_input` para receber as seis variáveis do problema de compra e ignora `context` e `params` porque o solver não precisa de arquivos externos:
+No workshop, o `PurchaseOptimizerModel` em `workshop_lib.py` usa `model_input` para receber as seis variáveis do problema de compra e ignora `context` e `params` porque o solver não precisa de arquivos externos (veja o modelo de otimização em [Otimização com Pyomo](otimizacao-pyomo.md)):
 
 ```python
 class PurchaseOptimizerModel(mlflow.pyfunc.PythonModel):
@@ -85,7 +85,7 @@ Os parâmetros mais importantes:
 
 **`python_model`**: a instância da sua classe. O MLflow serializa o objeto com `cloudpickle` e o empacota no artefato do run.
 
-**`code_paths`**: lista de arquivos `.py` (ou diretórios) que o modelo precisa em tempo de execução. No notebook `03_register_optimizer_pyomo.py`, `workshop_lib.py` é declarado aqui porque `PurchaseOptimizerModel.predict` chama `solve_purchase`, que está definida nesse arquivo. Sem `code_paths`, o modelo seria registrado mas falharia ao ser carregado em outro ambiente.
+**`code_paths`**: lista de arquivos `.py` (ou diretórios) de que o modelo precisa em tempo de execução. No notebook `03_register_optimizer_pyomo.py`, `workshop_lib.py` é declarado aqui porque `PurchaseOptimizerModel.predict` chama `solve_purchase`, que está definida nesse arquivo. Sem `code_paths`, o modelo seria registrado mas falharia ao ser carregado em outro ambiente.
 
 **`pip_requirements`**: dependências Python declaradas explicitamente. O MLflow as inclui no `MLmodel` e as instala automaticamente quando o modelo é servido ou carregado em outro ambiente.
 
@@ -191,5 +191,7 @@ Isso tem uma consequência importante: **qualquer ferramenta que entende PyFunc 
 
 ## Próximos passos
 
-- Veja a implementação completa no **Lab 3**: [Registrar o optimizer](../lab-3-optimizer/index.md)
+- Veja a implementação completa em [Registrar o optimizer](../lab-3-optimizer/index.md)
 - Para entender a lógica do problema de otimização em si (o modelo Pyomo, as restrições, o solver HiGHS): [Otimização com Pyomo](otimizacao-pyomo.md)
+
+Pronto para começar o caminho obrigatório? [Configure o ambiente de trabalho](../setup/workspace.md) e siga a trilha dos labs.

@@ -1,6 +1,6 @@
 # Empacotar o otimizador como PyFunc
 
-Esta página acompanha `03_register_optimizer_pyomo.py` e cobre os dois primeiros grandes passos do notebook: **formular e resolver o problema** com Pyomo, e **empacotar o solver** como um `mlflow.pyfunc.PythonModel`.
+Na visão geral desta etapa você entendeu por que o Pyomo exige o PyFunc como caminho de registro. Esta página acompanha `03_register_optimizer_pyomo.py` e cobre os dois primeiros grandes passos do notebook: **formular e resolver o problema** com Pyomo e **empacotar o solver** como um `mlflow.pyfunc.PythonModel`.
 
 ---
 
@@ -43,7 +43,7 @@ def solve_purchase(predicted_price, holding_cost, purchase_cost,
 | Elemento               | Papel na formulação                                                         |
 |------------------------|-----------------------------------------------------------------------------|
 | `m.q`                  | Quantidade a comprar (variável de decisão principal, ≥ 0)                   |
-| `m.leftover`           | Estoque gerado se `q > demand`; captura o custo de holding                 |
+| `m.leftover`           | Estoque gerado se `q > demand`; captura o custo de holding                  |
 | `m.meet_demand`        | Restrição hard: não há opção de falta (`q ≥ demand`)                        |
 | `m.capacity`           | Restrição hard: limite físico de armazenagem (`q ≤ capacity`)               |
 | `m.budget`             | Restrição hard: orçamento disponível (`purchase_cost × q ≤ budget`)         |
@@ -51,17 +51,17 @@ def solve_purchase(predicted_price, holding_cost, purchase_cost,
 | `m.obj`                | Minimizar `purchase_cost × q + holding_cost × leftover`                     |
 
 !!! note "Conceito"
-    **Por que modelar `leftover` explicitamente?** Se o modelo comprasse exatamente `demand`, o custo de holding seria sempre zero e `leftover` seria desnecessário. Mas se comprar mais do que a demanda for preferível (p.ex. preço hoje mais barato que amanhã), o otimizador vai considerar isso e o `holding_cost` encarece a folga. A variável `leftover` e a restrição `m.leftover_def` capturam esse trade-off de forma linear. Sem ela, o custo de holding não entraria na função objetivo.
+    **Por que modelar `leftover` explicitamente?** Se o modelo comprasse exatamente `demand`, o custo de holding seria sempre zero e `leftover` seria desnecessário. Mas se comprar mais do que a demanda for preferível (p. ex. o preço de hoje ser mais barato que o de amanhã), o otimizador levará isso em conta e o `holding_cost` encarece a folga. A variável `leftover` e a restrição `m.leftover_def` capturam esse trade-off de forma linear. Sem ela, o custo de holding não entraria na função objetivo.
 
 ### HiGHS via APPSI: por que essa combinação
 
-O Pyomo oferece várias interfaces de solver. A **APPSI** (Auto-Persistent Pyomo Solver Interface) é a mais moderna: ela mantém o solver em memória entre chamadas consecutivas, evitando o overhead de serializar/desserializar o modelo a cada solve. Para o workshop, que resolve um modelo por linha de DataFrame, isso simplifica o código e é performático o suficiente.
+O Pyomo oferece várias interfaces de solver. A **APPSI** (Auto-Persistent Pyomo Solver Interface) é a mais moderna: ela mantém o solver em memória entre chamadas consecutivas, evitando o overhead de serializar e desserializar o modelo a cada solve. Para o workshop, que resolve um modelo por linha de DataFrame, isso simplifica o código e é suficientemente performático.
 
 O **HiGHS** foi escolhido por ser:
 
-- **Pure-pip**: `pip install highspy` é tudo que precisa. Nenhum binário externo, nenhuma variável de ambiente, nenhuma licença.
+- **Pure-pip**: `pip install highspy` é tudo que é necessário. Nenhum binário externo, nenhuma variável de ambiente, nenhuma licença.
 - **Performático**: solver de PL e MIP de nível profissional, competitivo com opções comerciais em instâncias de médio porte.
-- **Serverless-friendly**: sem dependências do sistema operacional, roda no Serverless da Databricks sem configuração adicional.
+- **Serverless-friendly**: sem dependências do sistema operacional, roda no compute serverless da Databricks sem configuração adicional.
 
 ```python
 opt = Highs()
@@ -70,7 +70,7 @@ result = opt.solve(m)
 ```
 
 !!! warning "Atenção"
-    **`load_solution = False` é fundamental.** Por padrão, o HiGHS via APPSI lança uma exceção quando o problema é inviável (p.ex. `budget` tão pequeno que nem a demanda mínima cabe no orçamento). Com `load_solution = False`, o solver retorna normalmente e você verifica `result.termination_condition` para decidir o que fazer. O `solve_purchase` checa a string de status e retorna `{"status": "infeasible", "purchase_qty": NaN, "total_cost": NaN}` de forma limpa, sem stack trace e sem colapso do pipeline.
+    **`load_solution = False` é fundamental.** Por padrão, o HiGHS via APPSI lança uma exceção quando o problema é inviável (p. ex. `budget` tão pequeno que nem a demanda mínima cabe no orçamento). Com `load_solution = False`, o solver retorna normalmente e você verifica `result.termination_condition` para decidir o que fazer. O `solve_purchase` checa a string de status e retorna `{"status": "infeasible", "purchase_qty": NaN, "total_cost": NaN}` de forma limpa, sem stack trace e sem colapso do pipeline.
 
 ### Infeasibilidade tratada de forma explícita
 
@@ -88,13 +88,13 @@ return {
 }
 ```
 
-Problemas inviáveis são realidade operacional: um mês com budget muito apertado, uma capacidade de armazenagem abaixo da demanda contratada. O modelo não esconde isso. Retorna `NaN` e `status="infeasible"` para que o chamador tome a decisão correta.
+Problemas inviáveis são realidade operacional: um mês com orçamento muito apertado, uma capacidade de armazenagem abaixo da demanda contratada. O modelo não esconde isso. Retorna `NaN` e `status="infeasible"` para que o chamador tome a decisão correta.
 
 ---
 
 ## O wrapper PyFunc: `PurchaseOptimizerModel`
 
-Para que o MLflow possa serializar, registrar, versionar e servir o otimizador como qualquer outro modelo, ele precisa implementar a interface **`mlflow.pyfunc.PythonModel`**:
+Para que o MLflow possa serializar, registrar, versionar e servir o otimizador como qualquer outro modelo, é necessário implementar a interface **`mlflow.pyfunc.PythonModel`**:
 
 ```python
 class PurchaseOptimizerModel(mlflow.pyfunc.PythonModel):
@@ -125,16 +125,16 @@ Essa assinatura é o contrato do MLflow 3.x para qualquer PyFunc customizado. Tr
 | `params`       | Parâmetros opcionais de inferência (não usados aqui, mas a assinatura é obrigatória) |
 
 !!! note "Conceito"
-    **Por que um DataFrame de entrada, não escalares?** O PyFunc é uma interface de *batch*: ele aceita múltiplos exemplos de uma vez. Aqui, cada linha do DataFrame representa um mês de decisão independente. O `predict` itera pelas linhas e chama `solve_purchase` para cada uma, o que torna o otimizador compatível com Model Serving (que envia batches) e com o Lab 4 (que pode compor várias decisões de uma vez).
+    **Por que um DataFrame de entrada, e não escalares?** O PyFunc é uma interface de *batch*: ele aceita múltiplos exemplos de uma vez. Aqui, cada linha do DataFrame representa um mês de decisão independente. O `predict` itera pelas linhas e chama `solve_purchase` para cada uma, o que torna o otimizador compatível com Model Serving (que envia batches) e com o `04_end_to_end.py` (que pode compor várias decisões de uma vez).
 
 !!! tip "Curiosidade"
-    O `PurchaseOptimizerModel` não tem `__init__` nem estado interno. O solver Pyomo é instanciado dentro de `solve_purchase` a cada chamada. Essa escolha é intencional: evita problemas de serialização (o MLflow vai fazer pickle da instância) e garante que cada solve começa de um modelo limpo. Em produção, para alta frequência de chamadas, você poderia manter o solver em memória no `__init__` e usar a persistência da APPSI.
+    O `PurchaseOptimizerModel` não tem `__init__` nem estado interno. O solver Pyomo é instanciado dentro de `solve_purchase` a cada chamada. Essa escolha é intencional: evita problemas de serialização (o MLflow fará pickle da instância) e garante que cada solve começa com um modelo limpo. Em produção, para alta frequência de chamadas, você poderia manter o solver em memória no `__init__` e aproveitar a persistência da APPSI.
 
 ---
 
 ## Rodando o exemplo antes de registrar
 
-O notebook constrói um exemplo canônico e chama `.predict()` diretamente, antes de qualquer `log_model`:
+O notebook constrói um exemplo canônico e chama `.predict()` diretamente, antes de qualquer chamada a `log_model`:
 
 ```python
 example = pd.DataFrame([{
@@ -162,9 +162,9 @@ print(sample_out)
     |-------------:|-----------:|:--------|
     | 100.0        | 20 000.0   | optimal |
 
-    O solver escolhe exatamente `demand = 100` unidades: comprar mais adicionaria custo de holding sem benefício. O mínimo viável é o ótimo.
+    O solver escolhe exatamente `demand = 100` unidades: comprar mais acrescentaria custo de holding sem benefício. O mínimo viável é o ótimo.
 
-Esse passo tem duas funções: confirma que o ambiente está correto (Pyomo + highspy instalados e funcionais) e gera o `sample_out` que será usado para inferir a `signature` do modelo.
+Esse passo tem duas funções: confirmar que o ambiente está correto (Pyomo + highspy instalados e funcionais) e gerar o `sample_out` que será usado para inferir a `signature` do modelo.
 
 ---
 
