@@ -32,6 +32,22 @@
   --db-sidebar-bg: transparent;            /* oat page shows through */
   --db-active-tint: rgba(255, 54, 33, 0.09);
   --db-search-bg: rgba(27, 49, 57, 0.06);
+  /* surfaces (content card + grid cards) */
+  --db-card-bg: #fff;
+  --db-card-border: rgba(27, 49, 57, 0.10);
+  --db-card-lift: #fff;
+  --db-card-lift-border: rgba(27, 49, 57, 0.12);
+  --db-card-shadow: rgba(27, 49, 57, 0.06);
+  --db-card-shadow-hover: rgba(27, 49, 57, 0.10);
+  /* hero */
+  --db-hero-bg: linear-gradient(135deg, #ffffff 0%, #f3ede6 100%);
+  --db-hero-fg: var(--db-navy);
+  --db-hero-fg-muted: #3c4a4f;
+  --db-hero-border: rgba(27, 49, 57, 0.12);
+  --db-badge-bg: rgba(27, 49, 57, 0.06);
+  --db-badge-border: rgba(27, 49, 57, 0.18);
+  --db-badge-fg: var(--db-navy);
+  --db-rule-neutral: var(--db-navy);   /* neutral admonition accent */
 }
 
 /* ---- Dark scheme (slate): navy chrome, white logo ---- */
@@ -46,8 +62,24 @@
   --db-chrome-muted: #cdd6da;
   --db-chrome-border: rgba(255, 255, 255, 0.10);
   --db-sidebar-bg: var(--db-navy);
-  --db-active-tint: rgba(255, 54, 33, 0.14);
+  --db-active-tint: rgba(255, 54, 33, 0.18);
   --db-search-bg: rgba(255, 255, 255, 0.10);
+  /* surfaces (content card + grid cards) — mirror light, dark palette */
+  --db-card-bg: #16252b;
+  --db-card-border: rgba(255, 255, 255, 0.08);
+  --db-card-lift: #1e333b;
+  --db-card-lift-border: rgba(255, 255, 255, 0.13);
+  --db-card-shadow: rgba(0, 0, 0, 0.30);
+  --db-card-shadow-hover: rgba(0, 0, 0, 0.45);
+  /* hero */
+  --db-hero-bg: linear-gradient(135deg, #1b3139 0%, #25434c 100%);
+  --db-hero-fg: #ffffff;
+  --db-hero-fg-muted: #e6ecee;
+  --db-hero-border: rgba(255, 255, 255, 0.08);
+  --db-badge-bg: rgba(255, 255, 255, 0.10);
+  --db-badge-border: rgba(255, 255, 255, 0.22);
+  --db-badge-fg: #ffffff;
+  --db-rule-neutral: #6f96a3;           /* steel — visible on dark card */
 }
 
 /* ============================ Chrome ====================================== */
@@ -102,7 +134,12 @@
    title so section labels are untouched). */
 .md-sidebar--primary .md-nav--primary > .md-nav__title { display: none; }
 .md-sidebar--primary .md-nav__item--section > .md-nav__link { color: var(--db-chrome-fg); font-weight: 700; }
-.md-sidebar--primary .md-nav__link { color: var(--db-chrome-muted); padding-left: 0.7rem; }
+.md-sidebar--primary .md-nav__link {
+  color: var(--db-chrome-muted);
+  padding-left: 1.1rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
 .md-sidebar--primary .md-nav__link:hover { color: var(--db-chrome-fg); }
 
 /* Active sidebar item: Lava left-bar + faint tint (AWS-style).
@@ -122,14 +159,15 @@
 
 /* ============================ Content card ================================ */
 
-/* White reading panel floating on the Oat background */
-[data-md-color-scheme="default"] .md-content {
-  background-color: #fff;
-  border: 1px solid rgba(27, 49, 57, 0.10);
+/* Reading panel floating on the page background — same layout both schemes,
+   only the surface palette changes (white-on-oat / dark-on-deep). */
+.md-content {
+  background-color: var(--db-card-bg);
+  border: 1px solid var(--db-card-border);
   border-radius: var(--db-radius);
-  box-shadow: 0 1px 3px rgba(27, 49, 57, 0.06);
+  box-shadow: 0 1px 3px var(--db-card-shadow);
 }
-[data-md-color-scheme="default"] .md-content__inner { padding: 0 1.4rem 1.4rem; }
+.md-content__inner { padding: 0 1.4rem 1.4rem; }
 
 /* ============================ Typography ================================== */
 
@@ -174,12 +212,12 @@
 /* Colored left border + tinted panel, brand palette. */
 .md-typeset .admonition,
 .md-typeset details {
-  border-left: 4px solid var(--db-navy);
+  border-left: 4px solid var(--db-rule-neutral);
   box-shadow: none;
 }
 .md-typeset .admonition.info, .md-typeset details.info,
 .md-typeset .admonition.note, .md-typeset details.note {
-  border-left-color: var(--db-navy);
+  border-left-color: var(--db-rule-neutral);
 }
 .md-typeset .admonition.success, .md-typeset details.success {
   border-left-color: #1f7a4d;
@@ -191,7 +229,7 @@
   border-left-color: var(--db-lava-link);
 }
 .md-typeset .admonition.quote, .md-typeset details.quote {
-  border-left-color: var(--db-navy);
+  border-left-color: var(--db-rule-neutral);
 }
 
 /* ============================ Big footer nav buttons ===================== */
@@ -210,20 +248,14 @@
 
 /* ============================ Grid cards ================================== */
 .md-typeset .grid.cards > ul > li {
-  border: 1px solid rgba(27, 49, 57, 0.12);
+  background-color: var(--db-card-lift);
+  border: 1px solid var(--db-card-lift-border);
   padding: 1rem 1.1rem;
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-[data-md-color-scheme="default"] .md-typeset .grid.cards > ul > li {
-  background-color: #fff;
-}
-[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
-  background-color: #16252b;
-  border-color: rgba(255, 255, 255, 0.12);
-}
 .md-typeset .grid.cards > ul > li:hover {
   border-color: var(--db-lava);
-  box-shadow: 0 6px 18px rgba(27, 49, 57, 0.10);
+  box-shadow: 0 6px 18px var(--db-card-shadow-hover);
   transform: translateY(-2px);
 }
 .md-typeset .grid.cards .twemoji { color: var(--db-lava); }
@@ -233,26 +265,28 @@
 
 /* ============================ Hero (home) ================================ */
 .db-hero {
-  background: linear-gradient(135deg, var(--db-navy) 0%, #25434c 100%);
-  color: #fff;
+  background: var(--db-hero-bg);
+  color: var(--db-hero-fg);
+  border: 1px solid var(--db-hero-border);
+  border-left: 4px solid var(--db-lava);
   border-radius: var(--db-radius);
   padding: 2rem 1.8rem;
   margin: 0 0 1.4rem;
 }
-.db-hero h1 { color: #fff !important; margin: 0 0 0.4rem; border: 0; }
-.db-hero p { color: #e6ecee; margin: 0.3rem 0 0.9rem; }
+.db-hero h1 { color: var(--db-hero-fg) !important; margin: 0 0 0.4rem; border: 0; }
+.db-hero p { color: var(--db-hero-fg-muted); margin: 0.3rem 0 0.9rem; }
 .db-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .db-badge {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: #fff;
+  background: var(--db-badge-bg);
+  border: 1px solid var(--db-badge-border);
+  color: var(--db-badge-fg);
   font-size: 0.74rem;
   font-weight: 600;
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
 }
-.db-badge--lava { background: var(--db-lava); border-color: var(--db-lava); }
+.db-badge--lava { background: var(--db-lava); border-color: var(--db-lava); color: #fff; }
 
 /* Center diagrams */
 .md-typeset img[src$=".svg"] { display: block; margin: 1.4rem auto; }

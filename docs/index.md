@@ -1,9 +1,21 @@
+<div class="db-hero" markdown>
+
 # Workshop de MLOps no Databricks
 
-Bem-vindo(a)! Neste workshop você vai aprender, na prática, o **ciclo de vida de
-modelos com MLflow** no Databricks: rastreamento de experimentos, o registro de modelos
-no Unity Catalog, portões de validação, promoção por *alias* e a composição de modelos
-em um pipeline governado.
+Aprenda, na prática, o **ciclo de vida de modelos com MLflow** no Databricks — um
+conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
+
+<span class="db-badges">
+<span class="db-badge db-badge--lava">⏱ ~3 horas</span>
+<span class="db-badge">Nível básico–intermediário</span>
+<span class="db-badge">Serverless / DBR ML</span>
+</span>
+
+</div>
+
+Bem-vindo(a)! Você vai cobrir rastreamento de experimentos, o registro de modelos no
+Unity Catalog, portões de validação, promoção por *alias* e a composição de modelos em
+um pipeline governado.
 
 Aqui a ciência de dados é o **veículo**, não o destino. O foco é o ciclo de vida — e
 para deixá-lo concreto, seguimos uma empresa fictícia, a **AnyCompany**, que compra uma
