@@ -168,17 +168,17 @@
 .md-footer-meta { background-color: var(--db-navy-deep); }
 
 /* Copyright + authors block (legal notice + workshop authors) */
-/* Center the whole footer meta (copyright + generator) */
+/* Footer meta (copyright + generator), left-aligned */
 .md-footer-meta__inner {
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.2rem;
   padding: 0.7rem 0.8rem;
 }
 .md-footer-meta .md-copyright {
   width: 100%;
   line-height: 1.6;
-  text-align: center;
+  text-align: left;
 }
 .md-footer-authors { display: inline-block; color: #94a2a8; font-weight: 400; font-size: 0.58rem; }
 .md-footer-authors a { color: #cdd6da; }

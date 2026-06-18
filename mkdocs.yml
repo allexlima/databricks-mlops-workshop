@@ -14,7 +14,7 @@ copyright: >-
   <span class="md-footer-legal">&copy; 2026 Databricks, Inc. All rights reserved.
   Databricks, the Databricks logo, and Unity Catalog are trademarks of Databricks,
   Inc. Apache, Apache Spark, Spark, and the Spark logo are trademarks of the Apache
-  Software Foundation. All other trademarks are the property of their respective
+  Software Foundation.<br>All other trademarks are the property of their respective
   owners. Educational material; not official Databricks documentation.</span>
 
 theme:
