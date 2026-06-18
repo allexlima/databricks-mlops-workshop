@@ -85,7 +85,7 @@ nav:
       - Pré-requisitos: setup/prerequisites.md
   - Gerar o conjunto de dados: lab-1-generate-data/index.md
   - Treinar o forecaster (sklearn): lab-2-forecaster/index.md
-  - Otimizador Pyomo (destaque):
+  - MLflow Custom Flavor:
       - Visão geral: lab-3-optimizer/index.md
       - Empacotar como PyFunc: lab-3-optimizer/modelo-pyfunc.md
       - Registrar e promover a @champion: lab-3-optimizer/registrar-promover.md
