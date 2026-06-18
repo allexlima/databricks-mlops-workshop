@@ -167,6 +167,31 @@
 .md-footer { background-color: var(--db-navy); }
 .md-footer-meta { background-color: var(--db-navy-deep); }
 
+/* Copyright + authors block (legal notice + workshop authors) */
+/* Center the whole footer meta (copyright + generator) */
+.md-footer-meta__inner {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.7rem 0.8rem;
+}
+.md-footer-meta .md-copyright {
+  width: 100%;
+  line-height: 1.6;
+  text-align: center;
+}
+.md-footer-authors { display: inline-block; color: #fff; font-weight: 600; font-size: 0.66rem; }
+.md-footer-made { display: inline-block; margin-top: 0.15rem; color: #aab6bb; font-size: 0.58rem; }
+.md-footer-legal {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: #7e8c92;
+  font-size: 0.5rem;
+  line-height: 1.5;
+}
+.md-copyright a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+.md-copyright a:hover { color: var(--db-lava); }
+
 /* ============================ Content card ================================ */
 
 /* Reading panel floating on the page background — same layout both schemes,

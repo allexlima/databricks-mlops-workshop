@@ -3,6 +3,19 @@ site_description: Ciclo de vida de modelos com MLflow na Databricks. Um conjunto
 repo_url: https://github.com/allexlima/databricks-mlops-workshop
 repo_name: allexlima/databricks-mlops-workshop
 edit_uri: ""
+copyright: >-
+  <span class="md-footer-authors">Authored by
+  <a href="https://www.linkedin.com/in/allexlimas/" target="_blank" rel="noopener">Allex Lima</a>,
+  <a href="https://www.linkedin.com/in/rampim/" target="_blank" rel="noopener">Lucas Rampim</a>,
+  and <a href="https://www.linkedin.com/in/lfbraz/" target="_blank" rel="noopener">Luiz Braz</a>
+  &middot; Databricks LATAM SSA Team</span><br>
+  <span class="md-footer-made">Made with
+  <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">Material for MkDocs</a></span><br>
+  <span class="md-footer-legal">&copy; 2026 Databricks, Inc. All rights reserved.
+  Databricks, the Databricks logo, and Unity Catalog are trademarks of Databricks,
+  Inc. Apache, Apache Spark, Spark, and the Spark logo are trademarks of the Apache
+  Software Foundation. All other trademarks are the property of their respective
+  owners. Educational material; not official Databricks documentation.</span>
 
 theme:
   name: material
@@ -36,6 +49,9 @@ theme:
         name: Mudar para o tema claro
   icon:
     repo: fontawesome/brands/github
+
+extra:
+  generator: false   # we render our own "Made with" line in the footer copyright
 
 extra_css:
   - stylesheets/custom.css
