@@ -121,6 +121,20 @@
   background-image: url("../assets/primary-lockup-full-color-white-rgb.svg");
 }
 
+/* In responsive (drawer) mode the wide wordmark doesn't fit, and Material hides
+   the header logo entirely. Bring it back as the compact Databricks mark (the
+   favicon) so the brand stays visible. Same icon works on both schemes. */
+@media screen and (max-width: 76.234375em) {
+  .md-header__button.md-logo {
+    display: inline-flex;   /* override Material's display:none at this width */
+    width: 1.5rem;
+  }
+  [data-md-color-scheme="default"] .md-header__button.md-logo,
+  [data-md-color-scheme="slate"] .md-header__button.md-logo {
+    background-image: url("../assets/databricks-favicon-48x48-orange.png");
+  }
+}
+
 /* Left sidebar as a module tree — navy in slate, light/oat in default */
 .md-sidebar--primary { background-color: var(--db-sidebar-bg); }
 .md-sidebar--primary .md-sidebar__scrollwrap { background-color: var(--db-sidebar-bg); }
@@ -143,7 +157,12 @@
 .md-sidebar--primary .md-nav__link:hover { color: var(--db-chrome-fg); }
 
 /* Collapsible nav: keep parent (expandable) group labels prominent */
-.md-sidebar--primary .md-nav__item--nested > .md-nav__link { color: var(--db-chrome-fg); font-weight: 700; }
+/* Every top-level item (sections AND standalone pages) gets the same bold,
+   prominent treatment; subpages stay lighter for clear hierarchy. */
+.md-sidebar--primary .md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link {
+  color: var(--db-chrome-fg);
+  font-weight: 700;
+}
 
 /* Compact, comfortable type for the left menu and the right TOC (Índice) */
 .md-sidebar--primary .md-nav,
@@ -338,3 +357,32 @@
 
 /* Center diagrams */
 .md-typeset img[src$=".svg"] { display: block; margin: 1.4rem auto; }
+
+/* ============================ Reading polish ============================= */
+
+/* Comfortable reading measure: cap the content card so prose lines stay short
+   on wide screens (the right TOC fills the remaining column). */
+.md-content { max-width: 56rem; }
+
+/* Lead paragraph: the first paragraph after the page title reads as an intro */
+.md-typeset h1 + p { font-size: 1.06em; line-height: 1.7; }
+[data-md-color-scheme="default"] .md-typeset h1 + p { color: #46555b; }
+[data-md-color-scheme="slate"] .md-typeset h1 + p { color: #c2ccd0; }
+
+/* Numbered procedures: lava, bold step numbers */
+.md-typeset ol > li::marker { color: var(--db-lava); font-weight: 700; }
+
+/* A touch more air above section headings for vertical rhythm */
+.md-typeset h2 { margin-top: 2.2rem; }
+
+/* ============================ Footer Prev/Next =========================== */
+/* "Próximo" is the forward action, marked with a subtle lava accent (border +
+   label + arrow) at the SAME weight as "Anterior", so the pair stays balanced
+   instead of one loud filled block. */
+.md-footer__link--next { border-color: rgba(255, 54, 33, 0.6); }
+.md-footer__link--next .md-footer__direction { color: var(--db-lava); }
+.md-footer__link--next svg { fill: var(--db-lava); }
+.md-footer__link--next:hover {
+  background-color: rgba(255, 54, 33, 0.12);
+  border-color: var(--db-lava);
+}

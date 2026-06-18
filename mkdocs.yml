@@ -81,8 +81,9 @@ nav:
       - PyFunc e modelos customizados: conceitos/pyfunc-modelos-customizados.md
       - Otimização com Pyomo: conceitos/otimizacao-pyomo.md
   - Environment Setup:
-      - Clonar o repositório: setup/clone-repo.md
-      - Pré-requisitos: setup/prerequisites.md
+      - Workspace Databricks: setup/workspace.md
+      - Clonar e configurar o repositório: setup/clone-repo.md
+      - Checklist do ambiente: setup/prerequisites.md
   - Gerar o conjunto de dados: lab-1-generate-data/index.md
   - Treinar o forecaster (sklearn): lab-2-forecaster/index.md
   - MLflow Custom Flavor:

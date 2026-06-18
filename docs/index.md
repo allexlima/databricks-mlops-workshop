@@ -109,6 +109,16 @@ Dois tópicos conceituais estão disponíveis para leitura antes ou durante os l
   programação linear, como o Pyomo formula o problema de compra e por que o solver
   HiGHS é uma boa escolha sem dependências de sistema.
 
+## Objetivos de aprendizado
+
+Ao final do workshop, você será capaz de:
+
+- rastrear experimentos, parâmetros e métricas com MLflow tracking;
+- registrar e versionar modelos no Unity Catalog, com governança e lineage;
+- aplicar um validation gate (R² ≥ 0,6) e promover a versão aprovada pelo alias `@champion`;
+- governar um modelo customizado em PyFunc, sem `fit()`, exatamente como um modelo tradicional;
+- compor dois modelos diferentes em uma cadeia e verificar o caminho do início ao fim.
+
 ## A trilha do workshop
 
 <div class="grid cards" markdown>
@@ -184,4 +194,4 @@ Dois tópicos conceituais estão disponíveis para leitura antes ou durante os l
     não o catálogo. Se o catálogo não existir, você verá uma mensagem clara pedindo
     para criá-lo primeiro.
 
-[Começar pelos pré-requisitos :material-arrow-right:](setup/prerequisites.md){ .md-button .md-button--primary }
+[Começar pela configuração do ambiente :material-arrow-right:](setup/workspace.md){ .md-button .md-button--primary }
