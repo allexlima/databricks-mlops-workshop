@@ -1,4 +1,4 @@
-site_name: Workshop de MLOps no Databricks
+site_name: MLOps na Databricks
 site_description: Ciclo de vida de modelos com MLflow no Databricks — um conjunto de dados, dois tipos de modelo, um ciclo de vida governado.
 repo_url: https://github.com/allexlima/databricks-mlops-workshop
 repo_name: allexlima/databricks-mlops-workshop

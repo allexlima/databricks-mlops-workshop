@@ -1,6 +1,6 @@
 <div class="db-hero" markdown>
 
-# Workshop de MLOps no Databricks
+# MLOps na Databricks
 
 Aprenda, na prática, o **ciclo de vida de modelos com MLflow** no Databricks — um
 conjunto de dados, dois tipos de modelo, um ciclo de vida governado.

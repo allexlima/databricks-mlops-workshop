@@ -1,5 +1,5 @@
 /* ============================================================================
-   AWS Workshop Studio layout grammar, fully Databricks-branded.
+   Guided workshop layout, fully Databricks-branded.
    Palette roles:
      Lava   #FF3621  → ACCENTS only (links, active nav, primary buttons). Links
                        darkened to #C42912 for WCAG AA on light surfaces.
@@ -15,7 +15,7 @@
   --db-navy: #1b3139;
   --db-navy-deep: #122026;
   --db-oat: #f9f7f4;
-  --db-radius: 3px;          /* flat, squared AWS aesthetic */
+  --db-radius: 3px;          /* flat, squared aesthetic */
 }
 
 /* ---- Light scheme (primary): light chrome, full-color logo ---- */
@@ -142,7 +142,7 @@
 }
 .md-sidebar--primary .md-nav__link:hover { color: var(--db-chrome-fg); }
 
-/* Active sidebar item: Lava left-bar + faint tint (AWS-style).
+/* Active sidebar item: Lava left-bar + faint tint.
    The bar is an inset box-shadow so the row keeps its place; the base
    padding-left above gives the label clearance from the bar. */
 .md-sidebar--primary .md-nav__link--active,
@@ -212,7 +212,7 @@
   border-color: var(--db-lava-link);
 }
 
-/* ============================ Admonitions (AWS-style) ===================== */
+/* ============================ Admonitions ================================ */
 /* Colored left border + tinted panel, brand palette. */
 .md-typeset .admonition,
 .md-typeset details {

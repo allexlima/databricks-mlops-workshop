@@ -4,7 +4,7 @@ This is the **`workshop-site`** branch: the source for the workshop's MkDocs web
 kept deliberately separate from the notebook code (which lives on `main`) so the two
 don't get mixed up.
 
-The site is a guided, AWS-Workshops-style walkthrough; each lab page maps 1:1 to a
+The site is a guided, hands-on walkthrough; each lab page maps 1:1 to a
 notebook on `main` and references it by name.
 
 ## Build locally
