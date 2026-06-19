@@ -6,10 +6,14 @@
 # ///
 # MAGIC %md
 # MAGIC # Shared config
-# MAGIC `%run` this from every lab notebook. Edit CATALOG/SCHEMA once here and every
-# MAGIC notebook inherits them. Reproducibility constants live in `workshop_lib`.
+# MAGIC `%run` this from every lab notebook. Edit only **CATALOG** once here — SCHEMA,
+# MAGIC experiment path, and model names are derived automatically from the running
+# MAGIC user, giving each participant a fully isolated workspace. Reproducibility
+# MAGIC constants live in `workshop_lib`.
 
 # COMMAND ----------
+
+# DBTITLE 1,Cell 2
 import os
 import sys
 
@@ -21,17 +25,29 @@ for _p in (os.getcwd(), os.path.dirname(os.getcwd())):
 
 import workshop_lib as wl
 
-# 👉 Set these to a Unity Catalog + schema you can write to. Edit once; every
-# notebook picks it up via `%run ./_config`.
+# 👉 Set CATALOG to a Unity Catalog you can create schemas in. Edit once here.
+# SCHEMA, EXPERIMENT_PATH, SERVING_ENDPOINT, and all model/data paths are
+# derived automatically from the current user so every participant gets a
+# fully isolated workspace — no per-user config edits needed.
 CATALOG = "main"
-SCHEMA = "mlops_workshop"
 
-EXPERIMENT_PATH = "/Shared/mlops_workshop"
+# Derive a safe identifier from the running user's email.
+_current_user = spark.sql("SELECT current_user()").collect()[0][0]
+_user_suffix  = _current_user.split("@")[0].replace(".", "_").replace("-", "_")
+
+SCHEMA           = f"mlops_workshop_{_user_suffix}"
+EXPERIMENT_PATH  = f"/Users/{_current_user}/mlops_workshop"
+SERVING_ENDPOINT = f"mlops-workshop-forecaster-{_user_suffix}"
+
 FORECASTER_MODEL = f"{CATALOG}.{SCHEMA}.price_forecaster"
-OPTIMIZER_MODEL = f"{CATALOG}.{SCHEMA}.purchase_optimizer"
-DATA_TABLE = f"{CATALOG}.{SCHEMA}.commodity_monthly"
-VOLUME = "workshop_files"                              # UC Volume (serverless-safe file storage)
-CSV_PATH = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/commodity_monthly.csv"
-SEED = wl.SEED
-R2_THRESHOLD = wl.R2_THRESHOLD
-print(f"catalog={CATALOG} schema={SCHEMA} forecaster={FORECASTER_MODEL}")
+OPTIMIZER_MODEL  = f"{CATALOG}.{SCHEMA}.purchase_optimizer"
+DATA_TABLE       = f"{CATALOG}.{SCHEMA}.commodity_monthly"
+VOLUME           = "workshop_files"                    # UC Volume (serverless-safe file storage)
+CSV_PATH         = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/commodity_monthly.csv"
+SEED             = wl.SEED
+R2_THRESHOLD     = wl.R2_THRESHOLD
+
+print(f"user={_current_user!r}")
+print(f"catalog={CATALOG}  schema={SCHEMA}")
+print(f"experiment={EXPERIMENT_PATH}")
+print(f"forecaster={FORECASTER_MODEL}")

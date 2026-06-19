@@ -13,9 +13,11 @@
 # MAGIC is pip-installable inside the container.
 
 # COMMAND ----------
+
 # MAGIC %run ../_config
 
 # COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## Resolve the champion model version
 # MAGIC
@@ -23,6 +25,7 @@
 # MAGIC the endpoint always pins to the exact registered version, not just a name.
 
 # COMMAND ----------
+
 from mlflow.deployments import get_deploy_client
 from mlflow import MlflowClient
 
@@ -32,6 +35,7 @@ deploy = get_deploy_client("databricks")
 champ = client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
 
 # COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## Create the serving endpoint
 # MAGIC
@@ -39,9 +43,9 @@ champ = client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
 # MAGIC when the endpoint is idle between demo runs.
 
 # COMMAND ----------
-endpoint = "mlops-workshop-forecaster"
+
 deploy.create_endpoint(
-    name=endpoint,
+    name=SERVING_ENDPOINT,
     config={
         "served_entities": [
             {
@@ -53,9 +57,10 @@ deploy.create_endpoint(
         ]
     },
 )
-print(f"Creating endpoint {endpoint} for {FORECASTER_MODEL} v{champ.version}.")
+print(f"Creating endpoint {SERVING_ENDPOINT!r} for {FORECASTER_MODEL} v{champ.version}.")
 
 # COMMAND ----------
+
 # MAGIC %md
 # MAGIC When Ready, query it (drivers + price columns) via the Serving UI or REST.
 # MAGIC To serve the Pyomo optimizer, create a second endpoint for `OPTIMIZER_MODEL`

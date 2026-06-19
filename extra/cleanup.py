@@ -5,6 +5,7 @@
 # environment_version = "5"
 # ///
 
+
 # COMMAND ----------
 
 # MAGIC %md
@@ -53,8 +54,8 @@ mlflow.set_registry_uri("databricks-uc")
 client = MlflowClient()
 
 try:
-    get_deploy_client("databricks").delete_endpoint("mlops-workshop-forecaster")
-    print("Deleted serving endpoint.")
+    get_deploy_client("databricks").delete_endpoint(SERVING_ENDPOINT)
+    print(f"Deleted serving endpoint {SERVING_ENDPOINT!r}.")
 except Exception as e:
     print(f"No serving endpoint to delete ({e}).")
 
