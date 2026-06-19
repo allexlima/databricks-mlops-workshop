@@ -35,7 +35,7 @@ mlflow.set_experiment(EXPERIMENT_PATH)
 # COMMAND ----------
 # MAGIC %md
 # MAGIC **Build example input and run the optimizer** — creates a single-row DataFrame that
-# MAGIC represents a purchase decision problem, then calls the solver to get a solution.
+# MAGIC represents a purchase decision problem, then calls the solver to get a solution. TEST
 
 # COMMAND ----------
 example = pd.DataFrame([{
