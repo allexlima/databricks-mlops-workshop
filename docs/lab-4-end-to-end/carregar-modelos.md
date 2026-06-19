@@ -19,7 +19,7 @@ client = MlflowClient()
 A linha `mlflow.set_registry_uri("databricks-uc")` é o ponto de virada: ela redireciona o MLflow para usar o **Unity Catalog** como backend do model registry. Sem ela, o cliente tentaria o registry legado do workspace e os aliases `@champion` não resolveriam para os modelos registrados no UC.
 
 !!! note "Conceito"
-    O MLflow suporta dois registry backends na Databricks: o **workspace model registry** (legado) e o **Unity Catalog registry** (recomendado). Com `set_registry_uri("databricks-uc")`, todas as chamadas a `mlflow.pyfunc.load_model(...)` e ao `MlflowClient` passam a operar no UC. Modelos registrados no UC têm o nome completo com três partes: `{catalog}.{schema}.{model_name}`, por exemplo `main.mlops_workshop.price_forecaster`.
+    O MLflow suporta dois registry backends na Databricks: o **workspace model registry** (legado) e o **Unity Catalog registry** (recomendado). Com `set_registry_uri("databricks-uc")`, todas as chamadas a `mlflow.pyfunc.load_model(...)` e ao `MlflowClient` passam a operar no UC. Modelos registrados no UC têm o nome completo com três partes: `{catalog}.{schema}.{model_name}`, por exemplo `main.mlops_workshop_<seu-usuário>.price_forecaster`.
 
 ---
 
@@ -42,7 +42,7 @@ Antes de tocar nos dados ou carregar qualquer modelo, o notebook verifica proati
 Sem o guard, o fluxo seria:
 
 1. Carregar dados ✓
-2. Tentar `mlflow.pyfunc.load_model("models:/main.mlops_workshop.price_forecaster@champion")`
+2. Tentar `mlflow.pyfunc.load_model("models:/main.mlops_workshop_<seu-usuário>.price_forecaster@champion")`
 3. Erro genérico do registry: `RESOURCE_DOES_NOT_EXIST: Alias champion not found`
 
 Esse erro é difícil de diagnosticar: ele não indica qual lab deixou de ser executado, nem que o problema está no gate de R². Com o guard no topo do notebook, a mensagem explica exatamente o que falta. Você não precisa abrir o stack trace para saber o próximo passo.
@@ -67,8 +67,8 @@ optimizer  = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
 
 Ambos os modelos são carregados via `mlflow.pyfunc.load_model(...)` com a URI no formato `models:/{catalog}.{schema}.{model_name}@champion`. As constantes `FORECASTER_MODEL` e `OPTIMIZER_MODEL` vêm de `_config.py` (via `%run ./_config`) e expandem para:
 
-- `main.mlops_workshop.price_forecaster`
-- `main.mlops_workshop.purchase_optimizer`
+- `main.mlops_workshop_<seu-usuário>.price_forecaster`
+- `main.mlops_workshop_<seu-usuário>.purchase_optimizer`
 
 Isso significa que **nenhum número de versão** aparece no código. Se o forecaster for retreinado amanhã, passar pelo gate de R² ≥ 0,6 e ter seu `@champion` atualizado, este notebook carregará a nova versão automaticamente, sem nenhuma edição.
 

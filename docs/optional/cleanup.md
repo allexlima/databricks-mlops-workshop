@@ -31,7 +31,7 @@ Cada passo de deleção é independente e protegido por `try/except`: se o lab d
 
 ```python
 # 1. Endpoint de serving
-get_deploy_client("databricks").delete_endpoint("mlops-workshop-forecaster")
+get_deploy_client("databricks").delete_endpoint(SERVING_ENDPOINT)
 
 # 2. Modelos registrados (com todas as versões)
 for name in (FORECASTER_MODEL, OPTIMIZER_MODEL):

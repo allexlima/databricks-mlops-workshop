@@ -34,10 +34,10 @@ Siga os passos abaixo no seu workspace:
    pasta. Você vai ver os notebooks `00_setup` até `05_verify` na raiz e a pasta
    `extra/` com os labs opcionais.
 
-!!! info "📸 Screenshot"
-    *Reservado:* o diálogo "Create Git folder" com a URL
-    `https://github.com/allexlima/databricks-mlops-workshop.git` preenchida e o
-    campo de branch mostrando `main`.
+<figure markdown="span">
+  ![Pasta do repositório clonada no Workspace, com os notebooks 00 a 05](../assets/screenshots/setup-clone-repo.png)
+  <figcaption>Repositório clonado: os notebooks <code>00_setup</code> a <code>05_verify</code>, o <code>_config</code> e a pasta <code>extra/</code> no Workspace.</figcaption>
+</figure>
 
 !!! tip "Curiosidade"
     Como o repositório é público, você não precisa configurar credenciais de Git
@@ -49,7 +49,7 @@ Siga os passos abaixo no seu workspace:
 
 | Caminho | O que é |
 |---------|---------|
-| `_config.py` | Constantes editáveis (`CATALOG`, `SCHEMA`), nomes derivados, `SEED`, `R2_THRESHOLD` |
+| `_config.py` | Constante editável (`CATALOG`); `SCHEMA`, experimento, endpoint e nomes derivados do seu usuário; `SEED`, `R2_THRESHOLD` |
 | `workshop_lib.py` | Funções compartilhadas (`generate_dataset`, `solve_purchase`, `PurchaseOptimizerModel`) |
 | `00_setup.py` … `05_verify.py` | Caminho obrigatório, na ordem |
 | `extra/` | Labs opcionais: PyTorch, serving e cleanup |

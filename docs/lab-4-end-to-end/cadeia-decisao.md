@@ -87,7 +87,7 @@ Se o status for `infeasible`, as restrições do problema (demanda, capacidade, 
 A cadeia que você acabou de executar deixa um rastro automático no Unity Catalog. Para visualizá-lo:
 
 1. Abra o **Catalog Explorer** na Databricks.
-2. Navegue até a tabela referenciada por `DATA_TABLE` (por padrão, `main.mlops_workshop.commodity_monthly`).
+2. Navegue até a tabela referenciada por `DATA_TABLE` (por padrão, `main.mlops_workshop_<seu-usuário>.commodity_monthly`).
 3. Clique na aba **Lineage**.
 
 Você verá um grafo conectando:
@@ -96,11 +96,11 @@ Você verá um grafo conectando:
 tabela Delta (commodity_monthly)
         │
         ▼
-experimento MLflow (mlops_workshop)
+experimento MLflow (/Users/<seu-usuário>/mlops_workshop)
         │
-        ├──→ main.mlops_workshop.price_forecaster
+        ├──→ main.mlops_workshop_<seu-usuário>.price_forecaster
         │
-        └──→ main.mlops_workshop.purchase_optimizer
+        └──→ main.mlops_workshop_<seu-usuário>.purchase_optimizer
 ```
 
 !!! note "Conceito"
@@ -109,8 +109,10 @@ experimento MLflow (mlops_workshop)
 !!! tip "Curiosidade"
     O lineage do Unity Catalog vai além de modelos: ele também rastreia transformações entre tabelas Delta (quais tabelas foram lidas para criar outra). Quando seu pipeline de ML lê uma feature table, a transforma, grava outra tabela e depois usa essa tabela para treinar um modelo, o UC conecta toda essa cadeia em um único grafo navegável. É a diferença entre "saber que o modelo existe" e "saber de onde veio cada dado que o gerou".
 
-!!! info "Captura de tela"
-    *Capture aqui: o grafo de lineage no Catalog Explorer (tabela → experimento → modelos). Depois substitua por `![Lineage no Catalog Explorer](../assets/screenshots/lab-4-lineage.png)`.*
+<figure markdown="span">
+  ![O grafo de lineage da tabela commodity_monthly no Unity Catalog](../assets/screenshots/lab-4-lineage.png)
+  <figcaption>O grafo de lineage do Unity Catalog para a <code>commodity_monthly</code>: os produtores (quem escreve a tabela) à esquerda e os consumidores (quem a lê) à direita, com as colunas da tabela no nó central.</figcaption>
+</figure>
 
 ---
 

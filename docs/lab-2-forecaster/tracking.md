@@ -34,10 +34,11 @@ mlflow.set_experiment(EXPERIMENT_PATH)
       dados (linhagem, ACLs por schema, auditoria completa) ao ciclo de vida do
       modelo.
 
-    `EXPERIMENT_PATH` é `"/Shared/mlops_workshop"`, definido em `_config.py`.
-    Usar um caminho compartilhado garante que todos os participantes do workshop
-    vejam os runs no mesmo experiment, facilitando a comparação de execuções
-    lado a lado na UI do MLflow.
+    `EXPERIMENT_PATH` é `f"/Users/{current_user}/mlops_workshop"`, derivado em
+    `_config.py` a partir do seu usuário. Cada participante recebe um experiment
+    **próprio**, dentro da sua pasta de usuário: os runs ficam isolados por pessoa,
+    sem misturar execuções entre participantes, e cada um governa o seu na UI do
+    MLflow.
 
 !!! tip "Curiosidade: por que Unity Catalog e não o registry antigo?"
     O Workspace Model Registry original não tem controle de acesso por modelo:
@@ -174,14 +175,15 @@ with mlflow.start_run(run_name="sklearn_gbr") as run:
     Os três ficam logados no MLflow e aparecem na UI do experiment para
     comparação entre runs.
 
-!!! info "📸 Screenshot"
-    *Reservado: a UI do experiment no MLflow mostrando o run `sklearn_gbr` com
-    as três métricas (rmse, mae, r2) e o artefato de modelo na aba Artifacts.*
+<figure markdown="span">
+  ![Run sklearn_gbr no MLflow com métricas, parâmetros e artefatos](../assets/screenshots/lab-2-mlflow-run.png)
+  <figcaption>O run <code>sklearn_gbr</code> no MLflow: as três métricas (rmse, mae, r2), os parâmetros e os artefatos do modelo.</figcaption>
+</figure>
 
 ---
 
 !!! success "Pronto quando..."
-    - O experiment MLflow em `/Shared/mlops_workshop` contém um run chamado
+    - O experiment MLflow em `/Users/<seu-usuário>/mlops_workshop` contém um run chamado
       `sklearn_gbr` com params, métricas e um artefato de modelo logado.
     - A célula do notebook imprime uma linha como `r2=0.xxx rmse=yy.yy`.
     - Você consegue ver o run na UI do MLflow (clique em **Experiments** na

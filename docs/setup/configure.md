@@ -9,24 +9,29 @@ Com o repositório clonado e o compute escolhido, o próximo passo é editar o `
 
 ## 1. Editar o `_config.py`
 
-O `_config.py` é o único arquivo que você precisa editar em todo o workshop. Edite as duas constantes no topo e todos os notebooks herdam os valores via `%run ./_config`.
+O `_config.py` é o único arquivo que você precisa editar em todo o workshop — e nele você edita **apenas uma constante**, o `CATALOG`. Todos os notebooks herdam os valores via `%run ./_config`.
 
 Abra o `_config.py` na raiz da Git folder e localize o bloco abaixo:
 
 ```python
-# 👉 Set these to a Unity Catalog + schema you can write to. Edit once; every
+# 👉 Set CATALOG to a Unity Catalog you can create schemas in. Edit once; every
 # notebook picks it up via `%run ./_config`.
 CATALOG = "main"
-SCHEMA  = "mlops_workshop"
 ```
 
 - **`CATALOG`**: nome do catálogo Unity Catalog onde o workshop vai criar seus objetos. O valor padrão é `main`. Troque pelo catálogo no qual você tem permissão de criar schemas. O catálogo precisa existir previamente; o `00_setup` verifica isso e exibe uma mensagem clara caso não o encontre.
-- **`SCHEMA`**: nome do schema que o `00_setup` vai criar dentro do catálogo. O padrão `mlops_workshop` serve bem para a maioria dos casos. Use um nome diferente se quiser isolar sua instância do workshop em um ambiente compartilhado.
+- **`SCHEMA`, `EXPERIMENT_PATH`, `SERVING_ENDPOINT` e os nomes de modelos/dados**: você **não edita** nenhum deles. São **derivados automaticamente do seu usuário** (o `_config` lê `current_user()` e usa o seu e-mail como sufixo), dando a cada participante um **ambiente totalmente isolado** — schema, experimento e endpoint próprios, sem colisão e sem edição manual.
 
-A partir dessas duas constantes, o `_config.py` deriva automaticamente todos os demais nomes usados no workshop:
+A partir do `CATALOG` e do seu usuário, o `_config.py` deriva automaticamente todos os demais nomes usados no workshop:
 
 ```python
-EXPERIMENT_PATH  = "/Shared/mlops_workshop"
+# Sufixo seguro derivado do e-mail do usuário logado (ex.: ana.silva -> ana_silva)
+_current_user = spark.sql("SELECT current_user()").collect()[0][0]
+_user_suffix  = _current_user.split("@")[0].replace(".", "_").replace("-", "_")
+
+SCHEMA           = f"mlops_workshop_{_user_suffix}"          # ex.: mlops_workshop_ana_silva
+EXPERIMENT_PATH  = f"/Users/{_current_user}/mlops_workshop"  # experimento por-usuário
+SERVING_ENDPOINT = f"mlops-workshop-forecaster-{_user_suffix}"
 FORECASTER_MODEL = f"{CATALOG}.{SCHEMA}.price_forecaster"
 OPTIMIZER_MODEL  = f"{CATALOG}.{SCHEMA}.purchase_optimizer"
 DATA_TABLE       = f"{CATALOG}.{SCHEMA}.commodity_monthly"
@@ -40,8 +45,10 @@ CSV_PATH         = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/commodity_monthly.csv"
 !!! tip "Curiosidade"
     Todos os artefatos de arquivo (datasets CSV etc.) vão para um **UC Volume** (`/Volumes/{catalog}/{schema}/workshop_files/`). Volumes são a forma correta e portável de armazenar arquivos na Databricks moderna: funcionam tanto em serverless quanto em clusters clássicos, e ficam sob a governança do Unity Catalog como qualquer outro objeto. Saiba mais: [MLflow no Databricks](https://docs.databricks.com/en/mlflow/index.html).
 
-!!! info "📸 Screenshot"
-    *Reservado:* o arquivo `_config.py` aberto no editor do workspace, com as linhas `CATALOG` e `SCHEMA` destacadas no topo e os nomes derivados visíveis abaixo.
+<figure markdown="span">
+  ![O _config aberto no editor, com a linha CATALOG destacada](../assets/screenshots/setup-config-py.png)
+  <figcaption>A única linha que você edita: <code>CATALOG</code> (em destaque). <code>SCHEMA</code>, experimento, endpoint e nomes de modelos são derivados do seu usuário.</figcaption>
+</figure>
 
 !!! warning "Atenção"
     Não inclua o nome do catálogo em variáveis hardcoded em nenhuma célula de notebook; use sempre as constantes do `_config`. Isso garante que o workshop funcione em qualquer workspace sem edições espalhadas.
@@ -59,11 +66,13 @@ Com o `_config.py` configurado, abra o notebook `00_setup.py` e execute todas as
 5. **Registra o experimento MLflow**: `mlflow.set_experiment(EXPERIMENT_PATH)` garante que todos os labs loguem runs no mesmo experimento, facilitando comparações na UI de Experiments.
 6. **Imprime a confirmação final**: `Setup complete. Using <catalog>.<schema>.`
 
-!!! info "📸 Screenshot"
-    *Reservado:* a saída do `00_setup.py` no workspace mostrando a linha `Setup complete. Using main.mlops_workshop.` e, ao lado, o Catalog Explorer com o schema `mlops_workshop` e o volume `workshop_files` recém-criados.
-
 !!! warning "Atenção"
     Se o `assert` do catálogo falhar, a mensagem vai listar os catálogos disponíveis para você. Basta atualizar o `CATALOG` no `_config.py` para um catálogo da lista e re-executar o `00_setup`.
+
+<figure markdown="span">
+  ![Saída do 00_setup.py com a confirmação Setup complete](../assets/screenshots/setup-00-setup-output.png)
+  <figcaption>O <code>00_setup.py</code> cria o schema e o volume e imprime a confirmação final <code>Setup complete. Using …</code></figcaption>
+</figure>
 
 !!! success "Pronto quando..."
     O `00_setup.py` imprime a linha:

@@ -95,8 +95,10 @@ print(opt.predict(example))
 
 Essa é a prova final: o modelo foi registrado, o alias foi definido e agora ele é carregado *pelo alias*, exatamente como o `04_end_to_end.py` fará, em um notebook diferente e potencialmente em um cluster diferente. Se `opt.predict(example)` retornar um DataFrame com `status=optimal`, o ciclo de vida está completo.
 
-!!! info "Screenshot placeholder"
-    *Capture aqui: o modelo `purchase_optimizer` registrado no Unity Catalog com `@champion` visível. Depois substitua por `![Otimizador registrado](../assets/screenshots/lab-3-optimizer-registered.png)`.*
+<figure markdown="span">
+  ![O purchase_optimizer registrado no Unity Catalog com o alias @champion](../assets/screenshots/lab-3-optimizer-registered.png)
+  <figcaption>O otimizador Pyomo empacotado como PyFunc, registrado no Unity Catalog como <code>purchase_optimizer</code> v1 com o alias <code>@champion</code> — governado exatamente como o forecaster.</figcaption>
+</figure>
 
 !!! success "Pronto quando…"
     - O assert de viabilidade conclui **sem erro** (solver presente e funcional).

@@ -10,18 +10,20 @@ Esta é a última parada antes dos notebooks. Aqui você confirma, em um só lug
 | Passo | O que ficou pronto | Onde |
 |-------|--------------------|------|
 | Workspace | Acesso a um workspace com Unity Catalog e permissão para criar um schema | [Workspace Databricks](workspace.md) |
-| Repositório e compute | Git folder clonada, `_config.py` editado com o seu `CATALOG` e `SCHEMA`, compute escolhido | [Clonar o repositório](clone-repo.md) |
+| Repositório e compute | Git folder clonada, `_config.py` com o seu `CATALOG` definido, compute escolhido | [Clonar o repositório](clone-repo.md) |
 | Setup | O `00_setup.py` criou o schema, o volume e o experimento MLflow | [Configurar e rodar o setup](configure.md) |
 
 ## Confirme antes de começar
 
 - O `00_setup.py` terminou imprimindo `Setup complete. Using <catálogo>.<schema>.`
 - Você enxerga o schema e o volume `workshop_files` no Catalog Explorer.
-- As constantes `CATALOG` e `SCHEMA` no `_config.py` apontam para um catálogo e schema onde você tem permissão de escrita.
+- A constante `CATALOG` no `_config.py` aponta para um catálogo onde você tem permissão de criar schemas (o `SCHEMA` é derivado automaticamente do seu usuário).
 - O compute escolhido (serverless, recomendado, ou cluster com Databricks Runtime ML) está ativo no seletor do notebook.
 
-!!! info "📸 Screenshot"
-    *Reservado:* o Catalog Explorer mostrando o schema do workshop já criado, com o volume `workshop_files` dentro dele (confirma que o `00_setup.py` funcionou).
+<figure markdown="span">
+  ![O schema do workshop no Catalog Explorer, com o volume workshop_files](../assets/screenshots/setup-checklist-catalog.png)
+  <figcaption>O seu schema <code>mlops_workshop_&lt;seu-usuário&gt;</code> no Catalog Explorer, com o volume <code>workshop_files</code>. À medida que você avança nos labs, a tabela e os modelos vão aparecendo aqui.</figcaption>
+</figure>
 
 !!! warning "Atenção"
     Se o `00_setup.py` falhou com uma mensagem sobre o catálogo não existir, volte para [Configurar e rodar o setup](configure.md) e ajuste a constante `CATALOG` para um catálogo que já exista e ao qual você tenha acesso. Conferir privilégios: [Unity Catalog privileges](https://docs.databricks.com/en/data-governance/unity-catalog/manage-privileges/privileges.html) (documentação oficial).

@@ -84,9 +84,6 @@ Além dos 10 drivers de ML, cinco colunas econômicas alimentam o modelo de otim
 | `capacity` | Capacidade máxima de compra |
 | `budget` | Orçamento disponível |
 
-!!! info "Screenshot"
-    *Capture aqui a saída de `df.describe()` e as correlações. Depois substitua por `![Sanity checks](../assets/screenshots/lab-1-describe.png)`.*
-
 ---
 
 ## Passo 3 · Baseline ingênuo vs. R² do modelo rápido
@@ -99,6 +96,11 @@ naive_r2 = r2_score(df["price_next_month"].iloc[cut:], df["price"].iloc[cut:])
 model_r2 = wl.quick_fit_r2(df)   # corte temporal 80/20, GBR pequeno
 print(f"naive R2={naive_r2:.3f}  quick-model R2={model_r2:.3f}")
 ```
+
+<figure markdown="span">
+  ![Saída do notebook comparando o R² do baseline ingênuo com o do modelo rápido](../assets/screenshots/lab-1-baseline.png)
+  <figcaption>A saída do notebook compara o piso (baseline ingênuo lag-1) com o teto prático (modelo rápido), confirmando que o sinal é aprendível.</figcaption>
+</figure>
 
 O **forecast ingênuo lag-1** (usar o preço de hoje como previsão para o mês seguinte) define o **piso**. É o baseline mais simples possível: sem features, sem treino, sem parâmetros. Qualquer modelo que não supere esse R² não aprendeu nada útil.
 
@@ -189,9 +191,9 @@ Dois formatos com propósitos complementares:
 === "SQL"
 
     ```sql
-    SELECT count(*) FROM main.mlops_workshop.commodity_monthly;
+    SELECT count(*) FROM main.mlops_workshop_<seu-usuário>.commodity_monthly;
     -- Esperado: 96
-    SELECT * FROM main.mlops_workshop.commodity_monthly LIMIT 5;
+    SELECT * FROM main.mlops_workshop_<seu-usuário>.commodity_monthly LIMIT 5;
     ```
 
 ---
@@ -210,7 +212,7 @@ O dataset inclui uma coluna `trend_up`, um booleano derivado de `price_next_mont
 !!! success "Pronto quando…"
     - **96 linhas** estão na tabela Delta (consulte com `spark.table(DATA_TABLE).count()` ou o SQL acima).
     - O `assert` da célula 4 passou silenciosamente: R² impresso, sem `AssertionError`.
-    - A última célula imprimiu `Wrote main.mlops_workshop.commodity_monthly and /Volumes/…`.
+    - A última célula imprimiu `Wrote main.mlops_workshop_<seu-usuário>.commodity_monthly and /Volumes/…`.
     - Você consegue inspecionar a tabela no Catalog Explorer do workspace.
 
 ---

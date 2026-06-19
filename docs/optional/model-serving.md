@@ -39,9 +39,8 @@ Isso garante que o endpoint sempre aponte para a versão promovida mais recente.
 ## Criando o endpoint com scale-to-zero
 
 ```python
-endpoint = "mlops-workshop-forecaster"
 deploy.create_endpoint(
-    name=endpoint,
+    name=SERVING_ENDPOINT,   # mlops-workshop-forecaster-<seu-usuário>, derivado no _config
     config={
         "served_entities": [
             {
@@ -53,7 +52,7 @@ deploy.create_endpoint(
         ]
     },
 )
-print(f"Creating endpoint {endpoint} for {FORECASTER_MODEL} v{champ.version}.")
+print(f"Creating endpoint {SERVING_ENDPOINT!r} for {FORECASTER_MODEL} v{champ.version}.")
 ```
 
 `scale_to_zero_enabled: True` faz o endpoint desligar automaticamente quando fica ocioso, sem custo de compute enquanto não há requisições. Ideal para demos que não estão em produção contínua.
@@ -61,8 +60,10 @@ print(f"Creating endpoint {endpoint} for {FORECASTER_MODEL} v{champ.version}.")
 !!! tip "Curiosidade"
     O provisionamento de um novo endpoint leva alguns minutos após a chamada `create_endpoint` retornar: o Databricks está inicializando o container, instalando dependências e carregando o modelo. Acompanhe o progresso na aba **Serving** do workspace. O status transita de `Not Ready` para `Ready` quando o endpoint está apto a receber tráfego.
 
-!!! info "📸 Screenshot"
-    *Reservado: capture aqui o endpoint `mlops-workshop-forecaster` com status Ready na aba Serving do workspace.*
+<figure markdown="span">
+  ![O endpoint de serving do forecaster com status Ready](../assets/screenshots/serving-endpoint-ready.png)
+  <figcaption>O endpoint <code>mlops-workshop-forecaster-&lt;seu-usuário&gt;</code> com status <strong>Ready</strong>, servindo o <code>price_forecaster</code> v1 com scale-to-zero e 100% do tráfego.</figcaption>
+</figure>
 
 ---
 
@@ -83,7 +84,7 @@ O mesmo padrão funciona para o `purchase_optimizer`: basta criar um segundo end
     Para servir o optimizer, crie um segundo endpoint com `entity_name=OPTIMIZER_MODEL` e o mesmo padrão de configuração. O `highspy` (solver HiGHS) é puramente pip-instalável e já está declarado nos `pip_requirements` do modelo registrado em `03_register_optimizer_pyomo.py`. Ver mais em [Registrar e promover a @champion](../lab-3-optimizer/registrar-promover.md).
 
 !!! success "Pronto quando..."
-    - A célula de criação imprime `Creating endpoint mlops-workshop-forecaster for <model> v<N>.`
+    - A célula de criação imprime `Creating endpoint 'mlops-workshop-forecaster-<seu-usuário>' for <model> v<N>.`
     - O status do endpoint chega em **Ready** na aba Serving dentro de alguns minutos.
     - Uma query REST com colunas de drivers e `price` como JSON retorna um valor numérico em `predictions`.
 

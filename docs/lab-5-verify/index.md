@@ -83,7 +83,7 @@ assert wl.R2_BAND[0] <= r2 <= wl.R2_BAND[1], f"R2 {r2:.3f} outside {wl.R2_BAND}"
 **Por que verificar os dados antes do registry?** Se o R² estiver fora da faixa, algo mudou nos dados: deriva de distribuição, alteração de schema ou transformação incorreta na geração do dataset. É melhor parar aqui com uma mensagem clara do que promover um modelo treinado em features corrompidas e só perceber isso na inferência em produção.
 
 !!! tip "Curiosidade"
-    O R² de um ajuste linear sobre dados sintéticos com seed fixo é **determinístico**. Se esse checkpoint falhar em uma reexecução, a causa quase sempre é externa ao notebook: a tabela `DATA_TABLE` foi truncada, o `CATALOG`/`SCHEMA` está diferente do usado em `01_generate_data.py`, ou alguém executou o `extra/cleanup.py` sem perceber.
+    O R² de um ajuste linear sobre dados sintéticos com seed fixo é **determinístico**. Se esse checkpoint falhar em uma reexecução, a causa quase sempre é externa ao notebook: a tabela `DATA_TABLE` foi truncada, o `CATALOG` foi alterado para outro catálogo entre execuções (o `SCHEMA` é derivado do seu usuário, então não muda sozinho), ou alguém executou o `extra/cleanup.py` sem perceber.
 
 ---
 
@@ -187,10 +187,10 @@ ALL 4 CHECKPOINTS PASSED
     ```
     aparece no final do notebook, sem nenhum `AssertionError` nas células anteriores. Todos os quatro checkpoints passaram, os dois modelos estão registrados e promovidos com `@champion`, e a cadeia forecaster → optimizer retornou uma decisão de compra válida.
 
----
-
-!!! info "Captura de tela"
-    *Espaço reservado: capture a saída `ALL 4 CHECKPOINTS PASSED` e substitua por `![Verificação aprovada](../assets/screenshots/lab-5-verify.png)` quando disponível.*
+<figure markdown="span">
+  ![A saída final do 05_verify com ALL 4 CHECKPOINTS PASSED](../assets/screenshots/lab-5-verify.png)
+  <figcaption>Os quatro checkpoints baseados em alias passam de ponta a ponta: a saída final imprime <code>ALL 4 CHECKPOINTS PASSED</code>.</figcaption>
+</figure>
 
 ---
 

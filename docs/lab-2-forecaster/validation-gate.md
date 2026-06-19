@@ -22,7 +22,7 @@ else:
     print(f"FAILED gate (r2={r2:.3f} < {R2_THRESHOLD}). Not promoted.")
 ```
 
-`FORECASTER_MODEL` expande para `main.mlops_workshop.price_forecaster`
+`FORECASTER_MODEL` expande para `main.mlops_workshop_<seu-usuário>.price_forecaster`
 (definido em `_config.py` como `f"{CATALOG}.{SCHEMA}.price_forecaster"`).
 
 !!! note "Conceito: o que é um validation gate?"
@@ -63,14 +63,14 @@ else:
     No Unity Catalog Registry, cada versão de modelo tem um número inteiro
     (1, 2, 3...) que cresce a cada novo registro. Re-rodar este notebook cria a
     versão 2; rodar de novo cria a versão 3. Se `04_end_to_end.py` ou `05_verify.py`
-    referenciassem `models:/main.mlops_workshop.price_forecaster/1`, eles
+    referenciassem `models:/main.mlops_workshop_<seu-usuário>.price_forecaster/1`, eles
     quebrariam silenciosamente assim que uma nova versão melhor fosse promovida.
 
     A solução é o **alias**: um rótulo nomeado que pode ser movido de versão
     para versão sem alterar o código consumidor. `@champion` é o alias padrão
     deste workshop, o contrato entre o pipeline de treino e todo downstream.
     Qualquer código que carregar
-    `models:/main.mlops_workshop.price_forecaster@champion` resolve
+    `models:/main.mlops_workshop_<seu-usuário>.price_forecaster@champion` resolve
     automaticamente para a versão aprovada mais recente, hoje e amanhã, sem
     editar nada.
 
@@ -87,10 +87,10 @@ else:
 !!! warning "Requer `CREATE MODEL` no schema"
     Se `mlflow.register_model` falhar com erro de permissão, o seu usuário ou
     service principal precisa da permissão `CREATE MODEL` no schema
-    `mlops_workshop`. Peça ao administrador do workspace ou execute:
+    `mlops_workshop_<seu-usuário>`. Peça ao administrador do workspace ou execute:
 
     ```sql
-    GRANT CREATE MODEL ON SCHEMA main.mlops_workshop TO `seu-usuario@exemplo.com`;
+    GRANT CREATE MODEL ON SCHEMA main.mlops_workshop_<seu-usuário> TO `seu-usuario@exemplo.com`;
     ```
 
     Se o limiar do gate não for atingido, o notebook encerra normalmente mas
@@ -117,7 +117,7 @@ Após o notebook imprimir `PASSED gate`, confirme o resultado na interface:
     A partir deste momento, qualquer código que chamar:
 
     ```python
-    mlflow.pyfunc.load_model("models:/main.mlops_workshop.price_forecaster@champion")
+    mlflow.pyfunc.load_model("models:/main.mlops_workshop_<seu-usuário>.price_forecaster@champion")
     ```
 
     resolve para essa versão, sem precisar saber o número `v1`.
@@ -125,24 +125,24 @@ Após o notebook imprimir `PASSED gate`, confirme o resultado na interface:
 === "Catalog Explorer"
 
     1. Abra **Catalog** na barra lateral esquerda.
-    2. Navegue até **main → mlops_workshop → price_forecaster**.
+    2. Navegue até **main → mlops_workshop_&lt;seu-usuário&gt; → price_forecaster**.
     3. Clique na aba **Versions**. Você deve ver a versão 1 com o badge do
        alias `champion`.
     4. A aba **Lineage** vincula de volta ao run do MLflow e à tabela de origem
        `commodity_monthly`.
 
-!!! info "📸 Screenshot"
-    *Reservado: o modelo `price_forecaster` registrado no Catalog Explorer,
-    mostrando a versão 1 com o badge do alias `@champion` na aba Versions e a
-    lineage conectando ao run do MLflow e à tabela `commodity_monthly`.*
+<figure markdown="span">
+  ![O price_forecaster registrado no Unity Catalog com o alias @champion](../assets/screenshots/lab-2-model-registered.png)
+  <figcaption>O <code>price_forecaster</code> no Unity Catalog: a versão 1 marcada com o alias <code>@champion</code> e o log de atividade do registro.</figcaption>
+</figure>
 
 ---
 
 !!! success "Pronto quando..."
-    - O experiment MLflow em `/Shared/mlops_workshop` contém um run `sklearn_gbr`
+    - O experiment MLflow em `/Users/<seu-usuário>/mlops_workshop` contém um run `sklearn_gbr`
       com params, métricas e artefato de modelo logados.
     - A célula do notebook imprimiu `PASSED gate` com um número de versão.
-    - `main.mlops_workshop.price_forecaster@champion` resolve para essa versão
+    - `main.mlops_workshop_<seu-usuário>.price_forecaster@champion` resolve para essa versão
       no Catalog Explorer (aba Versions mostra o badge `champion`).
 
 ---

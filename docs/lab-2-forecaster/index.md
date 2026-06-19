@@ -2,7 +2,7 @@
 
 Com o dataset gerado no lab anterior, você tem 96 meses de preços de commodity e
 dez indicadores econômicos sintéticos persistidos na tabela
-`main.mlops_workshop.commodity_monthly` do Unity Catalog. Este lab usa esses
+`main.mlops_workshop_<seu-usuário>.commodity_monthly` do Unity Catalog. Este lab usa esses
 dados como ponto de partida para percorrer o loop cotidiano de MLOps na
 Databricks: treinar, rastrear, avaliar contra um critério objetivo e, somente se
 o modelo passar, registrar e promover para `@champion`.
