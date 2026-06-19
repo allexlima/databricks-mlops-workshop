@@ -25,12 +25,6 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Install Pyomo and HiGHS
-# MAGIC %pip install pyomo>=6.7 highspy>=1.7 -q
-# MAGIC %restart_python
-
-# COMMAND ----------
-
 # MAGIC %run ./_config
 
 # COMMAND ----------
