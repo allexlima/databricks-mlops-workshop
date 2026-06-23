@@ -1,0 +1,89 @@
+# Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# base_environment = "databricks_ml_v5"
+# environment_version = "5"
+# ///
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # 00 · Setup
+# MAGIC Points MLflow at Unity Catalog and creates the catalog/schema/volume and
+# MAGIC experiment. Run once before the labs.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Dependencies
+# MAGIC **Serverless (recommended):** dependencies are declared in each notebook's
+# MAGIC serverless **Environment** and persisted as PEP 723 metadata in the source —
+# MAGIC nothing to install, just run the cells.
+# MAGIC
+# MAGIC **Classic / ML cluster:** the PEP 723 environment is ignored. Run this once at
+# MAGIC the top of each notebook (or install the libs on the cluster). Use
+# MAGIC `requirements.txt` from a root notebook, or `../requirements.txt` from `extra/`:
+# MAGIC ```
+# MAGIC %pip install -q -r requirements.txt
+# MAGIC %restart_python
+# MAGIC ```
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Load shared config (catalog name, schema, volume, experiment path) from `_config`.
+
+# COMMAND ----------
+
+# MAGIC %run ./_config
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Tell MLflow to use Unity Catalog as the model registry instead of the legacy Workspace registry.
+
+# COMMAND ----------
+
+import mlflow
+
+mlflow.set_registry_uri("databricks-uc")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Verify the target catalog exists before attempting to write anything — creating
+# MAGIC catalogs requires admin privileges, so we only create objects *inside* one you
+# MAGIC already own.
+
+# COMMAND ----------
+
+# The catalog must already exist — creating catalogs is privileged and depends on
+# managed-location / Default-Storage settings. Set CATALOG (in _config) to one you
+# can create schemas in. We only create the schema inside it.
+catalogs = [r[0] for r in spark.sql("SHOW CATALOGS").collect()]
+assert CATALOG in catalogs, (
+    f"Catalog '{CATALOG}' not found. Set the 'catalog' widget to an existing Unity "
+    f"Catalog you can write to (available: {catalogs})."
+)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Create the schema and volume that all workshop notebooks will use for data and
+# MAGIC model artifacts (idempotent — safe to re-run).
+
+# COMMAND ----------
+
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA}")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA}.{VOLUME}")  # serverless-safe file storage
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Register the MLflow experiment so all lab notebooks log runs to the same
+# MAGIC experiment, making comparisons easy in the Experiments UI.
+
+# COMMAND ----------
+
+mlflow.set_experiment(EXPERIMENT_PATH)
+print(f"Setup complete. Using {CATALOG}.{SCHEMA}.")

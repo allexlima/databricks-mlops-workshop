@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Claude Code
+.claude/
+
+# Local-only project memory loader (imports .claude/CLAUDE.md)
+/CLAUDE.md
