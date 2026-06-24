@@ -13,15 +13,13 @@ Abra `01_generate_data.py`.
 
 ## Por que um dataset sintético e reprodutível?
 
-!!! note "Conceito"
-    **Reprodutibilidade** significa que qualquer pessoa que execute o workshop (hoje, daqui a seis meses, em outro workspace) gera exatamente os mesmos dados, treina os mesmos modelos e obtém os mesmos resultados. Isso não é apenas conveniência pedagógica: é a base da **governança de modelos**.
+**Reprodutibilidade** significa que qualquer pessoa que execute o workshop (hoje, daqui a seis meses, em outro workspace) gera exatamente os mesmos dados, treina os mesmos modelos e obtém os mesmos resultados. Isso não é apenas conveniência pedagógica: é a base da **governança de modelos**.
 
-    Sem reprodutibilidade, você não consegue auditar por que o modelo `v3` superou o `v2`, nem garantir que um modelo promovido a `@champion` se comportará em produção da mesma forma que se comportou na avaliação.
+Sem reprodutibilidade, você não consegue auditar por que o modelo `v3` superou o `v2`, nem garantir que um modelo promovido a `@champion` se comportará em produção da mesma forma que se comportou na avaliação.
 
 Um gerador determinístico com `seed` fixo garante isso. O `SEED = 42` definido em `_config.py` (e espelhado em `workshop_lib.SEED`) é passado para `generate_dataset`: o mesmo número de entrada gera a mesma sequência de números aleatórios, as mesmas features, o mesmo target e os mesmos cortes de treino/teste.
 
-!!! tip "Curiosidade"
-    O valor 42 é uma referência conhecida a *O Guia do Mochileiro das Galáxias*, de Douglas Adams, onde é a "resposta para a pergunta fundamental da vida, do universo e de tudo". Na prática, qualquer inteiro funciona. O importante é documentar e fixar o seed, não escolher o número "certo". O workshop usa 42 porque é uma tradição do ecossistema Python/ML.
+**Por que 42?** O valor 42 é uma referência conhecida a *O Guia do Mochileiro das Galáxias*, de Douglas Adams, onde é a "resposta para a pergunta fundamental da vida, do universo e de tudo". Na prática, qualquer inteiro funciona. O importante é documentar e fixar o seed, não escolher o número "certo". O workshop usa 42 porque é uma tradição do ecossistema Python/ML.
 
 ---
 
@@ -44,12 +42,9 @@ O `%run ./_config` (na célula anterior) centraliza todas as constantes do works
 
 `generate_dataset(n_months=96, seed=SEED)` retorna um **pandas DataFrame com 96 linhas**, uma por mês (`month` de 0 a 95). As linhas **nunca são embaralhadas**: a ordem temporal é preservada deliberadamente, pois cortes de avaliação em séries temporais precisam respeitar a causalidade.
 
-!!! note "Conceito"
-    **Como o gerador funciona internamente:**
+**Como o gerador funciona internamente.** As features de driver são construídas com **random-walks cumulativas** (`np.cumsum(rng.normal(...))`) e **sazonalidade senoidal** (`10 * np.sin(2π·t/12)`). Isso imita a dinâmica de mercados de commodities reais: tendências de médio prazo com variação estocástica mês a mês e um ciclo anual.
 
-    As features de driver são construídas com **random-walks cumulativas** (`np.cumsum(rng.normal(...))`) e **sazonalidade senoidal** (`10 * np.sin(2π·t/12)`). Isso imita a dinâmica de mercados de commodities reais: tendências de médio prazo com variação estocástica mês a mês e um ciclo anual.
-
-    O target `price_next_month` é uma **função linear ponderada dos drivers** acrescida do preço defasado (`0.3 * (price - base)`) e de ruído gaussiano calibrado. A equação é causal (os drivers do mês atual explicam o preço do mês seguinte), mas não é perfeitamente linear, o que torna o problema aprendível mas não trivial.
+O target `price_next_month` é uma **função linear ponderada dos drivers** acrescida do preço defasado (`0.3 * (price - base)`) e de ruído gaussiano calibrado. A equação é causal (os drivers do mês atual explicam o preço do mês seguinte), mas não é perfeitamente linear, o que torna o problema aprendível mas não trivial.
 
 ---
 
@@ -125,15 +120,11 @@ O **forecast ingênuo lag-1** (usar o preço de hoje como previsão para o mês 
 
 `quick_fit_r2` treina um `GradientBoostingRegressor` pequeno com um **corte temporal estrito de 80/20** (os primeiros 76 meses para treino, os últimos 20 para teste) e retorna o R² no conjunto de teste. Isso define o **teto prático**: o que um modelo simples, sem tuning, consegue extrair do sinal.
 
-!!! note "Conceito"
-    **Por que um corte temporal, e não um split aleatório?**
+**Por que um corte temporal, e não um split aleatório?** Em séries temporais, um split aleatório **vaza informação do futuro para o treino**: o modelo vê dados de períodos posteriores ao conjunto de teste durante o ajuste. Isso infla artificialmente o R² e não reflete o desempenho real em produção, onde o modelo nunca dispõe dos dados futuros.
 
-    Em séries temporais, um split aleatório **vaza informação do futuro para o treino**: o modelo vê dados de períodos posteriores ao conjunto de teste durante o ajuste. Isso infla artificialmente o R² e não reflete o desempenho real em produção, onde o modelo nunca dispõe dos dados futuros.
+O corte temporal preserva a causalidade: treino no passado, avaliação no futuro. É o mesmo princípio que guia o backtest de estratégias financeiras.
 
-    O corte temporal preserva a causalidade: treino no passado, avaliação no futuro. É o mesmo princípio que guia o backtest de estratégias financeiras.
-
-!!! tip "Curiosidade"
-    O `GradientBoostingRegressor` do scikit-learn usa árvores de decisão sequenciais em que cada árvore corrige os resíduos da anterior, daí o nome "gradient boosting". É robusto a features em escalas diferentes (sem necessidade de normalização) e frequentemente supera modelos lineares em dados tabulares com relações não lineares. Aqui ele serve apenas como referência rápida, não como o forecaster final do workshop.
+**Sobre o `GradientBoostingRegressor`.** Ele usa árvores de decisão sequenciais em que cada árvore corrige os resíduos da anterior, daí o nome "gradient boosting". É robusto a features em escalas diferentes (sem necessidade de normalização) e frequentemente supera modelos lineares em dados tabulares com relações não lineares. Aqui ele serve apenas como referência rápida, não como o forecaster final do workshop.
 
 ---
 
@@ -163,8 +154,7 @@ A faixa `[0.6, 0.85]` foi escolhida com intenção pedagógica:
 
 A faixa existe para que o **validation gate** do [forecaster (sklearn)](../lab-2-forecaster/index.md) (promover para `@champion` apenas se R² ≥ `R2_THRESHOLD` (0,6)) tenha significado real. Se o problema fosse trivial, o gate não filtraria nada. Se fosse impossível, o gate bloquearia tudo.
 
-!!! tip "Curiosidade"
-    Com `SEED = 42` e o runtime `databricks_ml_v5`, o `quick_fit_r2` converge para aproximadamente **0,76**, bem no centro da faixa. Esse valor foi obtido empiricamente ajustando o parâmetro de ruído em `generate_dataset`: o `noise = rng.normal(0, 12, n)` foi calibrado para que o R² do GBR pequeno ficasse próximo de 0,76, deixando espaço para um modelo mais cuidadoso (em `02_train_forecaster_sklearn.py`) melhorar e para um modelo mal ajustado ficar abaixo do threshold de 0,6.
+**O valor esperado de R².** Com `SEED = 42` e o runtime `databricks_ml_v5`, o `quick_fit_r2` converge para aproximadamente **0,76**, bem no centro da faixa. Esse valor foi obtido empiricamente ajustando o parâmetro de ruído em `generate_dataset`: o `noise = rng.normal(0, 12, n)` foi calibrado para que o R² do GBR pequeno ficasse próximo de 0,76, deixando espaço para um modelo mais cuidadoso (em `02_train_forecaster_sklearn.py`) melhorar e para um modelo mal ajustado ficar abaixo do threshold de 0,6.
 
 !!! warning "Se o assert falhar"
     Uma mudança de seed, uma versão diferente do NumPy ou uma alteração no código de `generate_dataset` pode deslocar o R² para fora da faixa. Antes de investigar o código do modelo, verifique que:
@@ -201,14 +191,12 @@ Dois formatos com propósitos complementares:
 
 `DATA_TABLE` e `CSV_PATH` são constantes definidas em `_config.py`. Você nunca precisa digitar o caminho manualmente, e se mudar de catálogo ou schema, basta editar `_config` uma vez.
 
-!!! note "Conceito"
-    **Delta Lake** não é apenas um formato de arquivo: é um protocolo de transações. Cada `write.mode("overwrite")` cria uma nova versão da tabela (Delta log), preservando o histórico. Você pode consultar versões anteriores com `VERSION AS OF` em SQL ou inspecionar o log com `DESCRIBE HISTORY`. É isso que torna a tabela "governada": auditável, versionada e acessível por qualquer serviço da Databricks.
+**Delta Lake** não é apenas um formato de arquivo: é um protocolo de transações. Cada `write.mode("overwrite")` cria uma nova versão da tabela (Delta log), preservando o histórico. Você pode consultar versões anteriores com `VERSION AS OF` em SQL ou inspecionar o log com `DESCRIBE HISTORY`. É isso que torna a tabela "governada": auditável, versionada e acessível por qualquer serviço da Databricks.
 
 !!! warning "Use Volumes, não `/dbfs/`, em compute serverless"
     Clusters serverless não montam o sistema de arquivos DBFS. Sempre escreva arquivos portáteis em um UC Volume (`/Volumes/<catalog>/<schema>/<volume>/…`). O `CSV_PATH` definido em `_config.py` já usa esse padrão. Não mude para um caminho `/dbfs/`, senão o notebook falha silenciosamente em compute serverless.
 
-!!! tip "Curiosidade"
-    O UC Volume é o equivalente moderno do DBFS para armazenamento de arquivos na Databricks. Ele tem controle de acesso via Unity Catalog (as mesmas permissões que governam tabelas e modelos), é acessível via API REST e funciona tanto em compute serverless quanto em classic clusters. O `VOLUME = "workshop_files"` foi criado pelo `00_setup.py`. Se você não executou o setup, o write vai falhar com um erro de caminho.
+**O que é um UC Volume.** É o equivalente moderno do DBFS para armazenamento de arquivos na Databricks. Ele tem controle de acesso via Unity Catalog (as mesmas permissões que governam tabelas e modelos), é acessível via API REST e funciona tanto em compute serverless quanto em classic clusters. O `VOLUME = "workshop_files"` foi criado pelo `00_setup.py`. Se você não executou o setup, o write vai falhar com um erro de caminho.
 
 ---
 
@@ -237,8 +225,7 @@ O dataset inclui uma coluna `trend_up`, um booleano derivado de `price_next_mont
 
 **`trend_up` nunca é usada como feature nem como target em nenhum notebook do workshop.** O forecaster de `02_train_forecaster_sklearn.py` é um regressor que prevê o valor contínuo de `price_next_month`, não um classificador binário. Incluir `trend_up` no treino seria circular (ela é derivada do target) e pedagogicamente enganoso.
 
-!!! tip "Curiosidade"
-    A distinção regressão vs. classificação importa aqui: prever "o preço vai subir?" (classificação) parece mais fácil, mas descarta informação valiosa sobre a *magnitude* da variação. É exatamente essa magnitude que o [otimizador Pyomo](../lab-3-optimizer/index.md) precisa para calcular a decisão de compra ótima. Um modelo que só diz "sobe/desce" não é suficiente para alimentar a cadeia de decisão.
+**Regressão vs. classificação.** A distinção importa aqui: prever "o preço vai subir?" (classificação) parece mais fácil, mas descarta informação valiosa sobre a *magnitude* da variação. É exatamente essa magnitude que o [otimizador Pyomo](../lab-3-optimizer/index.md) precisa para calcular a decisão de compra ótima. Um modelo que só diz "sobe/desce" não é suficiente para alimentar a cadeia de decisão.
 
 ---
 
