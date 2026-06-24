@@ -26,13 +26,8 @@
 
 # COMMAND ----------
 
-from mlflow.deployments import get_deploy_client
-from mlflow import MlflowClient
-
-client = MlflowClient()
-deploy = get_deploy_client("databricks")
-
-champ = client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
+# Paste the code for "Resolvendo a versão exata pelo alias" here.
+# Copy it from the workshop site → Model Serving, "Resolvendo a versão exata pelo alias".
 
 # COMMAND ----------
 
@@ -44,20 +39,8 @@ champ = client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
 
 # COMMAND ----------
 
-deploy.create_endpoint(
-    name=SERVING_ENDPOINT,
-    config={
-        "served_entities": [
-            {
-                "entity_name": FORECASTER_MODEL,
-                "entity_version": champ.version,
-                "workload_size": "Small",
-                "scale_to_zero_enabled": True,
-            }
-        ]
-    },
-)
-print(f"Creating endpoint {SERVING_ENDPOINT!r} for {FORECASTER_MODEL} v{champ.version}.")
+# Paste the code for "Criando o endpoint com scale-to-zero" here.
+# Copy it from the workshop site → Model Serving, "Criando o endpoint com scale-to-zero".
 
 # COMMAND ----------
 

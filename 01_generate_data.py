@@ -26,8 +26,8 @@
 
 import workshop_lib as wl
 
-df = wl.generate_dataset(seed=SEED)  # 96 monthly rows, time-ordered
-display(df.head(10))
+# Paste the code for "Passo 1 · Carregar a configuração e gerar o DataFrame bruto" here.
+# Copy it from the workshop site → Lab 1, "Passo 1".
 
 # COMMAND ----------
 
@@ -38,9 +38,8 @@ display(df.head(10))
 
 # COMMAND ----------
 
-print(df.describe())
-print("\nDriver correlation with target:")
-print(df[wl.DRIVERS].corrwith(df["price_next_month"]).sort_values())
+# Paste the code for "Passo 2 · Dicionário de dados e verificações de sanidade" here.
+# Copy it from the workshop site → Lab 1, "Passo 2".
 
 # COMMAND ----------
 
@@ -52,12 +51,8 @@ print(df[wl.DRIVERS].corrwith(df["price_next_month"]).sort_values())
 
 # COMMAND ----------
 
-from sklearn.metrics import r2_score
-
-cut = int(len(df) * 0.8)
-naive_r2 = r2_score(df["price_next_month"].iloc[cut:], df["price"].iloc[cut:])
-model_r2 = wl.quick_fit_r2(df)
-print(f"naive R2={naive_r2:.3f}  quick-model R2={model_r2:.3f}")
+# Paste the code for "Passo 3 · Baseline ingênuo vs. R² do modelo rápido" here.
+# Copy it from the workshop site → Lab 1, "Passo 3".
 
 # COMMAND ----------
 
@@ -68,8 +63,8 @@ print(f"naive R2={naive_r2:.3f}  quick-model R2={model_r2:.3f}")
 
 # COMMAND ----------
 
-lo, hi = wl.R2_BAND
-assert lo <= model_r2 <= hi, f"R2 {model_r2:.3f} outside band {wl.R2_BAND}"
+# Paste the code for "Passo 4 · Portão de qualidade do sinal (inline assert)" here.
+# Copy it from the workshop site → Lab 1, "Passo 4".
 
 # COMMAND ----------
 
@@ -80,6 +75,5 @@ assert lo <= model_r2 <= hi, f"R2 {model_r2:.3f} outside band {wl.R2_BAND}"
 
 # COMMAND ----------
 
-spark.createDataFrame(df).write.mode("overwrite").saveAsTable(DATA_TABLE)
-df.to_csv(CSV_PATH, index=False)
-print(f"Wrote {DATA_TABLE} and {CSV_PATH}.")
+# Paste the code for "Passo 5 · Persistir como tabela Delta + CSV em um UC Volume" here.
+# Copy it from the workshop site → Lab 1, "Passo 5".
