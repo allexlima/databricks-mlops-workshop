@@ -27,16 +27,15 @@ Um gerador determinístico com `seed` fixo garante isso. O `SEED = 42` definido 
 
 ## Passo 1 · Carregar a configuração e gerar o DataFrame bruto
 
+A célula `%run ./_config` e o `import workshop_lib as wl` já estão no notebook.
+Cole apenas o bloco abaixo no espaço reservado da célula:
+
 ```python
-%run ./_config          # define CATALOG, SCHEMA, DATA_TABLE, CSV_PATH, SEED
-
-import workshop_lib as wl
-
 df = wl.generate_dataset(n_months=96, seed=SEED)   # 96 linhas mensais, time-ordered
 display(df.head(10))
 ```
 
-O `%run ./_config` centraliza todas as constantes do workspace (catálogo, esquema, caminho do Volume, seed) em um único arquivo. Você edita ali uma vez e todos os notebooks herdam a mudança. Sem copiar e colar strings entre notebooks, sem divergência silenciosa.
+O `%run ./_config` (na célula anterior) centraliza todas as constantes do workspace (catálogo, esquema, caminho do Volume, seed) em um único arquivo. Você edita ali uma vez e todos os notebooks herdam a mudança. Sem copiar e colar strings entre notebooks, sem divergência silenciosa.
 
 `generate_dataset(n_months=96, seed=SEED)` retorna um **pandas DataFrame com 96 linhas**, uma por mês (`month` de 0 a 95). As linhas **nunca são embaralhadas**: a ordem temporal é preservada deliberadamente, pois cortes de avaliação em séries temporais precisam respeitar a causalidade.
 

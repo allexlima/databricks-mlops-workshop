@@ -47,6 +47,10 @@ mu, sd = train[feats].mean(), train[feats].std(ddof=0)
 
 def to_t(frame):
     return torch.tensor(((frame[feats] - mu) / sd).to_numpy(), dtype=torch.float32)
+
+Xtr = to_t(train)
+ytr = torch.tensor(train["price_next_month"].to_numpy(), dtype=torch.float32).view(-1, 1)
+Xte = to_t(test)
 ```
 
 !!! tip "Curiosidade"
@@ -58,9 +62,25 @@ def to_t(frame):
 
 Todo o treinamento acontece dentro de um bloco `with mlflow.start_run(run_name="pytorch_mlp")`. Isso garante que parâmetros, métricas e o artefato do modelo pertençam à mesma run, e que o `info.model_uri` devolvido por `log_model` seja a URI correta para o passo de registro.
 
+A classe `MLP` definida acima e este bloco de treino vão na **mesma célula** do
+notebook (primeiro a classe, depois o `with mlflow.start_run`):
+
 ```python
 with mlflow.start_run(run_name="pytorch_mlp"):
-    # ... loop de treino ...
+    net = MLP(len(feats))
+    opt = torch.optim.Adam(net.parameters(), lr=0.01)
+    loss_fn = nn.MSELoss()
+
+    for _ in range(400):
+        opt.zero_grad()
+        loss = loss_fn(net(Xtr), ytr)
+        loss.backward()
+        opt.step()
+
+    preds = net(Xte).detach().numpy().ravel()
+    r2 = float(r2_score(test["price_next_month"], preds))
+    rmse = float(np.sqrt(mean_squared_error(test["price_next_month"], preds)))
+
     mlflow.log_params({"model_type": "torch_mlp", "epochs": 400, "seed": SEED})
     mlflow.log_metrics({"r2": r2, "rmse": rmse})
     info = mlflow.pytorch.log_model(net, name="model")
