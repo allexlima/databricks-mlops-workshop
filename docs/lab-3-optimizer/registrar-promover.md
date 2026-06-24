@@ -8,6 +8,9 @@ Com o wrapper PyFunc validado na página anterior, o próximo passo é registrar
 
 Um modelo sklearn tem métricas de treino (R², RMSE) que servem como critério de qualidade antes do registro. O otimizador Pyomo não tem nenhuma dessas métricas, por isso o notebook exige um **assert de viabilidade** como gate explícito:
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«O assert de viabilidade»** pelo bloco abaixo.
+
 ```python
 row = sample_out.iloc[0]
 
@@ -31,6 +34,11 @@ O que cada assert verifica:
 ---
 
 ## Fazer o log do modelo com `code_paths`
+
+!!! example "Cole no notebook (parte 1 de 2)"
+    Esta célula combina **dois blocos**. Cole primeiro o log abaixo no espaço
+    reservado da célula; o bloco «Definir o alias `@champion`» vem logo em seguida,
+    na mesma célula.
 
 ```python
 signature = mlflow.models.infer_signature(example, sample_out)
@@ -73,6 +81,9 @@ with mlflow.start_run(run_name="pyomo_optimizer"):
 
 ## Definir o alias `@champion`
 
+!!! example "Cole no notebook (parte 2 de 2)"
+    Cole este bloco **logo após o `log_model`**, na mesma célula.
+
 ```python
 client.set_registered_model_alias(
     OPTIMIZER_MODEL, "champion", info.registered_model_version
@@ -87,6 +98,9 @@ client.set_registered_model_alias(
 ---
 
 ## Carregar pelo alias e confirmar
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Carregar pelo alias e confirmar»** pelo bloco abaixo.
 
 ```python
 opt = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")

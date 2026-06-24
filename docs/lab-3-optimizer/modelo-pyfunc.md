@@ -136,6 +136,9 @@ Essa assinatura é o contrato do MLflow 3.x para qualquer PyFunc customizado. Tr
 
 O notebook constrói um exemplo canônico e chama `.predict()` diretamente, antes de qualquer chamada a `log_model`:
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Rodando o exemplo antes de registrar»** pelo bloco abaixo.
+
 ```python
 example = pd.DataFrame([{
     "predicted_price": 210.0,

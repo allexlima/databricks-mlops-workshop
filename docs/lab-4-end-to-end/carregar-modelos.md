@@ -25,6 +25,9 @@ A linha `mlflow.set_registry_uri("databricks-uc")` é o ponto de virada: ela red
 
 ## O champion guard
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«O champion guard»** pelo bloco abaixo.
+
 ```python
 try:
     client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
@@ -56,6 +59,9 @@ Esse erro é difícil de diagnosticar: ele não indica qual lab deixou de ser ex
 ---
 
 ## Carregando os dois modelos por alias
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Carregando os dois modelos por alias»** pelo bloco abaixo.
 
 ```python
 df = spark.table(DATA_TABLE).toPandas().sort_values("month")

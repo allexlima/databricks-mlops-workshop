@@ -9,6 +9,9 @@ não de uma inspeção manual.
 
 ## Passo 4 · Validation gate: registrar somente se R² >= R2_THRESHOLD
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 4»** pelo bloco abaixo.
+
 ```python
 client = MlflowClient()
 if r2 >= R2_THRESHOLD:                                      # 0,6

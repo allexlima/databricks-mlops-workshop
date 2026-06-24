@@ -18,6 +18,10 @@ forecaster @champion  ──→  preço previsto
 
 O código que implementa isso em `04_end_to_end.py`:
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«A cadeia em quatro passos»** pelo bloco
+    completo abaixo. Os Passos 1 a 3 logo em seguida apenas detalham este mesmo bloco.
+
 ```python
 predicted_price = float(forecaster.predict(latest[wl.DRIVERS + ["price"]])[0])
 

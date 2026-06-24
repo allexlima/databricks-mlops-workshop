@@ -54,6 +54,9 @@ mlflow.set_experiment(EXPERIMENT_PATH)
 
 ## Passo 2 · Divisão treino/teste que respeita o tempo
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 2»** pelo bloco abaixo.
+
 ```python
 df = spark.table(DATA_TABLE).toPandas().sort_values("month")
 feats = wl.DRIVERS + ["price"]
@@ -94,6 +97,9 @@ viram teste.
 ---
 
 ## Passo 3 · Treinar e logar um run completo no MLflow
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 3»** pelo bloco abaixo.
 
 ```python
 with mlflow.start_run(run_name="sklearn_gbr") as run:

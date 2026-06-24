@@ -73,6 +73,9 @@ Se o checkpoint 1 falhar, não faz sentido testar o registry. Se o 2 falhar, o 3
 
 ### Checkpoint 1: R² dentro da faixa esperada
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Checkpoint 1»** pelo bloco abaixo.
+
 ```python
 r2 = wl.quick_fit_r2(df)
 assert wl.R2_BAND[0] <= r2 <= wl.R2_BAND[1], f"R2 {r2:.3f} outside {wl.R2_BAND}"
@@ -89,6 +92,9 @@ assert wl.R2_BAND[0] <= r2 <= wl.R2_BAND[1], f"R2 {r2:.3f} outside {wl.R2_BAND}"
 
 ### Checkpoint 2: `price_forecaster` está registrado no Unity Catalog
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Checkpoint 2»** pelo bloco abaixo.
+
 ```python
 assert client.get_registered_model(FORECASTER_MODEL) is not None
 ```
@@ -104,6 +110,9 @@ assert client.get_registered_model(FORECASTER_MODEL) is not None
 
 ### Checkpoint 3: O alias `@champion` resolve
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Checkpoint 3»** pelo bloco abaixo.
+
 ```python
 champ = client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
 assert champ is not None and champ.version is not None
@@ -117,6 +126,9 @@ assert champ is not None and champ.version is not None
 
 ### Checkpoint 4: A cadeia ponta a ponta retorna uma decisão de compra
 
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Checkpoint 4»** pelo bloco abaixo.
+
 ```python
 forecaster = mlflow.pyfunc.load_model(f"models:/{FORECASTER_MODEL}@champion")
 optimizer  = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
@@ -128,6 +140,7 @@ oi.insert(0, "predicted_price", pp)
 dec = optimizer.predict(oi)
 
 assert dec.loc[0, "status"] == "optimal" and pd.notna(dec.loc[0, "purchase_qty"])
+print("ALL 4 CHECKPOINTS PASSED")
 ```
 
 Este é o teste de integração real: carrega os dois modelos `@champion` e executa um ciclo completo de inferência na linha mais recente do dataset, exatamente o mesmo padrão do `04_end_to_end.py`.
