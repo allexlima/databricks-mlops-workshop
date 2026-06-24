@@ -1,5 +1,8 @@
 # Workflow end-to-end
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `04_end_to_end.py`. Abra-o na sua Git folder.
+
 Nas etapas anteriores você treinou e registrou dois modelos completamente diferentes no mesmo ciclo de vida governado pelo MLflow:
 
 - **`price_forecaster`**: um modelo scikit-learn que prevê o preço do próximo mês de uma commodity a partir de drivers econômicos.
@@ -8,8 +11,6 @@ Nas etapas anteriores você treinou e registrou dois modelos completamente difer
 Neste lab, você vai **compô-los** em uma única cadeia de decisão e entender o que a governança do Unity Catalog oferece de graça.
 
 ![Cadeia ponta a ponta: drivers → forecaster @champion → preço previsto → optimizer @champion → decisão de compra](../assets/diagrams/chain.svg){ width="100%" }
-
-Abra `04_end_to_end.py` no repositório.
 
 ---
 

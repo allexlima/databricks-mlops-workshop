@@ -1,5 +1,8 @@
 # Registrar e promover a `@champion`
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `03_register_optimizer_pyomo.py`. Abra-o na sua Git folder.
+
 Com o wrapper PyFunc validado na página anterior, o próximo passo é registrar o otimizador no Unity Catalog, promovê-lo para `@champion` e confirmar que tudo funciona carregando o modelo pelo alias. Esta página cobre os passos finais de `03_register_optimizer_pyomo.py`.
 
 ---

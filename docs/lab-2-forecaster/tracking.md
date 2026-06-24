@@ -1,5 +1,8 @@
 # Tracking com MLflow
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `02_train_forecaster_sklearn.py`. Abra-o na sua Git folder.
+
 Os três primeiros passos do `02_train_forecaster_sklearn.py` cobrem o bloco de
 tracking: apontar o MLflow para os lugares certos, preparar os dados respeitando
 o tempo, e executar o run de forma atômica. Ao final destes passos você terá um

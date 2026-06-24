@@ -1,5 +1,8 @@
 # Empacotar o otimizador como PyFunc
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `03_register_optimizer_pyomo.py`. Abra-o na sua Git folder.
+
 Na visão geral desta etapa você entendeu por que o Pyomo exige o PyFunc como caminho de registro. Esta página acompanha `03_register_optimizer_pyomo.py` e cobre os dois primeiros grandes passos do notebook: **formular e resolver o problema** com Pyomo e **empacotar o solver** como um `mlflow.pyfunc.PythonModel`.
 
 ---

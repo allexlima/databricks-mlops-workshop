@@ -1,5 +1,8 @@
 # Verificação (Definition of Done)
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `05_verify.py`. Abra-o na sua Git folder.
+
 `05_verify.py` é o portão final do caminho obrigatório: quatro asserções baseadas em alias que provam, de ponta a ponta, que os dois modelos estão registrados, promovidos e operando juntos em cadeia. Se todos os quatro passarem, o workshop está concluído.
 
 ---
@@ -9,8 +12,6 @@
 !!! warning "Pré-requisito"
     Execute os notebooks `00` a `04` na ordem antes de abrir este lab.
     O `05_verify.py` **não cria nenhum recurso**: ele apenas valida o que os notebooks anteriores produziram. Se qualquer checkpoint falhar, a seção [Passou × Falhou](#referencia-rapida-passou-x-falhou) indica qual notebook reexecutar.
-
-Abra `05_verify.py`.
 
 ---
 

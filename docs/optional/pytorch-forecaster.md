@@ -1,8 +1,9 @@
 # Forecaster em PyTorch: mesmo lifecycle, outro framework
 
-Este lab mostra que o MLflow governa qualquer modelo Python, não apenas scikit-learn: basta trocar o objeto do modelo e o restante do ciclo permanece idêntico.
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `extra/train_forecaster_pytorch.py`. Abra-o na sua Git folder.
 
-Abra `extra/train_forecaster_pytorch.py`.
+Este lab mostra que o MLflow governa qualquer modelo Python, não apenas scikit-learn: basta trocar o objeto do modelo e o restante do ciclo permanece idêntico.
 
 ---
 

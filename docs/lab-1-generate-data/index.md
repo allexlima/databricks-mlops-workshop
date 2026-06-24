@@ -1,13 +1,14 @@
 # Gerar o conjunto de dados
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `01_generate_data.py`. Abra-o na sua Git folder.
+
 Todo ciclo de vida de modelos começa com dados. Não dados quaisquer: dados **reprodutíveis, governados e com uma única fonte de verdade**. Sem isso, comparar modelos diferentes é como comparar maçãs com laranjas. Você não sabe se um resultado melhor vem do modelo ou dos dados que ele usou.
 
 Neste lab você cria o dataset sintético compartilhado que todos os outros labs consomem. Ao final, ele estará registrado como tabela Delta no Unity Catalog e como CSV em um UC Volume, disponíveis para qualquer notebook do workshop, em qualquer ordem de execução.
 
 !!! warning "Pré-requisito"
     O `00_setup.py` precisa ter rodado antes deste notebook. Ele cria o schema e o UC Volume que este lab usa para persistir a tabela Delta e o CSV. Se o schema ainda não existir, o `saveAsTable` vai falhar com erro de caminho.
-
-Abra `01_generate_data.py`.
 
 ---
 

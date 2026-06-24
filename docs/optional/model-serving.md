@@ -1,8 +1,11 @@
 # Model Serving: publicando o champion em tempo real
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `extra/serving.py`. Abra-o na sua Git folder.
+
 Este lab expõe o `price_forecaster@champion` como um endpoint HTTP gerenciado na Databricks, capaz de receber features de entrada e devolver previsões de preço em tempo real.
 
-Abra `extra/serving.py`. Documentação de referência: [Databricks Model Serving](https://docs.databricks.com/en/machine-learning/model-serving/index.html).
+Documentação de referência: [Databricks Model Serving](https://docs.databricks.com/en/machine-learning/model-serving/index.html).
 
 ---
 

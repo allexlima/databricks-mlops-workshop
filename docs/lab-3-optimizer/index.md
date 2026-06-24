@@ -1,10 +1,11 @@
 # O otimizador Pyomo como MLflow custom flavor
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `03_register_optimizer_pyomo.py`. Abra-o na sua Git folder.
+
 Na [etapa do forecaster (sklearn)](../lab-2-forecaster/index.md) você treinou um forecaster sklearn e o registrou no Unity Catalog com `mlflow.sklearn.log_model`. O registro, o versionamento e o alias `@champion` funcionaram sem nenhuma configuração especial, pois o sklearn é um flavor nativo do MLflow.
 
 Agora a pergunta é: e quando o modelo **não tem um flavor nativo**? Neste lab você vai responder a essa pergunta com o exemplo mais distante possível de um modelo de ML convencional: um otimizador de pesquisa operacional que nunca viu uma função `fit()`. A resposta é o **MLflow PyFunc**, uma interface genérica que governa qualquer objeto Python com um método `predict()`. Aqui a tese do workshop se torna concreta: o MLflow governa o que você tiver, independentemente do framework.
-
-Abra `03_register_optimizer_pyomo.py`.
 
 ---
 

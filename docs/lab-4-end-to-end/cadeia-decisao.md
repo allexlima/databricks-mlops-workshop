@@ -1,5 +1,8 @@
 # Rodar a cadeia e obter a decisão
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `04_end_to_end.py`. Abra-o na sua Git folder.
+
 Com os dois modelos carregados por `@champion` na página anterior, a última etapa é executar a cadeia de decisão: dados do mês mais recente entram, uma decisão de compra sai. Esse fluxo, que antes era uma rotina manual, agora conta com inputs rastreados, modelos versionados e lineage auditável no Unity Catalog.
 
 ---

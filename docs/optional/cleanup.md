@@ -1,8 +1,9 @@
 # Limpeza dos recursos
 
-Este notebook remove todos os recursos criados pelo workshop: endpoint de serving, modelos registrados, experimento MLflow, tabela Delta, Volume CSV e, por padrão, o schema inteiro.
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `extra/cleanup.py`. Abra-o na sua Git folder.
 
-Abra `extra/cleanup.py`.
+Este notebook remove todos os recursos criados pelo workshop: endpoint de serving, modelos registrados, experimento MLflow, tabela Delta, Volume CSV e, por padrão, o schema inteiro.
 
 !!! warning "Atenção"
     Este notebook **deleta permanentemente** todos os recursos criados pelo workshop. A ação não pode ser desfeita. Leia os dois flags de controle antes de executar qualquer célula.

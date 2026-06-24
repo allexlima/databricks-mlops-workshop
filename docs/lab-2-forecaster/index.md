@@ -1,5 +1,8 @@
 # Treinar o forecaster (sklearn)
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `02_train_forecaster_sklearn.py`. Abra-o na sua Git folder.
+
 Com o dataset gerado no lab anterior, você tem 96 meses de preços de commodity e
 dez indicadores econômicos sintéticos persistidos na tabela
 `main.mlops_workshop_<seu-usuário>.commodity_monthly` do Unity Catalog. Este lab usa esses
@@ -8,8 +11,6 @@ Databricks: treinar, rastrear, avaliar contra um critério objetivo e, somente s
 o modelo passar, registrar e promover para `@champion`.
 
 Promoção é um gesto deliberado. Não é efeito colateral do treinamento.
-
-Abra `02_train_forecaster_sklearn.py`.
 
 ---
 

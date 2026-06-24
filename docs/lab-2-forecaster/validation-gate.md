@@ -1,5 +1,8 @@
 # Validation gate e registro
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `02_train_forecaster_sklearn.py`. Abra-o na sua Git folder.
+
 O Passo 4 é onde a decisão acontece. O run está completo, as métricas estão
 logadas, e agora o notebook pergunta: este modelo é bom o suficiente para virar
 um modelo governado no Unity Catalog? A resposta vem de um critério objetivo,

@@ -1,5 +1,8 @@
 # Carregar os modelos por @champion
 
+!!! note "Notebook desta página"
+    Esta página acompanha o notebook `04_end_to_end.py`. Abra-o na sua Git folder.
+
 Na visão geral desta etapa você viu os quatro passos do notebook e entendeu por que o alias `@champion` torna a cadeia robusta a retreinos. Agora é hora de executar o primeiro desses passos: configurar o registry e carregar os dois modelos registrados. Antes disso, o notebook executa um guard que falha com mensagem clara caso algum `@champion` ainda não tenha sido promovido.
 
 ---
