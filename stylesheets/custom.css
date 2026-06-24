@@ -1,0 +1,388 @@
+/* ============================================================================
+   Guided workshop layout, fully Databricks-branded.
+   Palette roles:
+     Lava   #FF3621  → ACCENTS only (links, active nav, primary buttons). Links
+                       darkened to #C42912 for WCAG AA on light surfaces.
+     Navy   #1B3139  → header, sidebar, footer, dark surfaces (white text/logo).
+     Oat    #F9F7F4  → warm page background.
+     White  #FFFFFF  → content card/panels on top of Oat.
+   Fonts: DM Sans (text) + DM Mono (code) via theme.font.
+   ========================================================================== */
+
+:root {
+  --db-lava: #ff3621;
+  --db-lava-link: #c42912;   /* WCAG AA on oat/white */
+  --db-navy: #1b3139;
+  --db-navy-deep: #122026;
+  --db-oat: #f9f7f4;
+  --db-radius: 3px;          /* flat, squared aesthetic */
+}
+
+/* ---- Light scheme (primary): light chrome, full-color logo ---- */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--db-lava);
+  --md-accent-fg-color: var(--db-lava-link);
+  --md-default-bg-color: var(--db-oat);
+  --md-typeset-a-color: var(--db-lava-link);
+  /* chrome (header + sidebar) */
+  --db-chrome-bg: #fff;
+  --db-chrome-fg: var(--db-navy);
+  --db-chrome-muted: #5b6b70;
+  --db-chrome-border: rgba(27, 49, 57, 0.12);
+  --db-sidebar-bg: transparent;            /* oat page shows through */
+  --db-active-tint: rgba(255, 54, 33, 0.09);
+  --db-search-bg: rgba(27, 49, 57, 0.06);
+  /* surfaces (content card + grid cards) */
+  --db-card-bg: #fff;
+  --db-card-border: rgba(27, 49, 57, 0.10);
+  --db-card-lift: #fff;
+  --db-card-lift-border: rgba(27, 49, 57, 0.12);
+  --db-card-shadow: rgba(27, 49, 57, 0.06);
+  --db-card-shadow-hover: rgba(27, 49, 57, 0.10);
+  /* hero */
+  --db-hero-bg: linear-gradient(135deg, #ffffff 0%, #f3ede6 100%);
+  --db-hero-fg: var(--db-navy);
+  --db-hero-fg-muted: #3c4a4f;
+  --db-hero-border: rgba(27, 49, 57, 0.12);
+  --db-badge-bg: rgba(27, 49, 57, 0.06);
+  --db-badge-border: rgba(27, 49, 57, 0.18);
+  --db-badge-fg: var(--db-navy);
+  --db-rule-neutral: var(--db-navy);   /* neutral admonition accent */
+}
+
+/* ---- Dark scheme (slate): navy chrome, white logo ---- */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: var(--db-lava);
+  --md-accent-fg-color: #ff5a47;
+  --md-default-bg-color: #0f1c21;
+  --md-typeset-a-color: #ff8a7a;
+  /* chrome (header + sidebar) */
+  --db-chrome-bg: var(--db-navy);
+  --db-chrome-fg: #fff;
+  --db-chrome-muted: #cdd6da;
+  --db-chrome-border: rgba(255, 255, 255, 0.10);
+  --db-sidebar-bg: transparent;            /* page bg shows through (mirror light) */
+  --db-active-tint: rgba(255, 54, 33, 0.18);
+  --db-search-bg: rgba(255, 255, 255, 0.10);
+  /* surfaces (content card + grid cards) — mirror light, dark palette */
+  --db-card-bg: #16252b;
+  --db-card-border: rgba(255, 255, 255, 0.08);
+  --db-card-lift: #1e333b;
+  --db-card-lift-border: rgba(255, 255, 255, 0.13);
+  --db-card-shadow: rgba(0, 0, 0, 0.30);
+  --db-card-shadow-hover: rgba(0, 0, 0, 0.45);
+  /* hero */
+  --db-hero-bg: linear-gradient(135deg, #1b3139 0%, #25434c 100%);
+  --db-hero-fg: #ffffff;
+  --db-hero-fg-muted: #e6ecee;
+  --db-hero-border: rgba(255, 255, 255, 0.08);
+  --db-badge-bg: rgba(255, 255, 255, 0.10);
+  --db-badge-border: rgba(255, 255, 255, 0.22);
+  --db-badge-fg: #ffffff;
+  --db-rule-neutral: #6f96a3;           /* steel — visible on dark card */
+}
+
+/* ============================ Chrome ====================================== */
+
+/* Slim sticky header — scheme-aware (light chrome in default, navy in slate) */
+.md-header {
+  background-color: var(--db-chrome-bg);
+  color: var(--db-chrome-fg);
+  border-bottom: 1px solid var(--db-chrome-border);
+  box-shadow: none;
+}
+.md-header__inner { padding: 0 0.6rem; }
+.md-header__title { font-weight: 700; letter-spacing: -0.01em; padding-left: 0.8rem; font-size: 1.02rem; }
+.md-tabs { background-color: var(--db-chrome-bg); }
+
+/* Header search field tuned for the (light or navy) header surface */
+.md-search__input { background-color: var(--db-search-bg); color: var(--db-chrome-fg); }
+.md-search__input::placeholder { color: var(--db-chrome-muted); }
+.md-search__icon { color: var(--db-chrome-fg); }
+
+/* Official Databricks lockup, swapped per scheme: full-color on the light
+   header, white/reversed on the navy one. The asset is a wide wordmark, so we
+   render it as a sized background (the <img> is hidden) and use the exact
+   ~6.3:1 aspect at 1.4rem tall. */
+.md-header__button.md-logo {
+  padding-right: 0.4rem;
+  height: 1.4rem;
+  width: 8.8rem;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+}
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg { display: none; }
+[data-md-color-scheme="default"] .md-header__button.md-logo {
+  background-image: url("../assets/primary-lockup-full-color-rgb.svg");
+}
+[data-md-color-scheme="slate"] .md-header__button.md-logo {
+  background-image: url("../assets/primary-lockup-full-color-white-rgb.svg");
+}
+
+/* In responsive (drawer) mode the wide wordmark doesn't fit, and Material hides
+   the header logo entirely. Bring it back as the compact Databricks mark (the
+   favicon) so the brand stays visible. Same icon works on both schemes. */
+@media screen and (max-width: 76.234375em) {
+  .md-header__button.md-logo {
+    display: inline-flex;   /* override Material's display:none at this width */
+    width: 1.5rem;
+  }
+  [data-md-color-scheme="default"] .md-header__button.md-logo,
+  [data-md-color-scheme="slate"] .md-header__button.md-logo {
+    background-image: url("../assets/databricks-favicon-48x48-orange.png");
+  }
+}
+
+/* Left sidebar as a module tree — navy in slate, light/oat in default */
+.md-sidebar--primary { background-color: var(--db-sidebar-bg); }
+.md-sidebar--primary .md-sidebar__scrollwrap { background-color: var(--db-sidebar-bg); }
+.md-sidebar--primary .md-nav {
+  background-color: var(--db-sidebar-bg);
+  color: var(--db-chrome-muted);
+}
+
+/* The header already shows the site title — hide the duplicate site-title
+   block at the top of the sidebar nav (scoped to the primary nav's own
+   title so section labels are untouched). */
+.md-sidebar--primary .md-nav--primary > .md-nav__title { display: none; }
+.md-sidebar--primary .md-nav__item--section > .md-nav__link { color: var(--db-chrome-fg); font-weight: 700; }
+.md-sidebar--primary .md-nav__link {
+  color: var(--db-chrome-muted);
+  padding-left: 1.1rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+.md-sidebar--primary .md-nav__link:hover { color: var(--db-chrome-fg); }
+
+/* Collapsible nav: keep parent (expandable) group labels prominent */
+/* Every top-level item (sections AND standalone pages) gets the same bold,
+   prominent treatment; subpages stay lighter for clear hierarchy. */
+.md-sidebar--primary .md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link {
+  color: var(--db-chrome-fg);
+  font-weight: 700;
+}
+
+/* Compact, comfortable type for the left menu and the right TOC (Índice) */
+.md-sidebar--primary .md-nav,
+.md-sidebar--secondary .md-nav { font-size: 0.66rem; }
+
+/* Indent subpages a bit more under their parent group */
+.md-sidebar--primary .md-nav--primary .md-nav .md-nav__link { padding-left: 1.9rem; }
+
+/* Active sidebar item: Lava left-bar + faint tint.
+   The bar is an inset box-shadow so the row keeps its place; the base
+   padding-left above gives the label clearance from the bar. */
+.md-sidebar--primary .md-nav__link--active,
+.md-sidebar--primary .md-nav__item .md-nav__link--active {
+  color: var(--db-chrome-fg);
+  font-weight: 700;
+  background-color: var(--db-active-tint);
+  box-shadow: inset 3px 0 0 var(--db-lava);
+}
+
+/* Footer: deep navy */
+.md-footer { background-color: var(--db-navy); }
+.md-footer-meta { background-color: var(--db-navy-deep); }
+
+/* Copyright + authors block (legal notice + workshop authors) */
+/* Footer meta (copyright + generator), left-aligned */
+.md-footer-meta__inner {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.7rem 0.8rem;
+}
+.md-footer-meta .md-copyright {
+  width: 100%;
+  line-height: 1.6;
+  text-align: left;
+}
+.md-footer-authors { display: inline-block; color: #94a2a8; font-weight: 400; font-size: 0.58rem; }
+.md-footer-authors a { color: #cdd6da; }
+.md-footer-made { display: inline-block; margin-top: 0.15rem; color: #aab6bb; font-size: 0.58rem; }
+.md-footer-legal {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: #7e8c92;
+  font-size: 0.5rem;
+  line-height: 1.5;
+}
+.md-copyright a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+.md-copyright a:hover { color: var(--db-lava); }
+
+/* ============================ Content card ================================ */
+
+/* Reading panel floating on the page background — same layout both schemes,
+   only the surface palette changes (white-on-oat / dark-on-deep). */
+.md-content {
+  background-color: var(--db-card-bg);
+  border: 1px solid var(--db-card-border);
+  border-radius: var(--db-radius);
+  box-shadow: 0 1px 3px var(--db-card-shadow);
+}
+.md-content__inner { padding: 1.2rem 1.4rem 1.6rem; }
+/* Material adds a 0.8rem spacer ::before the first content block; with our own
+   top padding that doubles the gap, so neutralize it. */
+.md-content__inner > :first-child { margin-top: 0; }
+.md-content__inner::before { display: none; }
+
+/* ============================ Typography ================================== */
+
+/* Slightly smaller, comfortable body type */
+.md-typeset { font-size: 0.76rem; }
+
+.md-typeset h1, .md-typeset h2, .md-typeset h3 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--db-navy);
+}
+[data-md-color-scheme="slate"] .md-typeset h1,
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3 { color: inherit; }
+.md-typeset h2 {
+  border-bottom: 2px solid rgba(255, 54, 33, 0.18);
+  padding-bottom: 0.25rem;
+}
+.md-typeset a:hover { color: var(--db-lava); }
+
+/* ============================ Flatten components ========================== */
+
+.md-typeset .admonition,
+.md-typeset details,
+.md-typeset pre > code,
+.md-typeset .tabbed-set > .tabbed-content,
+.md-button,
+.md-typeset .grid.cards > ul > li {
+  border-radius: var(--db-radius) !important;
+}
+
+/* ============================ Buttons ===================================== */
+
+.md-typeset .md-button--primary {
+  background-color: var(--db-lava);
+  border-color: var(--db-lava);
+  color: #fff;
+}
+.md-typeset .md-button--primary:hover {
+  background-color: var(--db-lava-link);
+  border-color: var(--db-lava-link);
+}
+
+/* ============================ Admonitions ================================ */
+/* Colored left border + tinted panel, brand palette. */
+.md-typeset .admonition,
+.md-typeset details {
+  border-left: 4px solid var(--db-rule-neutral);
+  box-shadow: none;
+}
+.md-typeset .admonition.info, .md-typeset details.info,
+.md-typeset .admonition.note, .md-typeset details.note {
+  border-left-color: var(--db-rule-neutral);
+}
+.md-typeset .admonition.success, .md-typeset details.success {
+  border-left-color: #1f7a4d;
+}
+.md-typeset .admonition.warning, .md-typeset details.warning {
+  border-left-color: var(--db-lava);
+}
+.md-typeset .admonition.danger, .md-typeset details.danger {
+  border-left-color: var(--db-lava-link);
+}
+.md-typeset .admonition.quote, .md-typeset details.quote {
+  border-left-color: var(--db-rule-neutral);
+}
+
+/* ============================ Big footer nav buttons ===================== */
+.md-footer__inner { padding: 0.6rem; }
+.md-footer__link {
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--db-radius);
+  margin: 0.3rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.md-footer__link:hover {
+  background-color: rgba(255, 54, 33, 0.16);
+  border-color: var(--db-lava);
+}
+
+/* ============================ Grid cards ================================== */
+/* Two cards per row (collapses to one on narrow screens) */
+.md-typeset .grid.cards { grid-template-columns: repeat(2, 1fr); }
+@media screen and (max-width: 44.9375em) {
+  .md-typeset .grid.cards { grid-template-columns: 1fr; }
+}
+.md-typeset .grid.cards > ul > li {
+  background-color: var(--db-card-lift);
+  border: 1px solid var(--db-card-lift-border);
+  padding: 1rem 1.1rem;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--db-lava);
+  box-shadow: 0 6px 18px var(--db-card-shadow-hover);
+  transform: translateY(-2px);
+}
+.md-typeset .grid.cards .twemoji { color: var(--db-lava); }
+
+/* ============================ Code ======================================= */
+.md-typeset pre > code { border-left: 3px solid var(--db-lava); }
+
+/* ============================ Hero (home) ================================ */
+.db-hero {
+  background: var(--db-hero-bg);
+  color: var(--db-hero-fg);
+  border: 1px solid var(--db-hero-border);
+  border-left: 4px solid var(--db-lava);
+  border-radius: var(--db-radius);
+  padding: 2rem 1.8rem;
+  margin: 0 -1.5rem 1.4rem;
+}
+.db-hero h1 { color: var(--db-hero-fg) !important; margin: 0 0 0.4rem; border: 0; }
+.db-hero p { color: var(--db-hero-fg-muted); margin: 0.3rem 0 0.9rem; }
+.db-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.db-badge {
+  display: inline-block;
+  background: var(--db-badge-bg);
+  border: 1px solid var(--db-badge-border);
+  color: var(--db-badge-fg);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+.db-badge--lava { background: var(--db-lava); border-color: var(--db-lava); color: #fff; }
+
+/* Center diagrams */
+.md-typeset img[src$=".svg"] { display: block; margin: 1.4rem auto; }
+
+/* ============================ Reading polish ============================= */
+
+/* Comfortable reading measure: cap the content card so prose lines stay short
+   on wide screens (the right TOC fills the remaining column). */
+.md-content { max-width: 56rem; }
+
+/* Lead paragraph: the first paragraph after the page title reads as an intro */
+.md-typeset h1 + p { font-size: 1.06em; line-height: 1.7; }
+[data-md-color-scheme="default"] .md-typeset h1 + p { color: #46555b; }
+[data-md-color-scheme="slate"] .md-typeset h1 + p { color: #c2ccd0; }
+
+/* Numbered procedures: lava, bold step numbers */
+.md-typeset ol > li::marker { color: var(--db-lava); font-weight: 700; }
+
+/* A touch more air above section headings for vertical rhythm */
+.md-typeset h2 { margin-top: 2.2rem; }
+
+/* ============================ Footer Prev/Next =========================== */
+/* "Próximo" is the forward action, marked with a subtle lava accent (border +
+   label + arrow) at the SAME weight as "Anterior", so the pair stays balanced
+   instead of one loud filled block. */
+.md-footer__link--next { border-color: rgba(255, 54, 33, 0.6); }
+.md-footer__link--next .md-footer__direction { color: var(--db-lava); }
+.md-footer__link--next svg { fill: var(--db-lava); }
+.md-footer__link--next:hover {
+  background-color: rgba(255, 54, 33, 0.12);
+  border-color: var(--db-lava);
+}

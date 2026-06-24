@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 200" role="img" aria-label="Portão de validacao: avaliar R2, promover a champion apenas se passar">
+  <defs>
+    <marker id="arrow2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#FF3621"/>
+    </marker>
+    <style>
+      .box{fill:#1B3139;}
+      .ok{fill:#1f7a4d;}
+      .no{fill:#8a8f93;}
+      .lbl{fill:#fff;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:14px;font-weight:600;text-anchor:middle;}
+      .small{fill:#1B3139;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:12px;text-anchor:middle;}
+      .flow{stroke:#FF3621;stroke-width:2.5;marker-end:url(#arrow2);fill:none;}
+    </style>
+  </defs>
+  <rect class="box" x="10" y="80" width="150" height="44" rx="8"/>
+  <text class="lbl" x="85" y="107">Modelo treinado</text>
+  <line class="flow" x1="162" y1="102" x2="196" y2="102"/>
+
+  <!-- decision diamond -->
+  <polygon class="box" points="300,72 372,102 300,132 228,102"/>
+  <text class="lbl" x="300" y="99">R² ≥ 0,6 ?</text>
+  <text class="lbl" x="300" y="115" font-size="12">(R2_THRESHOLD)</text>
+
+  <!-- yes -->
+  <line class="flow" x1="372" y1="102" x2="430" y2="102"/>
+  <text class="small" x="400" y="92">Sim</text>
+  <rect class="ok" x="432" y="80" width="316" height="44" rx="8"/>
+  <text class="lbl" x="590" y="107">Registrar + alias @champion</text>
+
+  <!-- no -->
+  <line class="flow" x1="300" y1="132" x2="300" y2="170"/>
+  <text class="small" x="318" y="152">Não</text>
+  <rect class="no" x="200" y="170" width="200" height="30" rx="8"/>
+  <text class="lbl" x="300" y="190" font-size="13">Não promovido</text>
+</svg>
