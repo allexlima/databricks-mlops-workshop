@@ -17,7 +17,10 @@ O Databricks Model Serving isola cada modelo em um container gerenciado: instala
 
 ## Resolvendo a versão exata pelo alias
 
-O notebook não hardcoda um número de versão. Ele resolve qual versão está atualmente marcada como `champion` no Unity Catalog e usa esse número para criar o endpoint:
+O notebook não hardcoda um número de versão. Ele usa [`get_model_version_by_alias`](https://mlflow.org/docs/latest/python_api/mlflow.client.html#mlflow.client.MlflowClient.get_model_version_by_alias) para resolver qual versão está atualmente marcada como `champion` no Unity Catalog e usa esse número para criar o endpoint:
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Resolvendo a versão exata pelo alias»** pelo bloco abaixo.
 
 ```python
 from mlflow.deployments import get_deploy_client
@@ -37,6 +40,11 @@ Isso garante que o endpoint sempre aponte para a versão promovida mais recente.
 ---
 
 ## Criando o endpoint com scale-to-zero
+
+[`deploy.create_endpoint`](https://docs.databricks.com/en/machine-learning/model-serving/create-manage-serving-endpoints.html) provisiona um endpoint de Model Serving com a versão resolvida acima, em uma workload `Small` e com scale-to-zero habilitado.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Criando o endpoint com scale-to-zero»** pelo bloco abaixo.
 
 ```python
 deploy.create_endpoint(

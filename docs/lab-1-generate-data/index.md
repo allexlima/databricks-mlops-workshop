@@ -27,8 +27,13 @@ Um gerador determinístico com `seed` fixo garante isso. O `SEED = 42` definido 
 
 ## Passo 1 · Carregar a configuração e gerar o DataFrame bruto
 
-A célula `%run ./_config` e o `import workshop_lib as wl` já estão no notebook.
-Cole apenas o bloco abaixo no espaço reservado da célula:
+Este bloco gera o dataset sintético com `wl.generate_dataset` e exibe as primeiras
+linhas para conferência. A célula `%run ./_config` e o `import workshop_lib as wl`
+já estão no notebook.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 1»** apenas pelo bloco abaixo
+    (use o botão de copiar no canto do bloco).
 
 ```python
 df = wl.generate_dataset(n_months=96, seed=SEED)   # 96 linhas mensais, time-ordered
@@ -49,6 +54,13 @@ O `%run ./_config` (na célula anterior) centraliza todas as constantes do works
 ---
 
 ## Passo 2 · Dicionário de dados e verificações de sanidade
+
+Estas chamadas inspecionam o dataset recém-criado: `describe()` resume a escala de
+cada coluna e [`corrwith`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.corrwith.html)
+mede a correlação de cada driver com o alvo `price_next_month`.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 2»** pelo bloco abaixo.
 
 ```python
 print(df.describe())
@@ -87,6 +99,14 @@ Além dos 10 drivers de ML, cinco colunas econômicas alimentam o modelo de otim
 
 ## Passo 3 · Baseline ingênuo vs. R² do modelo rápido
 
+Aqui você compara dois R²: o do baseline ingênuo (usar o preço de hoje como
+previsão para o mês seguinte) e o de um modelo rápido de referência. O
+[`r2_score`](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.r2_score.html)
+do scikit-learn calcula o coeficiente de determinação no conjunto de teste.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 3»** pelo bloco abaixo.
+
 ```python
 from sklearn.metrics import r2_score
 
@@ -118,6 +138,13 @@ O **forecast ingênuo lag-1** (usar o preço de hoje como previsão para o mês 
 ---
 
 ## Passo 4 · Portão de qualidade do sinal (inline assert)
+
+Este `assert` é o portão de qualidade do sinal: ele interrompe o notebook se o R²
+do modelo rápido cair fora da banda esperada `(0.6, 0.85)`, sinalizando que o
+gerador foi descalibrado antes de você seguir para os próximos labs.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 4»** pelo bloco abaixo.
 
 ```python
 lo, hi = wl.R2_BAND    # (0.6, 0.85)
@@ -151,6 +178,13 @@ A faixa existe para que o **validation gate** do [forecaster (sklearn)](../lab-2
 ---
 
 ## Passo 5 · Persistir como tabela Delta + CSV em um UC Volume
+
+Este bloco persiste o DataFrame em dois formatos: uma tabela Delta gerenciada no
+Unity Catalog (via [`saveAsTable`](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrameWriter.saveAsTable.html))
+e um CSV em um UC Volume, deixando o dataset disponível para todos os outros labs.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Passo 5»** pelo bloco abaixo.
 
 ```python
 spark.createDataFrame(df).write.mode("overwrite").saveAsTable(DATA_TABLE)

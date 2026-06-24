@@ -17,7 +17,12 @@ O `02_train_forecaster_sklearn.py` treina um gradient boosting com scikit-learn.
 
 ## O modelo: MLP de duas camadas
 
-O notebook define um pequeno perceptron multicamada totalmente conectado: duas camadas lineares separadas por uma ativação ReLU, com 32 neurônios na camada oculta. A arquitetura é deliberadamente simples: o foco é o lifecycle, não a arquitetura.
+O notebook define um pequeno perceptron multicamada totalmente conectado: duas camadas lineares separadas por uma ativação ReLU, com 32 neurônios na camada oculta. A arquitetura, uma subclasse de [`nn.Module`](https://pytorch.org/docs/stable/generated/torch.nn.Module.html), é deliberadamente simples: o foco é o lifecycle, não a arquitetura.
+
+!!! example "Cole no notebook (parte 1 de 2)"
+    Esta célula recebe **dois blocos**. Cole primeiro a classe `MLP` abaixo no
+    espaço reservado da célula **«O modelo + Tracking»**; o bloco de treino do
+    próximo passo vai logo em seguida, na mesma célula.
 
 ```python
 class MLP(nn.Module):
@@ -35,7 +40,10 @@ O treinamento usa Adam por 400 épocas com `lr=0.01` e MSE como função de perd
 
 ## Dados, split e normalização: idênticos ao forecaster sklearn
 
-O notebook lê a mesma tabela Delta criada em `01_generate_data.py` (`DATA_TABLE`), aplica o mesmo corte cronológico 80/20, e normaliza as features com z-score calculado **exclusivamente sobre os dados de treino**.
+O notebook lê a mesma tabela Delta criada em `01_generate_data.py` (`DATA_TABLE`), aplica o mesmo corte cronológico 80/20, e normaliza as features com z-score calculado **exclusivamente sobre os dados de treino**. Por fim, converte os arrays em tensores PyTorch (`Xtr`, `ytr`, `Xte`) prontos para o treino.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Dados, split e normalização»** pelo bloco abaixo.
 
 ```python
 df = spark.table(DATA_TABLE).toPandas().sort_values("month")
@@ -60,10 +68,11 @@ Xte = to_t(test)
 
 ## Tracking e log: dentro de um único `mlflow.start_run`
 
-Todo o treinamento acontece dentro de um bloco `with mlflow.start_run(run_name="pytorch_mlp")`. Isso garante que parâmetros, métricas e o artefato do modelo pertençam à mesma run, e que o `info.model_uri` devolvido por `log_model` seja a URI correta para o passo de registro.
+Todo o treinamento acontece dentro de um bloco [`mlflow.start_run`](https://mlflow.org/docs/latest/python_api/mlflow.html#mlflow.start_run) (`run_name="pytorch_mlp"`). Isso garante que parâmetros, métricas e o artefato do modelo pertençam à mesma run, e que o `info.model_uri` devolvido por `log_model` seja a URI correta para o passo de registro.
 
-A classe `MLP` definida acima e este bloco de treino vão na **mesma célula** do
-notebook (primeiro a classe, depois o `with mlflow.start_run`):
+!!! example "Cole no notebook (parte 2 de 2)"
+    Cole este bloco **logo após a classe `MLP`**, na mesma célula
+    **«O modelo + Tracking»**.
 
 ```python
 with mlflow.start_run(run_name="pytorch_mlp"):
@@ -96,7 +105,10 @@ O experimento é o mesmo que o `02_train_forecaster_sklearn.py` usa, definido em
 
 ## Validation gate e promoção para `@champion`
 
-O mesmo `R2_THRESHOLD` (0.6) do forecaster sklearn. Se o modelo passar, ele é registrado no Unity Catalog com o mesmo nome `FORECASTER_MODEL` e recebe o alias `@champion`, podendo sobrescrever a versão sklearn anterior.
+O mesmo `R2_THRESHOLD` (0.6) do forecaster sklearn. Se o modelo passar, [`mlflow.register_model`](https://mlflow.org/docs/latest/python_api/mlflow.html#mlflow.register_model) o registra no Unity Catalog com o mesmo nome `FORECASTER_MODEL` e `set_registered_model_alias` aplica o alias `@champion`, podendo sobrescrever a versão sklearn anterior.
+
+!!! example "Cole no notebook"
+    Substitua o espaço reservado da célula **«Validation gate»** pelo bloco abaixo.
 
 ```python
 client = MlflowClient()
