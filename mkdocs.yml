@@ -80,7 +80,7 @@ nav:
   - Fundamentos:
       - PyFunc e modelos customizados: conceitos/pyfunc-modelos-customizados.md
       - Otimização com Pyomo: conceitos/otimizacao-pyomo.md
-  - Environment Setup:
+  - Configuração do ambiente:
       - Workspace Databricks: setup/workspace.md
       - Clonar o repositório: setup/clone-repo.md
       - Configurar e rodar o setup: setup/configure.md
