@@ -45,17 +45,8 @@ mlflow.set_experiment(EXPERIMENT_PATH)
 
 # COMMAND ----------
 
-example = pd.DataFrame([{
-    "predicted_price": 210.0,
-    "holding_cost": 1.0,
-    "purchase_cost": 200.0,
-    "demand": 100.0,
-    "capacity": 200.0,
-    "budget": 30000.0,
-}])
-
-sample_out = wl.PurchaseOptimizerModel().predict(None, example)
-print(sample_out)
+# Paste the code for "Rodando o exemplo antes de registrar" here.
+# Copy it from the workshop site → Lab 3 (Empacotar o otimizador como PyFunc), "Rodando o exemplo antes de registrar".
 
 # COMMAND ----------
 
@@ -65,9 +56,8 @@ print(sample_out)
 
 # COMMAND ----------
 
-row = sample_out.iloc[0]
-assert row["status"] == "optimal", f"optimizer infeasible on example: {row.to_dict()}"
-assert 100.0 - 1e-6 <= row["purchase_qty"] <= 200.0 + 1e-6, f"qty out of bounds: {row['purchase_qty']}"
+# Paste the code for "O assert de viabilidade" here.
+# Copy it from the workshop site → Lab 3 (Registrar e promover a @champion), "O assert de viabilidade".
 
 # COMMAND ----------
 
@@ -78,21 +68,9 @@ assert 100.0 - 1e-6 <= row["purchase_qty"] <= 200.0 + 1e-6, f"qty out of bounds:
 
 # COMMAND ----------
 
-signature = mlflow.models.infer_signature(example, sample_out)
-client = MlflowClient()
-
-with mlflow.start_run(run_name="pyomo_optimizer"):
-    info = mlflow.pyfunc.log_model(
-        name="model",
-        python_model=wl.PurchaseOptimizerModel(),
-        code_paths=["./workshop_lib.py"],
-        pip_requirements=["pyomo>=6.7", "highspy>=1.7", "pandas>=2.0"],
-        input_example=example,
-        signature=signature,
-        registered_model_name=OPTIMIZER_MODEL,
-    )
-
-client.set_registered_model_alias(OPTIMIZER_MODEL, "champion", info.registered_model_version)
+# Paste the code for "Fazer o log do modelo com code_paths" + "Definir o alias @champion"
+# here (both blocks go in this one cell: o log_model, depois o set_registered_model_alias).
+# Copy them from the workshop site → Lab 3 (Registrar e promover a @champion).
 
 # COMMAND ----------
 
@@ -102,5 +80,5 @@ client.set_registered_model_alias(OPTIMIZER_MODEL, "champion", info.registered_m
 
 # COMMAND ----------
 
-opt = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
-print(opt.predict(example))
+# Paste the code for "Carregar pelo alias e confirmar" here.
+# Copy it from the workshop site → Lab 3 (Registrar e promover a @champion), "Carregar pelo alias e confirmar".

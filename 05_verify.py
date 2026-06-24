@@ -40,8 +40,8 @@ df = spark.table(DATA_TABLE).toPandas().sort_values("month")
 # MAGIC Confirms the raw feature data still supports a reasonable linear fit; catches data-drift or schema changes before touching the registry.
 
 # COMMAND ----------
-r2 = wl.quick_fit_r2(df)
-assert wl.R2_BAND[0] <= r2 <= wl.R2_BAND[1], f"R2 {r2:.3f} outside {wl.R2_BAND}"
+# Paste the code for "Checkpoint 1: R² dentro da faixa esperada" here.
+# Copy it from the workshop site → Lab 5 (Verificação), "Checkpoint 1".
 
 # COMMAND ----------
 # MAGIC %md
@@ -49,7 +49,8 @@ assert wl.R2_BAND[0] <= r2 <= wl.R2_BAND[1], f"R2 {r2:.3f} outside {wl.R2_BAND}"
 # MAGIC Verifies the model name exists in Unity Catalog; fails fast if the training job never wrote to the registry.
 
 # COMMAND ----------
-assert client.get_registered_model(FORECASTER_MODEL) is not None
+# Paste the code for "Checkpoint 2: price_forecaster está registrado no Unity Catalog" here.
+# Copy it from the workshop site → Lab 5 (Verificação), "Checkpoint 2".
 
 # COMMAND ----------
 # MAGIC %md
@@ -57,8 +58,8 @@ assert client.get_registered_model(FORECASTER_MODEL) is not None
 # MAGIC Resolves the `@champion` alias (never a literal version integer) so promotion scripts and downstream consumers always point at the right version.
 
 # COMMAND ----------
-champ = client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
-assert champ is not None and champ.version is not None
+# Paste the code for "Checkpoint 3: O alias @champion resolve" here.
+# Copy it from the workshop site → Lab 5 (Verificação), "Checkpoint 3".
 
 # COMMAND ----------
 # MAGIC %md
@@ -66,11 +67,5 @@ assert champ is not None and champ.version is not None
 # MAGIC Loads both champion models and runs a full inference pass on the most recent row; confirms the optimizer returns `status == "optimal"` with a non-null `purchase_qty`.
 
 # COMMAND ----------
-forecaster = mlflow.pyfunc.load_model(f"models:/{FORECASTER_MODEL}@champion")
-optimizer = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
-latest = df.iloc[[-1]]
-pp = float(forecaster.predict(latest[wl.DRIVERS + ["price"]])[0])
-oi = latest[wl.ECON_COLS].copy(); oi.insert(0, "predicted_price", pp)
-dec = optimizer.predict(oi)
-assert dec.loc[0, "status"] == "optimal" and pd.notna(dec.loc[0, "purchase_qty"])
-print("ALL 4 CHECKPOINTS PASSED")
+# Paste the code for "Checkpoint 4: A cadeia ponta a ponta retorna uma decisão de compra" here.
+# Copy it from the workshop site → Lab 5 (Verificação), "Checkpoint 4".

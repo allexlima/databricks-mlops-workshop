@@ -38,13 +38,8 @@ client = MlflowClient()
 # MAGIC Fail immediately with a clear message if lab 02 hasn't promoted a champion yet,
 # MAGIC rather than surfacing a raw registry error later in the chain.
 
-try:
-    client.get_model_version_by_alias(FORECASTER_MODEL, "champion")
-except Exception:
-    raise RuntimeError(
-        f"No @champion alias on {FORECASTER_MODEL}. Run 02_train_forecaster_sklearn "
-        f"and confirm it passed the R2>={R2_THRESHOLD} gate before running this notebook."
-    )
+# Paste the code for "O champion guard" here.
+# Copy it from the workshop site → Lab 4 (Carregar os modelos por @champion), "O champion guard".
 
 # COMMAND ----------
 # MAGIC %md
@@ -52,11 +47,8 @@ except Exception:
 # MAGIC Using `@champion` means this cell always picks up the latest promoted version —
 # MAGIC no manual version numbers to update between runs.
 
-df = spark.table(DATA_TABLE).toPandas().sort_values("month")
-latest = df.iloc[[-1]]
-
-forecaster = mlflow.pyfunc.load_model(f"models:/{FORECASTER_MODEL}@champion")
-optimizer = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
+# Paste the code for "Carregando os dois modelos por alias" here.
+# Copy it from the workshop site → Lab 4 (Carregar os modelos por @champion), "Carregando os dois modelos por alias".
 
 # COMMAND ----------
 # MAGIC %md
@@ -64,12 +56,8 @@ optimizer = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
 # MAGIC The forecaster estimates next-month commodity price; the optimizer uses that
 # MAGIC estimate alongside economic context to recommend a purchase quantity.
 
-predicted_price = float(forecaster.predict(latest[wl.DRIVERS + ["price"]])[0])
-opt_input = latest[wl.ECON_COLS].copy()
-opt_input.insert(0, "predicted_price", predicted_price)
-decision = optimizer.predict(opt_input)
-print(f"Predicted next-month price: {predicted_price:.2f}")
-print(decision)
+# Paste the code for "A cadeia em quatro passos" (bloco completo) here.
+# Copy it from the workshop site → Lab 4 (Rodar a cadeia e obter a decisão), "A cadeia em quatro passos".
 
 # COMMAND ----------
 # MAGIC %md
