@@ -30,8 +30,7 @@ Comprar menos do que a demanda é inviável. Comprar mais do que a capacidade ou
 
 Esse é um problema clássico de **programação linear**, área da pesquisa operacional com décadas de história. Não há dados de treino, não há pesos aprendidos, não há gradiente: há uma formulação matemática e um solver que encontra a solução ótima.
 
-!!! note "Conceito"
-    **Programação linear (PL)** é uma técnica de otimização que encontra o mínimo (ou máximo) de uma função objetivo linear sujeita a restrições lineares. A solução existe e é única se o problema for viável e limitado. A AnyCompany tem exatamente esse perfil: função de custo linear e restrições lineares de capacidade, demanda e orçamento.
+**Programação linear (PL)** é uma técnica de otimização que encontra o mínimo (ou máximo) de uma função objetivo linear sujeita a restrições lineares. A solução existe e é única se o problema for viável e limitado. A AnyCompany tem exatamente esse perfil: função de custo linear e restrições lineares de capacidade, demanda e orçamento.
 
 ---
 
@@ -51,8 +50,7 @@ drivers do mês atual
                 → decisão de compra
 ```
 
-!!! tip "Curiosidade"
-    HiGHS é um solver de programação linear e inteira de código aberto desenvolvido na Universidade de Edimburgo. Em benchmarks independentes, ele rivaliza com solvers comerciais como Gurobi e CPLEX em instâncias de médio porte. É 100% gratuito, instalável via `pip`. Neste workshop, ele é chamado por meio da interface APPSI do Pyomo (`appsi_highs`), que oferece uma API de alto nível sem nenhum binário externo.
+**O que é o HiGHS?** HiGHS é um solver de programação linear e inteira de código aberto desenvolvido na Universidade de Edimburgo. Em benchmarks independentes, ele rivaliza com solvers comerciais como Gurobi e CPLEX em instâncias de médio porte. É 100% gratuito, instalável via `pip`. Neste workshop, ele é chamado por meio da interface APPSI do Pyomo (`appsi_highs`), que oferece uma API de alto nível sem nenhum binário externo.
 
 ---
 

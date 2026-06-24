@@ -25,10 +25,9 @@ O workshop usa um catálogo existente (padrão: `main`) e cria um schema dentro 
 !!! warning "Atenção"
     Se o catálogo `main` não for acessível para você (comum em workspaces corporativos com catálogos por time), não se preocupe. Você vai configurar isso na etapa seguinte.
 
-!!! note "Conceito"
-    **Unity Catalog** é a camada de governança centralizada da Databricks. Diferentemente do Hive Metastore legado (por workspace), o Unity Catalog é compartilhado entre workspaces e gerencia dados, modelos e volumes numa hierarquia de três níveis: `catalog.schema.objeto`. Neste workshop, os dois modelos treinados ficam registrados lá: `{catalog}.{schema}.price_forecaster` e `{catalog}.{schema}.purchase_optimizer`.
+**Unity Catalog** é a camada de governança centralizada da Databricks. Diferentemente do Hive Metastore legado (por workspace), o Unity Catalog é compartilhado entre workspaces e gerencia dados, modelos e volumes numa hierarquia de três níveis: `catalog.schema.objeto`. Neste workshop, os dois modelos treinados ficam registrados lá: `{catalog}.{schema}.price_forecaster` e `{catalog}.{schema}.purchase_optimizer`.
 
-    Consulte a [documentação oficial de privileges do Unity Catalog](https://docs.databricks.com/en/data-governance/unity-catalog/manage-privileges/privileges.html) se precisar solicitar as permissões ao seu administrador.
+Consulte a [documentação oficial de privileges do Unity Catalog](https://docs.databricks.com/en/data-governance/unity-catalog/manage-privileges/privileges.html) se precisar solicitar as permissões ao seu administrador.
 
 <figure markdown="span">
   ![Catalog Explorer no workspace, com o menu lateral e a árvore de catálogos do Unity Catalog](../assets/screenshots/setup-workspace-home.png)
@@ -57,8 +56,7 @@ O cadastro leva alguns minutos. Após confirmar o e-mail, você terá acesso a u
   <figcaption>A Databricks Free Edition: ambiente gratuito com Unity Catalog e serverless já habilitados.</figcaption>
 </figure>
 
-!!! tip "Curiosidade"
-    O Unity Catalog foi lançado em 2022 e se tornou o padrão de governança da Databricks. A Free Edition o adota por padrão justamente porque ele é o caminho recomendado, inclusive para quem está começando. Workspaces antigos criados antes de 2023 podem ainda estar no Hive Metastore legado; a migração é possível mas precisa de permissões de administrador.
+**Por que a Free Edition já vem com Unity Catalog?** O Unity Catalog foi lançado em 2022 e se tornou o padrão de governança da Databricks. A Free Edition o adota por padrão justamente porque ele é o caminho recomendado, inclusive para quem está começando. Workspaces antigos criados antes de 2023 podem ainda estar no Hive Metastore legado; a migração é possível mas precisa de permissões de administrador.
 
 ---
 

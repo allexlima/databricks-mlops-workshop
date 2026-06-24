@@ -10,8 +10,7 @@ Abra `extra/train_forecaster_pytorch.py`.
 
 O `02_train_forecaster_sklearn.py` treina um gradient boosting com scikit-learn. Este interlude substitui esse modelo por um pequeno MLP (Multi-Layer Perceptron) em PyTorch. O objetivo não é comparar desempenho entre os dois frameworks, e o PyTorch não é um challenger ao sklearn: ambos registram no mesmo modelo `FORECASTER_MODEL` e disputam o mesmo alias `@champion`. A mensagem é outra: **o MLflow governa o que você tiver** porque o mecanismo de tracking, registro e alias opera no nível do run e da versão, independente do framework que gerou o artefato.
 
-!!! note "Conceito"
-    Um framework de deep learning como PyTorch expõe seus modelos como objetos Python comuns (`nn.Module`). O MLflow tem um flavor nativo, `mlflow.pytorch`, que serializa e desserializa esses objetos automaticamente, incluindo os pesos treinados. Na hora de carregar o modelo, você recebe de volta um `nn.Module` funcional, sem precisar reescrever nenhuma classe.
+**Como o MLflow trata modelos PyTorch.** Um framework de deep learning como PyTorch expõe seus modelos como objetos Python comuns (`nn.Module`). O MLflow tem um flavor nativo, `mlflow.pytorch`, que serializa e desserializa esses objetos automaticamente, incluindo os pesos treinados. Na hora de carregar o modelo, você recebe de volta um `nn.Module` funcional, sem precisar reescrever nenhuma classe.
 
 ---
 
@@ -61,8 +60,7 @@ ytr = torch.tensor(train["price_next_month"].to_numpy(), dtype=torch.float32).vi
 Xte = to_t(test)
 ```
 
-!!! tip "Curiosidade"
-    Usar a média e o desvio padrão do conjunto de treino para normalizar o conjunto de teste é um requisito fundamental: se você calcular essas estatísticas sobre o conjunto de teste (ou sobre o dataset inteiro), o modelo "vê" informações do futuro durante o treino, o que é data leakage. Normalizar antes do treino é um dos ajustes de maior impacto para estabilizar a convergência de MLPs.
+**Por que normalizar com estatísticas só do treino?** Usar a média e o desvio padrão do conjunto de treino para normalizar o conjunto de teste é um requisito fundamental: se você calcular essas estatísticas sobre o conjunto de teste (ou sobre o dataset inteiro), o modelo "vê" informações do futuro durante o treino, o que é data leakage. Normalizar antes do treino é um dos ajustes de maior impacto para estabilizar a convergência de MLPs.
 
 ---
 
@@ -98,8 +96,7 @@ with mlflow.start_run(run_name="pytorch_mlp"):
 
 O experimento é o mesmo que o `02_train_forecaster_sklearn.py` usa, definido em `EXPERIMENT_PATH` no `_config.py`. Isso significa que as runs do sklearn e do PyTorch aparecem **lado a lado** na mesma view do MLflow, facilitando a comparação de métricas sem sair da interface.
 
-!!! note "Conceito"
-    A API `mlflow.pytorch.log_model(net, name="model")` é a forma MLflow 3.x de registrar o artefato: o parâmetro `name=` substitui o antigo `artifact_path=` (depreciado). O objeto serializado é um checkpoint PyTorch padrão (`.pt`), e o MLflow armazena junto os metadados do modelo para que o flavor correto seja usado na hora do carregamento.
+**A API de log do MLflow 3.x.** A API `mlflow.pytorch.log_model(net, name="model")` é a forma MLflow 3.x de registrar o artefato: o parâmetro `name=` substitui o antigo `artifact_path=` (depreciado). O objeto serializado é um checkpoint PyTorch padrão (`.pt`), e o MLflow armazena junto os metadados do modelo para que o flavor correto seja usado na hora do carregamento.
 
 ---
 
@@ -122,8 +119,7 @@ else:
 
 Isso é intencional: diferentes frameworks competindo pelo mesmo alias de produção. O `04_end_to_end.py` carrega o `@champion` pelo alias (nunca pelo número de versão), então funciona independentemente de qual framework está apontado.
 
-!!! note "Conceito"
-    Este é o poder dos aliases no Unity Catalog: desacoplam o código consumidor da versão concreta. O `04_end_to_end.py` sempre chama `client.get_model_version_by_alias(FORECASTER_MODEL, "champion")`, nunca `v3` ou `v7`. Quem promoveu qual versão é detalhe de governança, não de código. Ver mais em [Carregar os modelos por @champion](../lab-4-end-to-end/carregar-modelos.md).
+**O poder dos aliases no Unity Catalog.** Este é o poder dos aliases no Unity Catalog: desacoplam o código consumidor da versão concreta. O `04_end_to_end.py` sempre chama `client.get_model_version_by_alias(FORECASTER_MODEL, "champion")`, nunca `v3` ou `v7`. Quem promoveu qual versão é detalhe de governança, não de código. Ver mais em [Carregar os modelos por @champion](../lab-4-end-to-end/carregar-modelos.md).
 
 ---
 

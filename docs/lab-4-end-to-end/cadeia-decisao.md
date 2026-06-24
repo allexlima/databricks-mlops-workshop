@@ -44,8 +44,7 @@ predicted_price = float(forecaster.predict(latest[wl.DRIVERS + ["price"]])[0])
 
 O resultado é extraído como `float`, pois o optimizer recebe um escalar, não um array.
 
-!!! note "Conceito"
-    `wl.DRIVERS` é a lista de colunas de entrada do forecaster, definida em `workshop_lib.py`. O modelo sklearn treinado em `02_train_forecaster_sklearn.py` aprendeu a relação entre esses drivers e o preço futuro. Aqui você usa esse aprendizado para projetar o próximo mês com os dados já disponíveis.
+**O que é `wl.DRIVERS`.** `wl.DRIVERS` é a lista de colunas de entrada do forecaster, definida em `workshop_lib.py`. O modelo sklearn treinado em `02_train_forecaster_sklearn.py` aprendeu a relação entre esses drivers e o preço futuro. Aqui você usa esse aprendizado para projetar o próximo mês com os dados já disponíveis.
 
 ### Passo 2: Construir o input do optimizer
 
@@ -64,8 +63,7 @@ decision = optimizer.predict(opt_input)
 
 O `optimizer` (modelo Pyomo embrulhado como PyFunc) recebe o input, monta o problema de otimização e o resolve com o solver HiGHS. O resultado é um DataFrame com a quantidade de compra recomendada e o status da solução.
 
-!!! note "Conceito"
-    O optimizer resolve: minimizar o custo total (preço × quantidade comprada + custo de estoque excedente), sujeito a restrições de demanda mínima, capacidade máxima de estoque e orçamento. O solver **HiGHS** (`appsi_highs`) resolve isso em milissegundos; é um solver de programação linear de código aberto, instalado via `highspy` sem dependências de sistema. Quando a solução é `status=optimal`, o optimizer encontrou o mínimo global para aquele conjunto de restrições.
+**O que o optimizer resolve.** O optimizer resolve: minimizar o custo total (preço × quantidade comprada + custo de estoque excedente), sujeito a restrições de demanda mínima, capacidade máxima de estoque e orçamento. O solver **HiGHS** (`appsi_highs`) resolve isso em milissegundos; é um solver de programação linear de código aberto, instalado via `highspy` sem dependências de sistema. Quando a solução é `status=optimal`, o optimizer encontrou o mínimo global para aquele conjunto de restrições.
 
 ---
 
@@ -107,11 +105,9 @@ experimento MLflow (/Users/<seu-usuário>/mlops_workshop)
         └──→ main.mlops_workshop_<seu-usuário>.purchase_optimizer
 ```
 
-!!! note "Conceito"
-    Esse grafo é construído automaticamente pelo Unity Catalog quando o `registry_uri` está apontado para `databricks-uc` e os modelos foram registrados via MLflow com a tabela Delta como fonte de dados. Nenhuma instrumentação adicional é necessária. O UC captura a linhagem a partir dos metadados do experimento MLflow, e qualquer pessoa com acesso ao Catalog Explorer consegue responder "qual versão do modelo gerou esta decisão de compra?" sem abrir nenhum log.
+**Lineage construído automaticamente.** Esse grafo é construído automaticamente pelo Unity Catalog quando o `registry_uri` está apontado para `databricks-uc` e os modelos foram registrados via MLflow com a tabela Delta como fonte de dados. Nenhuma instrumentação adicional é necessária. O UC captura a linhagem a partir dos metadados do experimento MLflow, e qualquer pessoa com acesso ao Catalog Explorer consegue responder "qual versão do modelo gerou esta decisão de compra?" sem abrir nenhum log.
 
-!!! tip "Curiosidade"
-    O lineage do Unity Catalog vai além de modelos: ele também rastreia transformações entre tabelas Delta (quais tabelas foram lidas para criar outra). Quando seu pipeline de ML lê uma feature table, a transforma, grava outra tabela e depois usa essa tabela para treinar um modelo, o UC conecta toda essa cadeia em um único grafo navegável. É a diferença entre "saber que o modelo existe" e "saber de onde veio cada dado que o gerou".
+**O lineage vai além de modelos.** O lineage do Unity Catalog vai além de modelos: ele também rastreia transformações entre tabelas Delta (quais tabelas foram lidas para criar outra). Quando seu pipeline de ML lê uma feature table, a transforma, grava outra tabela e depois usa essa tabela para treinar um modelo, o UC conecta toda essa cadeia em um único grafo navegável. É a diferença entre "saber que o modelo existe" e "saber de onde veio cada dado que o gerou".
 
 <figure markdown="span">
   ![O grafo de lineage da tabela commodity_monthly no Unity Catalog](../assets/screenshots/lab-4-lineage.png)

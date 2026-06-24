@@ -8,10 +8,9 @@ No MLflow, cada framework de ML tem seu próprio *flavor*: `mlflow.sklearn`, `ml
 
 O PyFunc é a interface universal do MLflow. Em vez de depender de um framework específico, ele define um contrato simples: qualquer objeto Python que implemente o método `predict` pode ser registrado, versionado, governado e servido, exatamente como um modelo sklearn ou PyTorch.
 
-!!! note "Conceito"
-    `mlflow.pyfunc.PythonModel` é a classe base que você estende para criar um modelo customizado.
-    O único método obrigatório é `predict`. O MLflow cuida de tudo o mais: empacotamento,
-    registro, versionamento, serving, e integração com Unity Catalog.
+**A classe base PythonModel.** `mlflow.pyfunc.PythonModel` é a classe base que você estende para criar um modelo customizado.
+O único método obrigatório é `predict`. O MLflow cuida de tudo o mais: empacotamento,
+registro, versionamento, serving, e integração com Unity Catalog.
 
 Essa universalidade é o que permite ao workshop demonstrar algo contraintuitivo: um **optimizer de pesquisa operacional** (Pyomo + HiGHS) que nunca foi treinado vive no mesmo registry, com o mesmo alias `@champion`, e é carregado pela mesma chamada `mlflow.pyfunc.load_model()` que o forecaster sklearn. Nenhum tratamento especial.
 
@@ -32,9 +31,8 @@ Cada argumento tem um papel preciso:
 | `model_input` | `pd.DataFrame` com os dados de entrada, garantido pelo runtime MLflow | Sempre: é a entrada principal |
 | `params` | `dict` opcional com hiperparâmetros de inferência | Para expor opções sem mudar a assinatura (temperatura, limiar, etc.) |
 
-!!! tip "Curiosidade"
-    O parâmetro `params=None` foi adicionado na MLflow 2.6 e é **obrigatório na assinatura** nas versões 3.x.
-    Mesmo que você não use params, declare-o. Sem ele, o serving pode falhar ao passar configurações extras.
+**Por que declarar `params=None`?** O parâmetro `params=None` foi adicionado na MLflow 2.6 e é **obrigatório na assinatura** nas versões 3.x.
+Mesmo que você não use params, declare-o. Sem ele, o serving pode falhar ao passar configurações extras.
 
 No workshop, o `PurchaseOptimizerModel` em `workshop_lib.py` usa `model_input` para receber as seis variáveis do problema de compra e ignora `context` e `params` porque o solver não precisa de arquivos externos (veja o modelo de otimização em [Otimização com Pyomo](otimizacao-pyomo.md)):
 
@@ -114,9 +112,8 @@ def predict(self, context, model_input, params=None):
 
 O MLflow faz o upload desses arquivos junto com o artefato do run e os baixa automaticamente quando o modelo é carregado, seja localmente ou num endpoint de serving.
 
-!!! tip "Curiosidade"
-    O `context` também expõe `context.model_config` para configurações passadas em tempo de deploy,
-    sem precisar re-registrar o modelo. Útil para feature flags ou parâmetros de ambiente.
+**O `context.model_config`.** O `context` também expõe `context.model_config` para configurações passadas em tempo de deploy,
+sem precisar re-registrar o modelo. Útil para feature flags ou parâmetros de ambiente.
 
 No optimizer do workshop, o `context` não é usado porque o Pyomo constrói o modelo de otimização do zero a cada chamada. Não há estado pré-computado para carregar.
 
@@ -160,11 +157,10 @@ opt = mlflow.pyfunc.load_model(f"models:/{OPTIMIZER_MODEL}@champion")
 print(opt.predict(example))
 ```
 
-!!! tip "Curiosidade"
-    Usar `@champion` em vez de `@v3` (ou `@latest`, que não existe no Unity Catalog) é a prática correta
-    porque re-execuções do notebook criam novas versões. Um número hardcoded quebraria no segundo run.
-    O alias é o handle estável que o operator do modelo controla explicitamente: uma decisão de governança,
-    não só de conveniência.
+**Por que `@champion` e não um número de versão?** Usar `@champion` em vez de `@v3` (ou `@latest`, que não existe no Unity Catalog) é a prática correta
+porque re-execuções do notebook criam novas versões. Um número hardcoded quebraria no segundo run.
+O alias é o handle estável que o operator do modelo controla explicitamente: uma decisão de governança,
+não só de conveniência.
 
 Esse padrão é idêntico ao do forecaster sklearn em `02_train_forecaster_sklearn.py`. Os dois modelos (um treinado, outro não) usam exatamente a mesma mecânica de registro e promoção. É o PyFunc que torna isso possível.
 

@@ -15,8 +15,7 @@ Abra `04_end_to_end.py` no repositório.
 
 ## O que é composição de modelos governados
 
-!!! note "Conceito"
-    **Composição** é a prática de encadear dois ou mais modelos registrados para resolver um problema que nenhum deles resolveria sozinho. Aqui, o `price_forecaster` responde "qual será o preço?" e o `purchase_optimizer` responde "quanto comprar dado esse preço?". O resultado é um pipeline de decisão mensal rastreável, do dado de entrada ao output final.
+**Composição** é a prática de encadear dois ou mais modelos registrados para resolver um problema que nenhum deles resolveria sozinho. Aqui, o `price_forecaster` responde "qual será o preço?" e o `purchase_optimizer` responde "quanto comprar dado esse preço?". O resultado é um pipeline de decisão mensal rastreável, do dado de entrada ao output final.
 
 A composição de modelos não é novidade. Pipelines em produção sempre combinaram etapas. O que muda aqui é que **cada etapa é um modelo registrado e versionado**: você sabe exatamente qual versão do forecaster gerou o preço previsto que alimentou uma determinada versão do optimizer.
 
@@ -32,8 +31,7 @@ Todo o workshop usa o alias `@champion` em vez de números de versão literais. 
 
 A cadeia deste lab carrega **ambos os modelos por `@champion`**. Se um retreino acontecer e o novo modelo passar pelo gate, basta promover o alias. A cadeia já usa o modelo mais recente na próxima execução.
 
-!!! tip "Curiosidade"
-    O padrão de alias `@champion` vem do champion-challenger clássico de ML em produção, onde um modelo challenger disputa com o campeão atual. Neste workshop usamos um gate determinístico simples (R² ≥ 0,6), sem challenger, mas o alias carrega a mesma semântica: "versão aprovada para produção". O MLflow 3.x generalizou aliases para qualquer string arbitrária; `@champion` é apenas a mais comum.
+**De onde vem o alias `@champion`?** O padrão de alias `@champion` vem do champion-challenger clássico de ML em produção, onde um modelo challenger disputa com o campeão atual. Neste workshop usamos um gate determinístico simples (R² ≥ 0,6), sem challenger, mas o alias carrega a mesma semântica: "versão aprovada para produção". O MLflow 3.x generalizou aliases para qualquer string arbitrária; `@champion` é apenas a mais comum.
 
 ---
 
@@ -46,8 +44,7 @@ Quando você carrega modelos por URI do tipo `models:/{catalog}.{schema}.price_f
 - **Permissões granulares**: você pode controlar quem pode ler ou promover cada modelo registrado, usando as mesmas permissões do Unity Catalog que já se aplicam às suas tabelas.
 - **Versionamento imutável**: cada versão registrada é um artefato imutável. Você sempre pode voltar e reproduzir qualquer decisão histórica.
 
-!!! tip "Curiosidade"
-    O lineage do Unity Catalog usa a mesma infraestrutura que rastreia a linhagem de tabelas Delta. O MLflow 3.x integra essa linhagem de forma nativa quando o registry URI aponta para `databricks-uc`. O grafo aparece automaticamente no Catalog Explorer sem nenhuma configuração adicional.
+**Lineage sem configuração extra.** O lineage do Unity Catalog usa a mesma infraestrutura que rastreia a linhagem de tabelas Delta. O MLflow 3.x integra essa linhagem de forma nativa quando o registry URI aponta para `databricks-uc`. O grafo aparece automaticamente no Catalog Explorer sem nenhuma configuração adicional.
 
 ---
 

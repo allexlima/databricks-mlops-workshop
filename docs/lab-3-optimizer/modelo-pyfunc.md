@@ -50,8 +50,7 @@ def solve_purchase(predicted_price, holding_cost, purchase_cost,
 | `m.leftover_def`       | Vincula `leftover` à decisão de compra: `leftover ≥ q − demand`             |
 | `m.obj`                | Minimizar `purchase_cost × q + holding_cost × leftover`                     |
 
-!!! note "Conceito"
-    **Por que modelar `leftover` explicitamente?** Se o modelo comprasse exatamente `demand`, o custo de holding seria sempre zero e `leftover` seria desnecessário. Mas se comprar mais do que a demanda for preferível (p. ex. o preço de hoje ser mais barato que o de amanhã), o otimizador levará isso em conta e o `holding_cost` encarece a folga. A variável `leftover` e a restrição `m.leftover_def` capturam esse trade-off de forma linear. Sem ela, o custo de holding não entraria na função objetivo.
+**Por que modelar `leftover` explicitamente?** Se o modelo comprasse exatamente `demand`, o custo de holding seria sempre zero e `leftover` seria desnecessário. Mas se comprar mais do que a demanda for preferível (p. ex. o preço de hoje ser mais barato que o de amanhã), o otimizador levará isso em conta e o `holding_cost` encarece a folga. A variável `leftover` e a restrição `m.leftover_def` capturam esse trade-off de forma linear. Sem ela, o custo de holding não entraria na função objetivo.
 
 ### HiGHS via APPSI: por que essa combinação
 
@@ -124,11 +123,9 @@ Essa assinatura é o contrato do MLflow 3.x para qualquer PyFunc customizado. Tr
 | `model_input`  | DataFrame de entrada; o MLflow garante que chegue nesse tipo após o log com `signature` |
 | `params`       | Parâmetros opcionais de inferência (não usados aqui, mas a assinatura é obrigatória) |
 
-!!! note "Conceito"
-    **Por que um DataFrame de entrada, e não escalares?** O PyFunc é uma interface de *batch*: ele aceita múltiplos exemplos de uma vez. Aqui, cada linha do DataFrame representa um mês de decisão independente. O `predict` itera pelas linhas e chama `solve_purchase` para cada uma, o que torna o otimizador compatível com Model Serving (que envia batches) e com o `04_end_to_end.py` (que pode compor várias decisões de uma vez).
+**Por que um DataFrame de entrada, e não escalares?** O PyFunc é uma interface de *batch*: ele aceita múltiplos exemplos de uma vez. Aqui, cada linha do DataFrame representa um mês de decisão independente. O `predict` itera pelas linhas e chama `solve_purchase` para cada uma, o que torna o otimizador compatível com Model Serving (que envia batches) e com o `04_end_to_end.py` (que pode compor várias decisões de uma vez).
 
-!!! tip "Curiosidade"
-    O `PurchaseOptimizerModel` não tem `__init__` nem estado interno. O solver Pyomo é instanciado dentro de `solve_purchase` a cada chamada. Essa escolha é intencional: evita problemas de serialização (o MLflow fará pickle da instância) e garante que cada solve começa com um modelo limpo. Em produção, para alta frequência de chamadas, você poderia manter o solver em memória no `__init__` e aproveitar a persistência da APPSI.
+**Por que sem estado interno?** O `PurchaseOptimizerModel` não tem `__init__` nem estado interno. O solver Pyomo é instanciado dentro de `solve_purchase` a cada chamada. Essa escolha é intencional: evita problemas de serialização (o MLflow fará pickle da instância) e garante que cada solve começa com um modelo limpo. Em produção, para alta frequência de chamadas, você poderia manter o solver em memória no `__init__` e aproveitar a persistência da APPSI.
 
 ---
 

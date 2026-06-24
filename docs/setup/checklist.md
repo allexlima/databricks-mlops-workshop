@@ -2,8 +2,7 @@
 
 Esta é a última parada antes dos notebooks. Aqui você confirma, em um só lugar, que os três passos anteriores deixaram tudo pronto para executar o caminho obrigatório, da geração do dataset até a verificação.
 
-!!! note "Conceito"
-    Um checklist de ambiente é uma prática simples de MLOps: antes de executar um pipeline, você garante que os pré-requisitos de acesso, dados e configuração estão satisfeitos. Isso evita falhas no meio do caminho e torna a execução reproduzível para qualquer pessoa que repita o workshop.
+**Por que um checklist de ambiente?** Um checklist de ambiente é uma prática simples de MLOps: antes de executar um pipeline, você garante que os pré-requisitos de acesso, dados e configuração estão satisfeitos. Isso evita falhas no meio do caminho e torna a execução reproduzível para qualquer pessoa que repita o workshop.
 
 ## O que já deve estar pronto
 

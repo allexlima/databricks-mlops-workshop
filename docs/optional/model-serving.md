@@ -10,8 +10,7 @@ Abra `extra/serving.py`. Documentação de referência: [Databricks Model Servin
 
 O Databricks Model Serving isola cada modelo em um container gerenciado: instala automaticamente as dependências registradas com o modelo (`pip_requirements`), carrega os pesos, e expõe tudo via uma API REST autenticada. Você não gerencia infraestrutura, Dockerfile nem escalamento manual: define o tamanho da workload e o Databricks cuida do resto.
 
-!!! note "Conceito"
-    Quando você registrou o `price_forecaster` em `02_train_forecaster_sklearn.py`, o MLflow salvou junto os `pip_requirements` necessários (sklearn, numpy, etc.). O container de serving usa exatamente essa lista para montar o ambiente de inferência, garantindo que o modelo em produção rode com as mesmas versões de bibliotecas com que foi treinado. Isso é reprodutibilidade de ponta a ponta.
+**Reprodutibilidade via `pip_requirements`.** Quando você registrou o `price_forecaster` em `02_train_forecaster_sklearn.py`, o MLflow salvou junto os `pip_requirements` necessários (sklearn, numpy, etc.). O container de serving usa exatamente essa lista para montar o ambiente de inferência, garantindo que o modelo em produção rode com as mesmas versões de bibliotecas com que foi treinado. Isso é reprodutibilidade de ponta a ponta.
 
 ---
 
@@ -65,8 +64,7 @@ print(f"Creating endpoint {SERVING_ENDPOINT!r} for {FORECASTER_MODEL} v{champ.ve
 
 `scale_to_zero_enabled: True` faz o endpoint desligar automaticamente quando fica ocioso, sem custo de compute enquanto não há requisições. Ideal para demos que não estão em produção contínua.
 
-!!! tip "Curiosidade"
-    O provisionamento de um novo endpoint leva alguns minutos após a chamada `create_endpoint` retornar: o Databricks está inicializando o container, instalando dependências e carregando o modelo. Acompanhe o progresso na aba **Serving** do workspace. O status transita de `Not Ready` para `Ready` quando o endpoint está apto a receber tráfego.
+**Quanto tempo leva o provisionamento?** O provisionamento de um novo endpoint leva alguns minutos após a chamada `create_endpoint` retornar: o Databricks está inicializando o container, instalando dependências e carregando o modelo. Acompanhe o progresso na aba **Serving** do workspace. O status transita de `Not Ready` para `Ready` quando o endpoint está apto a receber tráfego.
 
 <figure markdown="span">
   ![O endpoint de serving do forecaster com status Ready](../assets/screenshots/serving-endpoint-ready.png)
@@ -79,8 +77,7 @@ print(f"Creating endpoint {SERVING_ENDPOINT!r} for {FORECASTER_MODEL} v{champ.ve
 
 Quando o status for `Ready`, você pode enviar requisições diretamente pela aba Serving (botão "Query endpoint") ou via REST com autenticação por token. O payload de entrada deve conter as colunas de drivers e `price` no formato JSON que o MLflow DatasetInput espera.
 
-!!! tip "Curiosidade"
-    O endpoint criado pelo `mlflow.deployments.get_deploy_client("databricks")` é automaticamente protegido pelo mecanismo de autenticação do workspace. Não é preciso configurar API keys separadas: o token do workspace (ou um service principal) já é suficiente para autenticar as requisições.
+**Autenticação automática do endpoint.** O endpoint criado pelo `mlflow.deployments.get_deploy_client("databricks")` é automaticamente protegido pelo mecanismo de autenticação do workspace. Não é preciso configurar API keys separadas: o token do workspace (ou um service principal) já é suficiente para autenticar as requisições.
 
 ---
 

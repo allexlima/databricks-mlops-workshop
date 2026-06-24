@@ -51,8 +51,7 @@ spark.sql(f"DROP SCHEMA IF EXISTS {CATALOG}.{SCHEMA} CASCADE")
 !!! warning "Atenção ao schema compartilhado"
     Se o catalog ou schema for usado por outros participantes, outros workshops, ou qualquer outra carga de trabalho, **defina `DROP_SCHEMA = False`** antes de executar. O `DROP SCHEMA ... CASCADE` remove tudo dentro do schema sem confirmação adicional do Databricks, inclusive objetos que não foram criados por este workshop.
 
-!!! note "Conceito"
-    O `DROP SCHEMA ... CASCADE` é um comando SQL do Unity Catalog que apaga recursivamente todos os objetos dentro do schema: tabelas, volumes, modelos registrados, views, funções. É a forma mais eficiente de fazer uma limpeza completa, mas exige que o schema seja exclusivo do workshop antes de usar.
+**O que `DROP SCHEMA ... CASCADE` faz.** O `DROP SCHEMA ... CASCADE` é um comando SQL do Unity Catalog que apaga recursivamente todos os objetos dentro do schema: tabelas, volumes, modelos registrados, views, funções. É a forma mais eficiente de fazer uma limpeza completa, mas exige que o schema seja exclusivo do workshop antes de usar.
 
 ---
 

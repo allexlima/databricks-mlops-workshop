@@ -18,8 +18,7 @@ client = MlflowClient()
 
 A linha `mlflow.set_registry_uri("databricks-uc")` é o ponto de virada: ela redireciona o MLflow para usar o **Unity Catalog** como backend do model registry. Sem ela, o cliente tentaria o registry legado do workspace e os aliases `@champion` não resolveriam para os modelos registrados no UC.
 
-!!! note "Conceito"
-    O MLflow suporta dois registry backends na Databricks: o **workspace model registry** (legado) e o **Unity Catalog registry** (recomendado). Com `set_registry_uri("databricks-uc")`, todas as chamadas a `mlflow.pyfunc.load_model(...)` e ao `MlflowClient` passam a operar no UC. Modelos registrados no UC têm o nome completo com três partes: `{catalog}.{schema}.{model_name}`, por exemplo `main.mlops_workshop_<seu-usuário>.price_forecaster`.
+**Dois registry backends na Databricks.** O MLflow suporta dois registry backends na Databricks: o **workspace model registry** (legado) e o **Unity Catalog registry** (recomendado). Com `set_registry_uri("databricks-uc")`, todas as chamadas a `mlflow.pyfunc.load_model(...)` e ao `MlflowClient` passam a operar no UC. Modelos registrados no UC têm o nome completo com três partes: `{catalog}.{schema}.{model_name}`, por exemplo `main.mlops_workshop_<seu-usuário>.price_forecaster`.
 
 ---
 
@@ -53,8 +52,7 @@ Esse erro é difícil de diagnosticar: ele não indica qual lab deixou de ser ex
 !!! warning "Atenção"
     O guard só verifica o `price_forecaster`. O `purchase_optimizer@champion` é verificado indiretamente quando `mlflow.pyfunc.load_model(...)` é chamado mais adiante. Se o `03_register_optimizer_pyomo.py` não foi executado, o erro aparecerá nesse ponto, de forma menos elegante, mas ainda identificável pelo nome do modelo no traceback.
 
-!!! tip "Curiosidade"
-    Esta é uma forma simples do padrão **fail-fast**: detectar o problema o mais cedo possível no fluxo de execução, no ponto em que a mensagem de erro ainda tem contexto suficiente para ser útil. Em produção, esse tipo de verificação antecipada é especialmente valioso em pipelines agendados. Um job que falha na primeira célula com mensagem clara é muito mais fácil de operar do que um que falha na décima com um erro genérico.
+**O padrão fail-fast.** Esta é uma forma simples do padrão **fail-fast**: detectar o problema o mais cedo possível no fluxo de execução, no ponto em que a mensagem de erro ainda tem contexto suficiente para ser útil. Em produção, esse tipo de verificação antecipada é especialmente valioso em pipelines agendados. Um job que falha na primeira célula com mensagem clara é muito mais fácil de operar do que um que falha na décima com um erro genérico.
 
 ---
 
@@ -78,8 +76,7 @@ Ambos os modelos são carregados via `mlflow.pyfunc.load_model(...)` com a URI n
 
 Isso significa que **nenhum número de versão** aparece no código. Se o forecaster for retreinado amanhã, passar pelo gate de R² ≥ 0,6 e ter seu `@champion` atualizado, este notebook carregará a nova versão automaticamente, sem nenhuma edição.
 
-!!! note "Conceito"
-    `mlflow.pyfunc.load_model(...)` é a interface unificada do MLflow para carregar qualquer modelo, independentemente do framework com que foi treinado. Tanto o `price_forecaster` (sklearn) quanto o `purchase_optimizer` (Pyomo PyFunc) retornam um objeto com o mesmo método `.predict(input_df)`. A cadeia funciona porque **o contrato de interface é o mesmo**; o framework subjacente é um detalhe de implementação.
+**A interface unificada do PyFunc.** `mlflow.pyfunc.load_model(...)` é a interface unificada do MLflow para carregar qualquer modelo, independentemente do framework com que foi treinado. Tanto o `price_forecaster` (sklearn) quanto o `purchase_optimizer` (Pyomo PyFunc) retornam um objeto com o mesmo método `.predict(input_df)`. A cadeia funciona porque **o contrato de interface é o mesmo**; o framework subjacente é um detalhe de implementação.
 
 !!! warning "Atenção"
     O alias `@champion` deve ser promovido explicitamente; ele não é automático. O `02_train_forecaster_sklearn.py` só promove para `@champion` se o modelo passou pelo gate de R² ≥ 0,6. Se você retreinar com dados ruins e o modelo não passar pelo gate, o `@champion` continua apontando para a versão anterior, mais segura. Nunca use `models:/.../latest` em um pipeline de produção: ele pega a versão mais recente registrada, independentemente de qualidade.

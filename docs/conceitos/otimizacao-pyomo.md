@@ -10,8 +10,7 @@ Quando alguém diz "modelo", a primeira imagem costuma ser de dados de treino, u
 
 O paradigma central é a **otimização matemática**: dado um conjunto de variáveis de decisão, uma função a minimizar (ou maximizar) e um conjunto de restrições, encontre os valores das variáveis que otimizam a função sem violar nenhuma restrição.
 
-!!! note "Conceito"
-    **Otimização matemática** é o processo de encontrar o ponto `x*` no espaço viável tal que `f(x*)` seja mínimo (ou máximo). O espaço viável é definido pelas restrições: desigualdades e igualdades que `x` deve satisfazer. Quando tanto `f` quanto as restrições são lineares nas variáveis de decisão, o problema é chamado de **programação linear** (PL ou *linear programming*, LP).
+**Otimização matemática** é o processo de encontrar o ponto `x*` no espaço viável tal que `f(x*)` seja mínimo (ou máximo). O espaço viável é definido pelas restrições: desigualdades e igualdades que `x` deve satisfazer. Quando tanto `f` quanto as restrições são lineares nas variáveis de decisão, o problema é chamado de **programação linear** (PL ou *linear programming*, LP).
 
 ---
 
@@ -28,8 +27,7 @@ A distinção entre ML e PO é simples, mas importante:
 | **Melhora com mais dados?** | Sim | Não. Muda-se o modelo, não os dados |
 | **Garantia** | Estatística (em média, tende a acertar) | Matemática (solução ótima dentro do modelo) |
 
-!!! tip "Curiosidade"
-    Os dois paradigmas se **complementam** no workshop da AnyCompany: o forecaster (ML) prevê o preço do próximo mês, e o optimizer (PO) usa essa previsão como dado de entrada para decidir a quantidade a comprar. Um alimenta o outro, e essa composição é exatamente o que `04_end_to_end.py` monta.
+**ML e PO se complementam.** Os dois paradigmas se **complementam** no workshop da AnyCompany: o forecaster (ML) prevê o preço do próximo mês, e o optimizer (PO) usa essa previsão como dado de entrada para decidir a quantidade a comprar. Um alimenta o outro, e essa composição é exatamente o que `04_end_to_end.py` monta.
 
 ---
 
@@ -63,8 +61,7 @@ São as fronteiras do espaço viável, ou seja, o que é fisicamente ou logicame
 | Ficar no orçamento | Não ultrapassar o limite financeiro | `purchase_cost × q ≤ budget` |
 | Definir excedente | Auxiliar para o custo de estoque | `leftover ≥ q − demand` |
 
-!!! note "Conceito"
-    Uma solução é **viável** quando satisfaz todas as restrições. Uma solução **ótima** é a melhor dentre todas as viáveis segundo a função objetivo. Se nenhuma combinação de valores satisfaz todas as restrições simultaneamente, o problema é chamado de **infeasible** (sem solução).
+**Viável versus ótima.** Uma solução é **viável** quando satisfaz todas as restrições. Uma solução **ótima** é a melhor dentre todas as viáveis segundo a função objetivo. Se nenhuma combinação de valores satisfaz todas as restrições simultaneamente, o problema é chamado de **infeasible** (sem solução).
 
 ---
 
@@ -75,8 +72,7 @@ O problema da AnyCompany é um caso particular e poderoso: tanto a função obje
 - A solução ótima, se existir, está sempre em um **vértice** do poliedro viável (geometricamente, num "canto" do espaço de soluções).
 - Algoritmos como o **simplex** e os de **pontos interiores** resolvem LPs de forma exata e muito eficiente, mesmo com milhões de variáveis.
 
-!!! tip "Curiosidade: a história do simplex"
-    O método simplex foi proposto por **George Dantzig** em 1947, enquanto trabalhava para as Forças Aéreas dos EUA em problemas de logística militar. Dantzig conta que, ao visitar o matemático John von Neumann com o rascunho do método, von Neumann respondeu em menos de uma hora com a teoria da dualidade LP, que Dantzig não conhecia. O simplex continua sendo um dos algoritmos mais usados na prática mais de 75 anos depois.
+**A história do simplex.** O método simplex foi proposto por **George Dantzig** em 1947, enquanto trabalhava para as Forças Aéreas dos EUA em problemas de logística militar. Dantzig conta que, ao visitar o matemático John von Neumann com o rascunho do método, von Neumann respondeu em menos de uma hora com a teoria da dualidade LP, que Dantzig não conhecia. O simplex continua sendo um dos algoritmos mais usados na prática mais de 75 anos depois.
 
 ---
 
@@ -108,8 +104,7 @@ m.obj = pyo.Objective(
 
 Leia o código como leria matemática: cada linha é uma equação ou inequação do problema. Não há nada implícito. O modelo é exatamente o que está escrito.
 
-!!! tip "Curiosidade: modelos concretos vs. abstratos"
-    Pyomo oferece dois sabores: `ConcreteModel` (dados embutidos no momento da construção, como aqui) e `AbstractModel` (estrutura separada dos dados, populada depois). Para problemas de decisão mensal com parâmetros variando a cada chamada, `ConcreteModel` é mais direto e legível.
+**Modelos concretos versus abstratos.** Pyomo oferece dois sabores: `ConcreteModel` (dados embutidos no momento da construção, como aqui) e `AbstractModel` (estrutura separada dos dados, populada depois). Para problemas de decisão mensal com parâmetros variando a cada chamada, `ConcreteModel` é mais direto e legível.
 
 ---
 
@@ -123,8 +118,7 @@ Um modelo Pyomo é apenas uma **representação** do problema: ele não resolve 
 - **Interface APPSI**: o Pyomo expõe o HiGHS via a interface APPSI (*Algebraic Programming System Plugin Interface*), mais moderna e eficiente que os adaptadores de linha de comando.
 - **Performance**: HiGHS regularmente vence benchmarks contra solvers comerciais em LPs de médio porte.
 
-!!! tip "Curiosidade: HiGHS no OR-Tools e no SciPy"
-    O HiGHS não é exclusividade do Pyomo. O Google OR-Tools e o `scipy.optimize.linprog` (com `method='highs'`) também o usam internamente como backend LP. Se você já usou `scipy.optimize.linprog` recentemente, provavelmente já rodou o HiGHS sem saber.
+**HiGHS no OR-Tools e no SciPy.** O HiGHS não é exclusividade do Pyomo. O Google OR-Tools e o `scipy.optimize.linprog` (com `method='highs'`) também o usam internamente como backend LP. Se você já usou `scipy.optimize.linprog` recentemente, provavelmente já rodou o HiGHS sem saber.
 
 ---
 

@@ -39,11 +39,9 @@ VOLUME           = "workshop_files"
 CSV_PATH         = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/commodity_monthly.csv"
 ```
 
-!!! note "Conceito"
-    O padrão `catalog.schema.objeto` é a hierarquia de três níveis do Unity Catalog. `FORECASTER_MODEL` e `OPTIMIZER_MODEL` são os nomes completos dos dois modelos que você vai registrar nos labs seguintes: `price_forecaster` (scikit-learn) e `purchase_optimizer` (Pyomo PyFunc). `CSV_PATH` usa um caminho de UC Volume em vez de `/dbfs/` porque o DBFS FUSE não está disponível no compute serverless.
+**A hierarquia `catalog.schema.objeto`.** O padrão `catalog.schema.objeto` é a hierarquia de três níveis do Unity Catalog. `FORECASTER_MODEL` e `OPTIMIZER_MODEL` são os nomes completos dos dois modelos que você vai registrar nos labs seguintes: `price_forecaster` (scikit-learn) e `purchase_optimizer` (Pyomo PyFunc). `CSV_PATH` usa um caminho de UC Volume em vez de `/dbfs/` porque o DBFS FUSE não está disponível no compute serverless.
 
-!!! tip "Curiosidade"
-    Todos os artefatos de arquivo (datasets CSV etc.) vão para um **UC Volume** (`/Volumes/{catalog}/{schema}/workshop_files/`). Volumes são a forma correta e portável de armazenar arquivos na Databricks moderna: funcionam tanto em serverless quanto em clusters clássicos, e ficam sob a governança do Unity Catalog como qualquer outro objeto. Saiba mais: [MLflow no Databricks](https://docs.databricks.com/en/mlflow/index.html).
+**Por que UC Volumes para arquivos?** Todos os artefatos de arquivo (datasets CSV etc.) vão para um **UC Volume** (`/Volumes/{catalog}/{schema}/workshop_files/`). Volumes são a forma correta e portável de armazenar arquivos na Databricks moderna: funcionam tanto em serverless quanto em clusters clássicos, e ficam sob a governança do Unity Catalog como qualquer outro objeto. Saiba mais: [MLflow no Databricks](https://docs.databricks.com/en/mlflow/index.html).
 
 <figure markdown="span">
   ![O _config aberto no editor, com a linha CATALOG destacada](../assets/screenshots/setup-config-py.png)

@@ -2,8 +2,7 @@
 
 Com o workspace pronto (passo anterior), o objetivo agora é trazer o repositório para dentro dele. Os notebooks vivem no GitHub; para rodá-los na Databricks, você os clona como uma **Git folder** e escolhe o tipo de compute que vai usar durante o workshop.
 
-!!! note "Conceito"
-    Uma **Git folder** é um clone de um repositório Git que vive dentro do workspace da Databricks. Ela mantém a hierarquia de diretórios idêntica à do repositório remoto. Isso importa porque o `%run ./_config` usa um caminho relativo (`./`); se você importar os notebooks soltos, sem essa estrutura, a Databricks não consegue encontrar o arquivo e o comando falha. Documentação oficial: [Git folders (Repos)](https://docs.databricks.com/en/repos/index.html).
+**O que é uma Git folder?** Uma **Git folder** é um clone de um repositório Git que vive dentro do workspace da Databricks. Ela mantém a hierarquia de diretórios idêntica à do repositório remoto. Isso importa porque o `%run ./_config` usa um caminho relativo (`./`); se você importar os notebooks soltos, sem essa estrutura, a Databricks não consegue encontrar o arquivo e o comando falha. Documentação oficial: [Git folders (Repos)](https://docs.databricks.com/en/repos/index.html).
 
 ---
 
@@ -54,11 +53,10 @@ Siga os passos abaixo no seu workspace:
     clonada e selecione **`hands-on`**. Você pode alternar entre as duas a
     qualquer momento, sem precisar clonar de novo.
 
-!!! tip "Curiosidade"
-    Como o repositório é público, você não precisa configurar credenciais de Git
-    para cloná-lo. Credenciais (um personal access token em **Settings › Linked
-    accounts**) só são necessárias se você quiser dar `pull` em atualizações
-    futuras ou trabalhar com um fork privado seu.
+**Precisa de credenciais de Git?** Como o repositório é público, você não precisa configurar credenciais de Git
+para cloná-lo. Credenciais (um personal access token em **Settings › Linked
+accounts**) só são necessárias se você quiser dar `pull` em atualizações
+futuras ou trabalhar com um fork privado seu.
 
 ### Como o repositório está organizado
 

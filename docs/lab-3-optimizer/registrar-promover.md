@@ -64,15 +64,13 @@ with mlflow.start_run(run_name="pyomo_optimizer"):
 
 **`code_paths=["./workshop_lib.py"]`**: este é o parâmetro mais importante. Sem ele, `solve_purchase` estaria ausente no momento do carregamento (o artefato não saberia de onde importar `workshop_lib`). Com ele, o MLflow copia `workshop_lib.py` para dentro do artefato do modelo. O arquivo *viaja junto* e fica disponível em qualquer ambiente de serving ou inferência.
 
-!!! note "Conceito"
-    **Como `code_paths` funciona internamente:** o MLflow copia cada arquivo listado para uma subpasta `code/` dentro do artefato do modelo. Quando o modelo é carregado, essa pasta é adicionada ao `sys.path` automaticamente. Assim, qualquer `import workshop_lib` dentro de `PurchaseOptimizerModel.predict` resolve corretamente, seja em um cluster diferente, em um endpoint de serving ou meses depois.
+**Como `code_paths` funciona internamente:** o MLflow copia cada arquivo listado para uma subpasta `code/` dentro do artefato do modelo. Quando o modelo é carregado, essa pasta é adicionada ao `sys.path` automaticamente. Assim, qualquer `import workshop_lib` dentro de `PurchaseOptimizerModel.predict` resolve corretamente, seja em um cluster diferente, em um endpoint de serving ou meses depois.
 
 **`pip_requirements`**: declara as dependências explicitamente para o ambiente de serving. O MLflow usa essa lista para criar o ambiente virtual quando o modelo é servido via Model Serving ou carregado com `mlflow.pyfunc.load_model`. Note que `pyomo` e `highspy` também estão declarados no cabeçalho PEP 723 do notebook (para o ambiente de execução); aqui eles aparecem novamente para o ambiente de inferência.
 
 **`registered_model_name=OPTIMIZER_MODEL`**: registra o modelo diretamente no Unity Catalog em uma única chamada. `OPTIMIZER_MODEL` é definido em `_config.py` como `f"{CATALOG}.{SCHEMA}.purchase_optimizer"`, sem nenhum nome hardcoded no notebook.
 
-!!! tip "Curiosidade"
-    `mlflow.models.infer_signature(example, sample_out)` inspeciona os DataFrames de entrada e saída e gera um schema tipado. Isso permite que o Model Serving valide entradas sem executar o modelo e fornece ao Unity Catalog metadados ricos sobre o contrato de entrada/saída do modelo, visíveis na UI e nas consultas ao catálogo.
+**Para que serve a signature?** `mlflow.models.infer_signature(example, sample_out)` inspeciona os DataFrames de entrada e saída e gera um schema tipado. Isso permite que o Model Serving valide entradas sem executar o modelo e fornece ao Unity Catalog metadados ricos sobre o contrato de entrada/saída do modelo, visíveis na UI e nas consultas ao catálogo.
 
 !!! warning "Atenção"
     **`mlflow.set_registry_uri("databricks-uc")` deve ser chamado antes de qualquer operação de registry.** Essa chamada é feita no início do notebook (junto com os demais imports) e instrui o MLflow a usar o Unity Catalog como registry, em vez do registry legado. Sem ela, `registered_model_name` com o formato `catalog.schema.model` vai falhar.
@@ -92,8 +90,7 @@ client.set_registered_model_alias(
 
 `info.registered_model_version` é o número de versão que o MLflow atribuiu neste registro. Usamos essa variável *agora*, para definir o alias, e depois nunca mais: todo o restante do workshop usa `@champion`, nunca um inteiro fixo.
 
-!!! note "Conceito"
-    **Por que alias em vez de versão?** Cada execução do `03_register_optimizer_pyomo.py` registra uma nova versão do modelo (1, 2, 3…). Se o `04_end_to_end.py` dependesse de `models:/.../1`, a segunda execução do workshop quebraria silenciosamente, carregando a versão errada. Com `@champion`, o `04_end_to_end.py` sempre carrega *a versão promovida*, independentemente de quantas vezes o workshop foi reexecutado. É o mesmo padrão do forecaster em `02_train_forecaster_sklearn.py`, garantindo consistência entre os dois modelos.
+**Por que alias em vez de versão?** Cada execução do `03_register_optimizer_pyomo.py` registra uma nova versão do modelo (1, 2, 3…). Se o `04_end_to_end.py` dependesse de `models:/.../1`, a segunda execução do workshop quebraria silenciosamente, carregando a versão errada. Com `@champion`, o `04_end_to_end.py` sempre carrega *a versão promovida*, independentemente de quantas vezes o workshop foi reexecutado. É o mesmo padrão do forecaster em `02_train_forecaster_sklearn.py`, garantindo consistência entre os dois modelos.
 
 ---
 

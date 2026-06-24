@@ -22,12 +22,11 @@ compra uma matéria-prima (uma *commodity*) todo mês. O problema real é decidi
 *quanto comprar*. Para isso, a empresa precisa primeiro *prever o preço* do próximo
 mês, e então *otimizar a decisão de compra* com base nessa previsão.
 
-!!! note "Conceito"
-    **MLOps** é o conjunto de práticas que leva um modelo de ML de um notebook
-    exploratório até um artefato confiável, versionado e governado, que pode ser
-    auditado, substituído e monitorado ao longo do tempo. Não é sobre infraestrutura
-    sofisticada: é sobre **disciplina de ciclo de vida**. O MLflow é a ferramenta
-    que implementa essa disciplina na Databricks.
+**MLOps** é o conjunto de práticas que leva um modelo de ML de um notebook
+exploratório até um artefato confiável, versionado e governado, que pode ser
+auditado, substituído e monitorado ao longo do tempo. Não é sobre infraestrutura
+sofisticada: é sobre **disciplina de ciclo de vida**. O MLflow é a ferramenta
+que implementa essa disciplina na Databricks.
 
 ![Ciclo de vida do modelo: Rastrear → Registrar → Validar → Compor → Governar](assets/diagrams/lifecycle.svg){ width="100%" }
 
@@ -70,12 +69,11 @@ explícita. O forecaster precisa atingir **R² ≥ 0,6** no conjunto de teste (h
 O optimizer precisa devolver uma solução **feasible** (o solver HiGHS confirma isso
 automaticamente).
 
-!!! tip "Curiosidade"
-    O alias `@champion` é a chave que torna o pipeline estável entre re-execuções.
-    Cada vez que você re-treina e re-registra, o MLflow cria uma nova versão do
-    modelo (v2, v3, …). Referenciar uma versão literal (`models:/…/3`) quebra na
-    próxima re-execução. Referenciar `@champion` nunca quebra: você simplesmente
-    move o alias para a nova versão aprovada.
+**Por que o alias importa.** O alias `@champion` é a chave que torna o pipeline estável entre re-execuções.
+Cada vez que você re-treina e re-registra, o MLflow cria uma nova versão do
+modelo (v2, v3, …). Referenciar uma versão literal (`models:/…/3`) quebra na
+próxima re-execução. Referenciar `@champion` nunca quebra: você simplesmente
+move o alias para a nova versão aprovada.
 
 ### O ciclo de vida em cinco etapas
 
@@ -90,13 +88,12 @@ automaticamente).
 5. **Govern**: o Unity Catalog mantém o lineage, a auditoria e o controle de acesso
    de ambos os modelos em um único lugar.
 
-!!! note "Conceito"
-    **PyFunc** (abreviação de *Python Function*) é a interface genérica do MLflow para
-    modelos que não têm um flavor nativo: qualquer classe Python que implemente
-    `predict(self, context, model_input, params=None)` pode ser registrada, versionada
-    e servida exatamente como um modelo scikit-learn. É o mecanismo que torna possível
-    governar o solver Pyomo no mesmo ciclo de vida. Veja mais em
-    [Fundamentos: PyFunc e modelos customizados](conceitos/pyfunc-modelos-customizados.md).
+**PyFunc** (abreviação de *Python Function*) é a interface genérica do MLflow para
+modelos que não têm um flavor nativo: qualquer classe Python que implemente
+`predict(self, context, model_input, params=None)` pode ser registrada, versionada
+e servida exatamente como um modelo scikit-learn. É o mecanismo que torna possível
+governar o solver Pyomo no mesmo ciclo de vida. Veja mais em
+[Fundamentos: PyFunc e modelos customizados](conceitos/pyfunc-modelos-customizados.md).
 
 ## Fundamentos
 

@@ -16,8 +16,7 @@ Abra `05_verify.py`.
 
 ## A filosofia: verificação inline, não pytest
 
-!!! note "Conceito"
-    **Verificação inline** significa colocar asserções diretamente nas células do notebook, logo após o código que elas validam. A execução para imediatamente no primeiro `assert` que falha, com uma mensagem clara indicando qual checkpoint não passou, sem precisar abrir um terminal separado ou interpretar um relatório de testes.
+**Verificação inline** significa colocar asserções diretamente nas células do notebook, logo após o código que elas validam. A execução para imediatamente no primeiro `assert` que falha, com uma mensagem clara indicando qual checkpoint não passou, sem precisar abrir um terminal separado ou interpretar um relatório de testes.
 
 Projetos de software de longa duração geralmente têm uma suíte `pytest` separada: centenas de testes unitários, fixtures de banco de dados, mocks de APIs externas. Essa é a abordagem correta para código de produção que será mantido por anos.
 
@@ -31,8 +30,7 @@ Um workshop tem requisitos diferentes:
 | Objetivo | Regressão contínua em CI | Confirmar que o workshop rodou corretamente |
 | Adequação para este workshop | Excessivo | Adequada |
 
-!!! tip "Curiosidade"
-    A maior armadilha dos testes inline em notebooks é a **ordem de execução das células**: se você reexecutar uma célula fora de ordem, o estado do kernel pode ser inconsistente. O `05_verify.py` contorna isso sendo um notebook de verificação isolado. Ele carrega tudo do zero (MlflowClient, DataFrame) em vez de depender de variáveis de sessões anteriores, o que o torna repetível: você pode executar `Run All` quantas vezes quiser e obter o mesmo resultado.
+**A armadilha da ordem de execução.** A maior armadilha dos testes inline em notebooks é a **ordem de execução das células**: se você reexecutar uma célula fora de ordem, o estado do kernel pode ser inconsistente. O `05_verify.py` contorna isso sendo um notebook de verificação isolado. Ele carrega tudo do zero (MlflowClient, DataFrame) em vez de depender de variáveis de sessões anteriores, o que o torna repetível: você pode executar `Run All` quantas vezes quiser e obter o mesmo resultado.
 
 ---
 
@@ -85,8 +83,7 @@ assert wl.R2_BAND[0] <= r2 <= wl.R2_BAND[1], f"R2 {r2:.3f} outside {wl.R2_BAND}"
 
 **Por que verificar os dados antes do registry?** Se o R² estiver fora da faixa, algo mudou nos dados: deriva de distribuição, alteração de schema ou transformação incorreta na geração do dataset. É melhor parar aqui com uma mensagem clara do que promover um modelo treinado em features corrompidas e só perceber isso na inferência em produção.
 
-!!! tip "Curiosidade"
-    O R² de um ajuste linear sobre dados sintéticos com seed fixo é **determinístico**. Se esse checkpoint falhar em uma reexecução, a causa quase sempre é externa ao notebook: a tabela `DATA_TABLE` foi truncada, o `CATALOG` foi alterado para outro catálogo entre execuções (o `SCHEMA` é derivado do seu usuário, então não muda sozinho), ou alguém executou o `extra/cleanup.py` sem perceber.
+**Por que o R² é determinístico.** O R² de um ajuste linear sobre dados sintéticos com seed fixo é **determinístico**. Se esse checkpoint falhar em uma reexecução, a causa quase sempre é externa ao notebook: a tabela `DATA_TABLE` foi truncada, o `CATALOG` foi alterado para outro catálogo entre execuções (o `SCHEMA` é derivado do seu usuário, então não muda sozinho), ou alguém executou o `extra/cleanup.py` sem perceber.
 
 ---
 
@@ -103,8 +100,7 @@ assert client.get_registered_model(FORECASTER_MODEL) is not None
 
 **Por quê?** Falha rápida caso o `02_train_forecaster_sklearn.py` nunca tenha gravado no registry: seja porque o R² ficou abaixo do gate (< 0,6) e a promoção foi bloqueada corretamente, seja porque o notebook travou antes do `log_model`. Sem esse registro, os checkpoints 3 e 4 falhariam com erros de API que não indicam a causa raiz.
 
-!!! note "Conceito"
-    O nome completo do modelo no Unity Catalog segue o padrão de três níveis: `catalog.schema.nome_do_modelo`. Isso garante isolamento por ambiente: você pode ter `main.workshop.price_forecaster` (dev) e `prod.mlops.price_forecaster` (produção) sem conflito, pois são entidades completamente distintas no registry.
+**O padrão de três níveis.** O nome completo do modelo no Unity Catalog segue o padrão de três níveis: `catalog.schema.nome_do_modelo`. Isso garante isolamento por ambiente: você pode ter `main.workshop.price_forecaster` (dev) e `prod.mlops.price_forecaster` (produção) sem conflito, pois são entidades completamente distintas no registry.
 
 ---
 
