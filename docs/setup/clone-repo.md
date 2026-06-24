@@ -39,6 +39,21 @@ Siga os passos abaixo no seu workspace:
   <figcaption>Repositório clonado: os notebooks <code>00_setup</code> a <code>05_verify</code>, o <code>_config</code> e a pasta <code>extra/</code> no Workspace.</figcaption>
 </figure>
 
+!!! tip "Quer seguir a versão hands-on (mão na massa)?"
+    O repositório tem duas branches:
+
+    - **`main`** (selecionada acima): os notebooks completos, com todo o código
+      pronto. Ideal para acompanhar a leitura ou usar como referência.
+    - **`hands-on`**: os mesmos notebooks, mas com os blocos de código mais
+      importantes substituídos por espaços reservados
+      (`# Paste the code for "..." here`). Você preenche cada um copiando o bloco
+      correspondente desta documentação, célula por célula.
+
+    Para fazer o workshop no formato mão na massa, troque a branch da Git folder
+    para `hands-on`: clique no nome da branch (ícone de Git) no topo da pasta
+    clonada e selecione **`hands-on`**. Você pode alternar entre as duas a
+    qualquer momento, sem precisar clonar de novo.
+
 !!! tip "Curiosidade"
     Como o repositório é público, você não precisa configurar credenciais de Git
     para cloná-lo. Credenciais (um personal access token em **Settings › Linked
