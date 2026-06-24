@@ -108,10 +108,10 @@ Essa é a prova final: o modelo foi registrado, o alias foi definido e agora ele
 
 <figure markdown="span">
   ![O purchase_optimizer registrado no Unity Catalog com o alias @champion](../assets/screenshots/lab-3-optimizer-registered.png)
-  <figcaption>O otimizador Pyomo empacotado como PyFunc, registrado no Unity Catalog como <code>purchase_optimizer</code> v1 com o alias <code>@champion</code> — governado exatamente como o forecaster.</figcaption>
+  <figcaption>O otimizador Pyomo empacotado como PyFunc, registrado no Unity Catalog como <code>purchase_optimizer</code> v1 com o alias <code>@champion</code>, governado exatamente como o forecaster.</figcaption>
 </figure>
 
-!!! success "Pronto quando…"
+!!! success "Pronto quando..."
     - O assert de viabilidade conclui **sem erro** (solver presente e funcional).
     - O Unity Catalog exibe o modelo `purchase_optimizer` (nome derivado de `OPTIMIZER_MODEL`) com a versão 1 marcada com o alias `@champion`.
     - A chamada `opt.predict(example)` retorna um DataFrame com `purchase_qty=100.0` e `status=optimal`.

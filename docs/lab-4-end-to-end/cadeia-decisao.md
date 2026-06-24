@@ -75,7 +75,7 @@ Predicted next-month price: 142.37
 0         850.0  optimal
 ```
 
-!!! success "Pronto quando…"
+!!! success "Pronto quando..."
     - Uma linha impressa com o preço previsto no formato `Predicted next-month price: XXX.XX`
     - Um DataFrame de uma linha com `purchase_qty` e `status=optimal`
     - Nenhum erro de registry (ambos os `@champion` foram encontrados)

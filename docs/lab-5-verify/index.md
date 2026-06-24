@@ -7,7 +7,7 @@
 ## Antes de começar
 
 !!! warning "Pré-requisito"
-    Execute os notebooks `00` a `04` na ordem antes de abrir este lab.  
+    Execute os notebooks `00` a `04` na ordem antes de abrir este lab.
     O `05_verify.py` **não cria nenhum recurso**: ele apenas valida o que os notebooks anteriores produziram. Se qualquer checkpoint falhar, a seção [Passou × Falhou](#referencia-rapida-passou-x-falhou) indica qual notebook reexecutar.
 
 Abra `05_verify.py`.
@@ -190,7 +190,7 @@ ALL 4 CHECKPOINTS PASSED
     | `@champion` não resolve | Nenhuma versão foi promovida | Reexecute `02_train_forecaster_sklearn.py` (gate ≥ 0,6) |
     | `status != "optimal"` | Incompatibilidade entre forecaster e optimizer | Reexecute `02_train_forecaster_sklearn.py`, `03_register_optimizer_pyomo.py` e `04_end_to_end.py` na ordem |
 
-!!! success "Pronto quando…"
+!!! success "Pronto quando..."
     ```
     ALL 4 CHECKPOINTS PASSED
     ```

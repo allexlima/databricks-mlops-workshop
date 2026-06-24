@@ -9,7 +9,7 @@ Com o repositório clonado e o compute escolhido, o próximo passo é editar o `
 
 ## 1. Editar o `_config.py`
 
-O `_config.py` é o único arquivo que você precisa editar em todo o workshop — e nele você edita **apenas uma constante**, o `CATALOG`. Todos os notebooks herdam os valores via `%run ./_config`.
+O `_config.py` é o único arquivo que você precisa editar em todo o workshop, e nele você edita **apenas uma constante**, o `CATALOG`. Todos os notebooks herdam os valores via `%run ./_config`.
 
 Abra o `_config.py` na raiz da Git folder e localize o bloco abaixo:
 
@@ -20,7 +20,7 @@ CATALOG = "main"
 ```
 
 - **`CATALOG`**: nome do catálogo Unity Catalog onde o workshop vai criar seus objetos. O valor padrão é `main`. Troque pelo catálogo no qual você tem permissão de criar schemas. O catálogo precisa existir previamente; o `00_setup` verifica isso e exibe uma mensagem clara caso não o encontre.
-- **`SCHEMA`, `EXPERIMENT_PATH`, `SERVING_ENDPOINT` e os nomes de modelos/dados**: você **não edita** nenhum deles. São **derivados automaticamente do seu usuário** (o `_config` lê `current_user()` e usa o seu e-mail como sufixo), dando a cada participante um **ambiente totalmente isolado** — schema, experimento e endpoint próprios, sem colisão e sem edição manual.
+- **`SCHEMA`, `EXPERIMENT_PATH`, `SERVING_ENDPOINT` e os nomes de modelos/dados**: você **não edita** nenhum deles. São **derivados automaticamente do seu usuário** (o `_config` lê `current_user()` e usa o seu e-mail como sufixo), dando a cada participante um **ambiente totalmente isolado**: schema, experimento e endpoint próprios, sem colisão e sem edição manual.
 
 A partir do `CATALOG` e do seu usuário, o `_config.py` deriva automaticamente todos os demais nomes usados no workshop:
 

@@ -229,7 +229,7 @@ O dataset inclui uma coluna `trend_up`, um booleano derivado de `price_next_mont
 
 ---
 
-!!! success "Pronto quando…"
+!!! success "Pronto quando..."
     - **96 linhas** estão na tabela Delta (consulte com `spark.table(DATA_TABLE).count()` ou o SQL acima).
     - O `assert` da célula 4 passou silenciosamente: R² impresso, sem `AssertionError`.
     - A última célula imprimiu `Wrote main.mlops_workshop_<seu-usuário>.commodity_monthly and /Volumes/…`.
